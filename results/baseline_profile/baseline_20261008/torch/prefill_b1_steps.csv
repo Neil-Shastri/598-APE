@@ -1,0 +1,2 @@
+region,index,host_wall_us,gpu_span_us,gpu_busy_us,gpu_idle_us,busy_pct_of_wall,kernels,max_gap_us
+prefill_b1,0,129118.8,122730.6,105929.2,16801.3,82.0,1907,2403.9

@@ -1,0 +1,102 @@
+host gpub081.delta.ncsa.illinois.edu  job 22763272  Thu Oct  8 18:01:57 CDT 2026
+Thu Oct  8 18:01:57 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.71.05              Driver Version: 595.71.05      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA A40                     On  |   00000000:07:00.0 Off |                    0 |
+|  0%   30C    P0             39W /  300W |       0MiB /  46068MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Loading weights:   0%|          | 0/355 [00:00<?, ?it/s]Loading weights:   0%|          | 1/355 [00:01<09:37,  1.63s/it]Loading weights:   1%|          | 4/355 [00:01<01:59,  2.95it/s]Loading weights:   2%|▏         | 6/355 [00:01<01:15,  4.63it/s]Loading weights:   3%|▎         | 12/355 [00:01<00:29, 11.54it/s]Loading weights:   5%|▍         | 16/355 [00:02<00:31, 10.66it/s]Loading weights:   6%|▌         | 20/355 [00:02<00:23, 14.32it/s]Loading weights:   7%|▋         | 25/355 [00:02<00:20, 16.18it/s]Loading weights:   8%|▊         | 28/355 [00:02<00:21, 15.37it/s]Loading weights:   9%|▉         | 33/355 [00:03<00:15, 20.58it/s]Loading weights:  10%|█         | 37/355 [00:03<00:18, 17.44it/s]Loading weights:  11%|█▏        | 40/355 [00:03<00:16, 19.06it/s]Loading weights:  12%|█▏        | 43/355 [00:03<00:14, 20.89it/s]Loading weights:  13%|█▎        | 47/355 [00:03<00:14, 20.59it/s]Loading weights:  14%|█▍        | 50/355 [00:04<00:16, 18.13it/s]Loading weights:  16%|█▌        | 56/355 [00:04<00:11, 25.64it/s]Loading weights:  17%|█▋        | 60/355 [00:04<00:17, 17.21it/s]Loading weights:  19%|█▉        | 67/355 [00:04<00:11, 25.05it/s]Loading weights:  20%|██        | 71/355 [00:05<00:16, 17.64it/s]Loading weights:  21%|██▏       | 76/355 [00:05<00:12, 22.04it/s]Loading weights:  23%|██▎       | 80/355 [00:05<00:12, 21.51it/s]Loading weights:  24%|██▎       | 84/355 [00:05<00:13, 20.42it/s]Loading weights:  25%|██▍       | 87/355 [00:05<00:12, 21.89it/s]Loading weights:  26%|██▌       | 91/355 [00:05<00:12, 21.14it/s]Loading weights:  26%|██▋       | 94/355 [00:06<00:14, 18.02it/s]Loading weights:  27%|██▋       | 97/355 [00:06<00:12, 19.92it/s]Loading weights:  29%|██▊       | 102/355 [00:06<00:11, 21.40it/s]Loading weights:  30%|██▉       | 105/355 [00:06<00:13, 18.21it/s]Loading weights:  31%|███▏      | 111/355 [00:06<00:10, 22.76it/s]Loading weights:  32%|███▏      | 114/355 [00:07<00:16, 14.45it/s]Loading weights:  33%|███▎      | 116/355 [00:07<00:15, 15.00it/s]Loading weights:  34%|███▍      | 122/355 [00:07<00:10, 22.10it/s]Loading weights:  35%|███▌      | 126/355 [00:07<00:13, 16.76it/s]Loading weights:  37%|███▋      | 133/355 [00:08<00:09, 24.55it/s]Loading weights:  39%|███▊      | 137/355 [00:08<00:12, 17.46it/s]Loading weights:  40%|████      | 142/355 [00:08<00:09, 21.85it/s]Loading weights:  41%|████      | 146/355 [00:08<00:09, 21.30it/s]Loading weights:  42%|████▏     | 150/355 [00:08<00:10, 20.29it/s]Loading weights:  43%|████▎     | 153/355 [00:09<00:09, 21.78it/s]Loading weights:  44%|████▍     | 157/355 [00:09<00:09, 21.12it/s]Loading weights:  45%|████▌     | 160/355 [00:09<00:10, 18.57it/s]Loading weights:  46%|████▌     | 164/355 [00:09<00:08, 22.23it/s]Loading weights:  47%|████▋     | 167/355 [00:09<00:09, 19.83it/s]Loading weights:  48%|████▊     | 170/355 [00:10<00:10, 17.62it/s]Loading weights:  50%|████▉     | 177/355 [00:10<00:06, 26.95it/s]Loading weights:  51%|█████     | 181/355 [00:10<00:09, 17.74it/s]Loading weights:  53%|█████▎    | 188/355 [00:10<00:06, 25.39it/s]Loading weights:  54%|█████▍    | 192/355 [00:11<00:09, 17.54it/s]Loading weights:  56%|█████▌    | 199/355 [00:11<00:06, 24.52it/s]Loading weights:  57%|█████▋    | 204/355 [00:11<00:08, 18.78it/s]Loading weights:  59%|█████▊    | 208/355 [00:11<00:06, 21.45it/s]Loading weights:  60%|█████▉    | 212/355 [00:11<00:06, 21.06it/s]Loading weights:  61%|██████    | 215/355 [00:12<00:07, 18.74it/s]Loading weights:  62%|██████▏   | 221/355 [00:12<00:05, 25.22it/s]Loading weights:  63%|██████▎   | 225/355 [00:12<00:07, 17.33it/s]Loading weights:  65%|██████▌   | 232/355 [00:12<00:04, 24.63it/s]Loading weights:  66%|██████▋   | 236/355 [00:13<00:06, 17.31it/s]Loading weights:  68%|██████▊   | 242/355 [00:13<00:05, 21.59it/s]Loading weights:  69%|██████▉   | 246/355 [00:13<00:05, 19.75it/s]Loading weights:  70%|███████   | 249/355 [00:13<00:05, 20.91it/s]Loading weights:  72%|███████▏  | 254/355 [00:13<00:04, 21.80it/s]Loading weights:  72%|███████▏  | 257/355 [00:14<00:05, 18.48it/s]Loading weights:  73%|███████▎  | 260/355 [00:14<00:04, 19.87it/s]Loading weights:  75%|███████▍  | 265/355 [00:14<00:03, 25.25it/s]Loading weights:  76%|███████▌  | 269/355 [00:14<00:05, 16.92it/s]Loading weights:  78%|███████▊  | 276/355 [00:14<00:03, 24.76it/s]Loading weights:  79%|███████▉  | 280/355 [00:15<00:04, 17.45it/s]Loading weights:  81%|████████  | 287/355 [00:15<00:02, 24.55it/s]Loading weights:  82%|████████▏ | 292/355 [00:15<00:03, 18.78it/s]Loading weights:  84%|████████▍ | 298/355 [00:16<00:02, 24.11it/s]Loading weights:  85%|████████▌ | 302/355 [00:16<00:03, 17.55it/s]Loading weights:  87%|████████▋ | 309/355 [00:16<00:01, 24.20it/s]Loading weights:  88%|████████▊ | 314/355 [00:16<00:02, 18.49it/s]Loading weights:  90%|█████████ | 320/355 [00:17<00:01, 23.67it/s]Loading weights:  92%|█████████▏| 325/355 [00:17<00:01, 18.43it/s]Loading weights:  93%|█████████▎| 331/355 [00:17<00:01, 23.52it/s]Loading weights:  94%|█████████▍| 335/355 [00:18<00:01, 17.35it/s]Loading weights:  96%|█████████▋| 342/355 [00:18<00:00, 23.94it/s]Loading weights:  98%|█████████▊| 347/355 [00:18<00:00, 18.33it/s]Loading weights:  99%|█████████▉| 352/355 [00:18<00:00, 20.57it/s]Loading weights: 100%|██████████| 355/355 [00:18<00:00, 18.84it/s]
+{
+  "timestamp": "2026-10-08T23:02:52+00:00",
+  "hostname": "gpub081.delta.ncsa.illinois.edu",
+  "slurm_job_id": "22763272",
+  "cuda_visible_devices": "0",
+  "python": "3.13.5",
+  "torch": "2.14.1+cu130",
+  "torch_cuda": "13.0",
+  "cudnn": 92400,
+  "transformers": "5.19.0",
+  "model_id": "allenai/Olmo-3-1025-7B",
+  "revision": "a81bae42db3975be1671e27b9c9a56da1a9f980f",
+  "dtype": "bfloat16",
+  "attn_implementation": "sdpa",
+  "device": "cuda",
+  "gpu_name": "NVIDIA A40",
+  "nvidia_smi": "0, NVIDIA A40, 595.71.05, 14193 MiB, 46068 MiB, 0 %, 1740 MHz, 34",
+  "git_hash": "uncommitted",
+  "git_dirty": false,
+  "load_s": 22.045359220006503,
+  "workload": {
+    "prefill": [
+      [
+        1,
+        128
+      ],
+      [
+        1,
+        512
+      ],
+      [
+        1,
+        2048
+      ]
+    ],
+    "decode": [
+      [
+        1,
+        512,
+        128
+      ],
+      [
+        8,
+        512,
+        128
+      ]
+    ],
+    "warmup": 3,
+    "repeats": 5,
+    "text": "scandal_in_bohemia.txt",
+    "text_sha256": "1ea089c8ec3d69ea499efea24a957908fbaed75bc5e110f865320d0f1acc89d2"
+  }
+}
+--- 'The capital of France is'  matches_generate=True
+The capital of France is known for its rich history and culture, which includes
+A. A significant number of ancient ruins and monuments.
+B. A lack of historical significance.
+C.
+--- 'Water boils at sea level when it reaches a temperature of'  matches_generate=True
+Water boils at sea level when it reaches a temperature of 
+A. 100 degrees Celsius
+B. 50 degrees Celsius
+C. 150 degrees Celsius
+D. 200 degrees Celsius
+
+Answer: A
+--- 'Once upon a time, in a small village by the sea, there lived'  matches_generate=True
+Once upon a time, in a small village by the sea, there lived a young girl named Lily. She had long, golden hair that shimmered like the sun and eyes as blue as the sky. Lily loved to spend her days
+--- 'The theory of general relativity, proposed by Albert Einstein,'  matches_generate=True
+The theory of general relativity, proposed by Albert Einstein, describes gravity as the curvature of spacetime caused by mass and energy. This curvature dictates the motion of objects and light, with massive objects like stars and planets war
+perplexity over 1536 tokens: 2.906
+golden created: /u/neilas3/classes/598/598-project/results/baseline/golden/NVIDIA_A40_bfloat16_sdpa.json match=None
+CORRECTNESS PASS
+prefill b=1 s=128  ttft_ms=46.05 (cv 0.002)  prefill_tok_s=2779.53 (cv 0.002)  peak=14067 MiB
+prefill b=1 s=512  ttft_ms=109.05 (cv 0.000)  prefill_tok_s=4695.02 (cv 0.000)  peak=14485 MiB
+prefill b=1 s=2048  ttft_ms=383.48 (cv 0.001)  prefill_tok_s=5340.53 (cv 0.001)  peak=16158 MiB
+decode  b=1 s=512  ttft_ms=108.91 (cv 0.003)  tpot_ms=38.56 (cv 0.001)  decode_tok_s=25.93 (cv 0.001)  e2e_tok_s=25.57 (cv 0.001)  step_ms=38.54 (cv 0.005)  peak=14257 MiB
+decode  b=8 s=512  ttft_ms=731.11 (cv 0.004)  tpot_ms=45.38 (cv 0.000)  decode_tok_s=176.28 (cv 0.000)  e2e_tok_s=157.69 (cv 0.000)  step_ms=45.42 (cv 0.018)  peak=16565 MiB
+wrote /u/neilas3/classes/598/598-project/results/baseline/20261008_180440_22763272/bench.json and bench.csv (129 s total)
+done Thu Oct  8 18:04:43 CDT 2026

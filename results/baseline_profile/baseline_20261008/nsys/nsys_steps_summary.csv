@@ -1,0 +1,7 @@
+region,n,median_host_wall_us,median_gpu_span_us,median_gpu_busy_us,median_gpu_idle_us,median_busy_pct_of_wall,median_kernels,median_median_gap_us
+prefill_b1,1,113107.4,112680.9,105885.1,6795.7,93.6,1907,0.77
+decode_b1,16,66437.8,66297.6,31506.0,34791.6,47.4,1979.0,15.42
+prefill_b8,1,726818.3,726662.3,722674.7,3987.6,99.4,1907,0.8
+decode_b8,16,65370.55,65225.95,42278.25,22887.6,64.8,1883.0,1.67
+decode_b1_nolabels,16,57114.8,56950.65,31487.55,25457.85,55.1,1979.0,8.07
+decode_b8_nolabels,16,56184.35,56025.35,42300.9,13686.05,75.4,1883.0,0.8

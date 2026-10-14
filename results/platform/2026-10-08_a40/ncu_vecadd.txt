@@ -1,0 +1,59 @@
+== host: gpub027.delta.ncsa.illinois.edu
+/opt/nvidia/nsight-compute/2026.1.1/ncu
+Version 2026.1.1.0 (build 37634170) (public-release)
+==PROF== Connected to process 3245332 (/u/neilas3/classes/598/gpucheck/vecadd)
+==PROF== Profiling "vecadd" - 0: 0%....50%....100% - 9 passes
+vecadd: no error
+==PROF== Disconnected from process 3245332
+[3245332] vecadd@127.0.0.1
+  vecadd(const float *, const float *, float *, int) (65536, 1, 1)x(256, 1, 1), Context 1, Stream 7, Device 0, CC 8.6
+    Section: Command line profiler metrics
+    ---------------------- ----------- ------------
+    Metric Name            Metric Unit Metric Value
+    ---------------------- ----------- ------------
+    dram__bytes_read.sum         Mbyte       146.83
+    dram__bytes_write.sum        Mbyte        76.08
+    gpu__time_duration.sum          us       348.54
+    ---------------------- ----------- ------------
+
+    Section: GPU Speed Of Light Throughput
+    ----------------------- ----------- ------------
+    Metric Name             Metric Unit Metric Value
+    ----------------------- ----------- ------------
+    DRAM Frequency                  Ghz         7.24
+    SM Frequency                    Ghz         1.74
+    Elapsed Cycles                cycle       606377
+    Memory Throughput                 %        91.98
+    DRAM Throughput                   %        91.98
+    Duration                         us       348.54
+    L1/TEX Cache Throughput           %        10.64
+    L2 Cache Throughput               %        22.82
+    SM Active Cycles              cycle    592129.64
+    Compute (SM) Throughput           %         8.30
+    ----------------------- ----------- ------------
+
+    INF   This workload is utilizing greater than 80.0% of the available compute or memory performance of this device.  
+          To further improve performance, work will likely need to be shifted from the most utilized to another unit.   
+          Start by analyzing DRAM in the Memory Workload Analysis section.                                              
+
+    Section: Memory Workload Analysis
+    --------------------------------------- ----------- ------------
+    Metric Name                             Metric Unit Metric Value
+    --------------------------------------- ----------- ------------
+    Local Memory Spilling Requests                                 0
+    Local Memory Spilling Request Overhead            %            0
+    L2 Sector Promotion Misses                        %            0
+    Shared Memory Spilling Requests                                0
+    Shared Memory Spilling Request Overhead           %            0
+    Memory Throughput                           Gbyte/s       639.55
+    Mem Busy                                          %        22.82
+    Max Bandwidth                                     %        91.98
+    L1/TEX Hit Rate                                   %            0
+    L2 Persisting Size                            Mbyte         1.18
+    L2 Compression Success Rate                       %            0
+    L2 Compression Ratio                                           0
+    L2 Compression Input Sectors                 sector            0
+    L2 Hit Rate                                       %        33.43
+    Mem Pipes Busy                                    %         8.30
+    --------------------------------------- ----------- ------------
+

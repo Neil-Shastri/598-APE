@@ -1,0 +1,66 @@
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                               aten::mm         0.92%       6.772ms         1.25%       9.210ms      40.932us     436.207ms        59.72%     436.207ms       1.939ms           225  
+void cutlass::Kernel2<cutlass_80_tensorop_bf16_s1681...         0.00%       0.000us         0.00%       0.000us       0.000us     434.776ms        59.52%     434.776ms       1.941ms           224  
+                                       prefill_b8:layer         0.00%       0.000us         0.00%       0.000us       0.000us     359.455ms        49.21%     359.455ms      11.233ms            32  
+                                prefill_b8:gate_up_proj         0.00%       0.000us         0.00%       0.000us       0.000us     184.658ms        25.28%     184.658ms       2.885ms            64  
+                                    prefill_b8:qkv_proj         0.00%       0.000us         0.00%       0.000us       0.000us     113.661ms        15.56%     113.661ms       1.184ms            96  
+                                              aten::mul         0.61%       4.505ms         0.99%       7.299ms      17.216us     101.648ms        13.92%     101.648ms     239.736us           424  
+                                   prefill_b8:down_proj         0.00%       0.000us         0.00%       0.000us       0.000us      98.476ms        13.48%      98.476ms       3.077ms            32  
+                                     prefill_b8:rmsnorm         0.00%       0.000us         0.00%       0.000us       0.000us      78.110ms        10.69%      78.110ms       1.220ms            64  
+                                     prefill_b8:qk_norm         0.00%       0.000us         0.00%       0.000us       0.000us      78.088ms        10.69%      78.088ms       1.220ms            64  
+                                        prefill_b8:rope         0.00%       0.000us         0.00%       0.000us       0.000us      74.667ms        10.22%      74.667ms       2.333ms            32  
+                                            aten::copy_         0.35%       2.552ms        83.39%     614.335ms       1.491ms      57.246ms         7.84%      57.246ms     138.946us           412  
+void at::native::elementwise_kernel<128, 4, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      55.967ms         7.66%      55.967ms     217.770us           257  
+                                      prefill_b8:o_proj         0.00%       0.000us         0.00%       0.000us       0.000us      37.981ms         5.20%      37.981ms       1.187ms            32  
+                                              aten::add         0.38%       2.809ms         0.63%       4.623ms      17.917us      34.735ms         4.76%      34.735ms     134.633us           258  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      34.601ms         4.74%      34.601ms     179.281us           193  
+                                              aten::pow         0.23%       1.690ms         0.37%       2.690ms      20.852us      31.150ms         4.26%      31.150ms     241.470us           129  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      31.150ms         4.26%      31.150ms     241.470us           129  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      30.375ms         4.16%      30.375ms     231.869us           131  
+                                              aten::cat         0.21%       1.579ms         0.35%       2.615ms      20.112us      24.112ms         3.30%      24.112ms     185.473us           130  
+void at::native::(anonymous namespace)::CatArrayBatc...         0.00%       0.000us         0.00%       0.000us       0.000us      24.107ms         3.30%      24.107ms     188.335us           128  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      22.948ms         3.14%      22.948ms     358.558us            64  
+void at::native::unrolled_elementwise_kernel<at::nat...         0.00%       0.000us         0.00%       0.000us       0.000us      22.633ms         3.10%      22.633ms     172.769us           131  
+                                             aten::mean         0.24%       1.749ms         0.34%       2.540ms      19.688us      17.229ms         2.36%      17.229ms     133.559us           129  
+void at::native::reduce_kernel<512, 1, at::native::R...         0.00%       0.000us         0.00%       0.000us       0.000us      17.229ms         2.36%      17.229ms     133.559us           129  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      15.300ms         2.09%      15.300ms     478.136us            32  
+                                         prefill_b8:mlp         0.00%       0.000us         0.00%       0.000us       0.000us      15.300ms         2.09%      15.300ms     478.136us            32  
+                                    prefill_b8:kv_cache         0.00%       0.000us         0.00%       0.000us       0.000us      13.921ms         1.91%      13.921ms     435.026us            32  
+                         aten::_flash_attention_forward         0.06%     447.194us         0.23%       1.678ms      52.443us      13.229ms         1.81%      13.229ms     413.420us            32  
+void pytorch_flash::flash_fwd_kernel<Flash_fwd_kerne...         0.00%       0.000us         0.00%       0.000us       0.000us      13.229ms         1.81%      13.229ms     413.420us            32  
+                                   prefill_b8:attn_core         0.00%       0.000us         0.00%       0.000us       0.000us      13.229ms         1.81%      13.229ms     413.420us            32  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      11.523ms         1.58%      11.523ms     180.042us            64  
+                                             aten::silu         0.07%     486.256us         0.11%     827.857us      25.871us      10.216ms         1.40%      10.216ms     319.242us            32  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      10.216ms         1.40%      10.216ms     319.242us            32  
+                                         prefill_b8:act         0.00%       0.000us         0.00%       0.000us       0.000us      10.216ms         1.40%      10.216ms     319.242us            32  
+                                              aten::neg         0.10%     739.651us         0.17%       1.233ms      19.259us       4.296ms         0.59%       4.296ms      67.119us            64  
+void at::native::elementwise_kernel<128, 4, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us       4.296ms         0.59%       4.296ms      67.119us            64  
+void cutlass::Kernel2<cutlass_80_wmma_tensorop_bf16_...         0.00%       0.000us         0.00%       0.000us       0.000us       1.431ms         0.20%       1.431ms       1.431ms             1  
+                                     prefill_b8:lm_head         0.00%       0.000us         0.00%       0.000us       0.000us       1.431ms         0.20%       1.431ms       1.431ms             1  
+                                  prefill_b8:final_norm         0.00%       0.000us         0.00%       0.000us       0.000us       1.222ms         0.17%       1.222ms       1.222ms             1  
+                                  prefill_b8:rope_table         0.00%       0.000us         0.00%       0.000us       0.000us     493.665us         0.07%     493.665us     246.832us             2  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     262.949us         0.04%     262.949us       2.038us           129  
+                                            aten::rsqrt         0.13%     981.032us         0.23%       1.668ms      12.928us     249.379us         0.03%     249.379us       1.933us           129  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     249.379us         0.03%     249.379us       1.933us           129  
+                                           aten::gather         0.01%      59.783us         0.12%     919.552us     919.552us      86.496us         0.01%      86.496us      86.496us             1  
+void at::native::vectorized_gather_kernel<16, long>(...         0.00%       0.000us         0.00%       0.000us       0.000us      86.496us         0.01%      86.496us      86.496us             1  
+                                       prefill_b8:embed         0.00%       0.000us         0.00%       0.000us       0.000us      86.496us         0.01%      86.496us      86.496us             1  
+                                       prefill_b8:model         0.00%       0.000us         0.00%       0.000us       0.000us      77.953us         0.01%      77.953us      77.953us             1  
+                                           aten::argmax         0.01%      41.739us         0.01%      82.435us      82.435us      34.816us         0.00%      34.816us      34.816us             1  
+void at::native::reduce_kernel<512, 1, at::native::R...         0.00%       0.000us         0.00%       0.000us       0.000us      34.816us         0.00%      34.816us      34.816us             1  
+                                             prefill_b8         0.00%       0.000us         0.00%       0.000us       0.000us      34.816us         0.00%      34.816us      34.816us             1  
+                       Memcpy HtoD (Pageable -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us      11.842us         0.00%      11.842us       0.493us            24  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       5.888us         0.00%       5.888us       1.472us             4  
+void at::native::(anonymous namespace)::CatArrayBatc...         0.00%       0.000us         0.00%       0.000us       0.000us       4.639us         0.00%       4.639us       2.319us             2  
+                                              aten::sin         0.00%      25.257us         0.01%      53.891us      26.945us       4.512us         0.00%       4.512us       2.256us             2  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       4.512us         0.00%       4.512us       2.256us             2  
+                                              aten::cos         0.00%      28.273us         0.01%      54.452us      27.226us       4.512us         0.00%       4.512us       2.256us             2  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       4.512us         0.00%       4.512us       2.256us             2  
+void at::native::vectorized_elementwise_kernel<2, at...         0.00%       0.000us         0.00%       0.000us       0.000us       2.016us         0.00%       2.016us       2.016us             1  
+                                           aten::arange         0.00%      28.774us         0.02%     156.763us      78.381us       1.504us         0.00%       3.008us       1.504us             2  
+void (anonymous namespace)::elementwise_kernel_with_...         0.00%       0.000us         0.00%       0.000us       0.000us       1.504us         0.00%       1.504us       1.504us             1  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 736.717ms
+Self CUDA time total: 730.449ms

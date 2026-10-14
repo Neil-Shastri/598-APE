@@ -1,0 +1,187 @@
+host gpub082.delta.ncsa.illinois.edu  job 22765112  tag baseline_20261008  Thu Oct  8 20:14:41 CDT 2026
+Version 2026.1.1.0 (build 37634170) (public-release)
+==PROF== Connected to process 3872639 (/sw/rh9.4/spack/v1.0.0/sw/linux-x86_64_v2/python-3.13.5-7bp2p4z/bin/python3.13)
+Loading weights:   0%|          | 0/355 [00:00<?, ?it/s]Loading weights:   0%|          | 1/355 [00:01<09:31,  1.61s/it]Loading weights:   1%|          | 3/355 [00:01<02:42,  2.16it/s]Loading weights:   1%|▏         | 5/355 [00:01<01:38,  3.54it/s]Loading weights:   3%|▎         | 12/355 [00:02<00:30, 11.12it/s]Loading weights:   5%|▍         | 16/355 [00:02<00:33, 10.22it/s]Loading weights:   6%|▌         | 20/355 [00:02<00:24, 13.67it/s]Loading weights:   7%|▋         | 25/355 [00:02<00:21, 15.52it/s]Loading weights:   8%|▊         | 28/355 [00:03<00:22, 14.86it/s]Loading weights:  10%|▉         | 34/355 [00:03<00:14, 21.42it/s]Loading weights:  11%|█         | 38/355 [00:03<00:20, 15.57it/s]Loading weights:  13%|█▎        | 45/355 [00:03<00:13, 22.80it/s]Loading weights:  14%|█▍        | 49/355 [00:04<00:18, 16.30it/s]Loading weights:  15%|█▌        | 54/355 [00:04<00:14, 20.44it/s]Loading weights:  16%|█▋        | 58/355 [00:04<00:14, 20.27it/s]Loading weights:  17%|█▋        | 62/355 [00:04<00:15, 19.15it/s]Loading weights:  19%|█▊        | 66/355 [00:04<00:12, 22.39it/s]Loading weights:  20%|█▉        | 70/355 [00:05<00:18, 15.42it/s]Loading weights:  21%|██▏       | 76/355 [00:05<00:13, 21.39it/s]Loading weights:  23%|██▎       | 80/355 [00:05<00:13, 20.88it/s]Loading weights:  23%|██▎       | 83/355 [00:05<00:14, 18.60it/s]Loading weights:  25%|██▌       | 89/355 [00:05<00:10, 25.25it/s]Loading weights:  26%|██▌       | 93/355 [00:06<00:15, 16.60it/s]Loading weights:  28%|██▊       | 98/355 [00:06<00:12, 21.02it/s]Loading weights:  29%|██▊       | 102/355 [00:06<00:12, 20.41it/s]Loading weights:  30%|██▉       | 105/355 [00:06<00:14, 17.85it/s]Loading weights:  31%|███▏      | 111/355 [00:07<00:11, 20.97it/s]Loading weights:  32%|███▏      | 114/355 [00:07<00:15, 15.35it/s]Loading weights:  33%|███▎      | 117/355 [00:07<00:13, 17.08it/s]Loading weights:  34%|███▍      | 122/355 [00:07<00:10, 22.33it/s]Loading weights:  35%|███▌      | 126/355 [00:08<00:13, 16.77it/s]Loading weights:  37%|███▋      | 131/355 [00:08<00:10, 21.65it/s]Loading weights:  38%|███▊      | 135/355 [00:08<00:10, 21.09it/s]Loading weights:  39%|███▉      | 138/355 [00:08<00:11, 18.60it/s]Loading weights:  41%|████      | 144/355 [00:08<00:08, 25.53it/s]Loading weights:  42%|████▏     | 148/355 [00:09<00:12, 17.00it/s]Loading weights:  44%|████▎     | 155/355 [00:09<00:08, 24.44it/s]Loading weights:  45%|████▍     | 159/355 [00:09<00:11, 17.38it/s]Loading weights:  46%|████▌     | 164/355 [00:09<00:08, 21.63it/s]Loading weights:  47%|████▋     | 168/355 [00:10<00:08, 21.11it/s]Loading weights:  48%|████▊     | 172/355 [00:10<00:09, 19.91it/s]Loading weights:  49%|████▉     | 175/355 [00:10<00:08, 21.41it/s]Loading weights:  50%|█████     | 179/355 [00:10<00:08, 20.82it/s]Loading weights:  51%|█████▏    | 182/355 [00:10<00:09, 18.31it/s]Loading weights:  52%|█████▏    | 185/355 [00:10<00:08, 20.22it/s]Loading weights:  54%|█████▎    | 190/355 [00:11<00:07, 21.72it/s]Loading weights:  54%|█████▍    | 193/355 [00:11<00:08, 18.79it/s]Loading weights:  56%|█████▌    | 199/355 [00:11<00:06, 23.27it/s]Loading weights:  57%|█████▋    | 202/355 [00:11<00:08, 18.28it/s]Loading weights:  58%|█████▊    | 205/355 [00:11<00:07, 19.72it/s]Loading weights:  59%|█████▉    | 210/355 [00:12<00:05, 25.21it/s]Loading weights:  60%|██████    | 214/355 [00:12<00:08, 16.70it/s]Loading weights:  62%|██████▏   | 221/355 [00:12<00:05, 24.58it/s]Loading weights:  63%|██████▎   | 225/355 [00:13<00:07, 17.02it/s]Loading weights:  65%|██████▍   | 230/355 [00:13<00:05, 21.01it/s]Loading weights:  66%|██████▌   | 234/355 [00:13<00:05, 20.20it/s]Loading weights:  67%|██████▋   | 237/355 [00:13<00:06, 18.01it/s]Loading weights:  68%|██████▊   | 243/355 [00:13<00:05, 20.95it/s]Loading weights:  69%|██████▉   | 246/355 [00:13<00:05, 20.11it/s]Loading weights:  70%|███████   | 249/355 [00:14<00:05, 21.13it/s]Loading weights:  71%|███████▏  | 253/355 [00:14<00:04, 20.42it/s]Loading weights:  72%|███████▏  | 256/355 [00:14<00:05, 18.72it/s]Loading weights:  73%|███████▎  | 259/355 [00:14<00:05, 16.55it/s]Loading weights:  75%|███████▍  | 265/355 [00:14<00:03, 23.90it/s]Loading weights:  76%|███████▌  | 269/355 [00:15<00:05, 16.44it/s]Loading weights:  78%|███████▊  | 276/355 [00:15<00:03, 24.04it/s]Loading weights:  79%|███████▉  | 280/355 [00:15<00:04, 16.83it/s]Loading weights:  81%|████████  | 287/355 [00:15<00:02, 23.75it/s]Loading weights:  82%|████████▏ | 291/355 [00:16<00:03, 16.95it/s]Loading weights:  84%|████████▍ | 298/355 [00:16<00:02, 23.54it/s]Loading weights:  85%|████████▌ | 303/355 [00:16<00:02, 18.25it/s]Loading weights:  87%|████████▋ | 309/355 [00:17<00:01, 23.35it/s]Loading weights:  88%|████████▊ | 313/355 [00:17<00:02, 17.12it/s]Loading weights:  90%|█████████ | 320/355 [00:17<00:01, 23.63it/s]Loading weights:  92%|█████████▏| 325/355 [00:17<00:01, 18.11it/s]Loading weights:  93%|█████████▎| 331/355 [00:18<00:01, 23.21it/s]Loading weights:  95%|█████████▍| 336/355 [00:18<00:01, 18.14it/s]Loading weights:  96%|█████████▌| 340/355 [00:18<00:00, 20.72it/s]Loading weights:  97%|█████████▋| 344/355 [00:18<00:00, 19.94it/s]Loading weights:  98%|█████████▊| 347/355 [00:19<00:00, 17.71it/s]Loading weights:  99%|█████████▉| 351/355 [00:19<00:00, 19.22it/s]Loading weights: 100%|██████████| 355/355 [00:19<00:00, 18.34it/s]
+attn_implementation=sdpa
+==PROF== Profiling "Kernel2" - 0: 0%....50%....100% - 38 passes
+==PROF== Profiling "unrolled_elementwise_kernel" - 1: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 2: 0%....50%....100% - 38 passes
+==PROF== Profiling "reduce_kernel" - 3: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 4: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 5: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 6: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 7: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 8: 0%....50%....100% - 38 passes
+==PROF== Profiling "Kernel2" - 9: 0%....50%....100% - 38 passes
+==PROF== Profiling "unrolled_elementwise_kernel" - 10: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 11: 0%....50%....100% - 38 passes
+==PROF== Profiling "reduce_kernel" - 12: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 13: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 14: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 15: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 16: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 17: 0%....50%....100% - 38 passes
+==PROF== Profiling "Kernel2" - 18: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 19: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 20: 0%....50%....100% - 38 passes
+==PROF== Profiling "CatArrayBatchedCopy" - 21: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 22: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 23: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 24: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 25: 0%....50%....100% - 38 passes
+==PROF== Profiling "CatArrayBatchedCopy" - 26: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 27: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 28: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 29: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 30: 0%....50%....100% - 38 passes
+==PROF== Profiling "CatArrayBatchedCopy" - 31: 0%....50%....100% - 38 passes
+==PROF== Profiling "CatArrayBatchedCopy" - 32: 0%....50%....100% - 38 passes
+==PROF== Profiling "flash_fwd_kernel" - 33: 0%....50%....100% - 38 passes
+==PROF== Profiling "Kernel2" - 34: 0%....50%....100% - 38 passes
+==PROF== Profiling "unrolled_elementwise_kernel" - 35: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 36: 0%....50%....100% - 38 passes
+==PROF== Profiling "reduce_kernel" - 37: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 38: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 39: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 40: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 41: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 42: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 43: 0%....50%....100% - 38 passes
+==PROF== Profiling "Kernel2" - 44: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 45: 0%....50%....100% - 38 passes
+==PROF== Profiling "Kernel2" - 46: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 47: 0%....50%....100% - 38 passes
+==PROF== Profiling "Kernel2" - 48: 0%....50%....100% - 38 passes
+==PROF== Profiling "unrolled_elementwise_kernel" - 49: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 50: 0%....50%....100% - 38 passes
+==PROF== Profiling "reduce_kernel" - 51: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 52: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 53: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 54: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 55: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 56: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 57: 0%....50%....100% - 38 passes
+==PROF== Profiling "ampere_bf16_s16816gemm_bf16_6..." - 58: 0%....50%....100% - 38 passes
+==PROF== Profiling "unrolled_elementwise_kernel" - 59: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 60: 0%....50%....100% - 38 passes
+==PROF== Profiling "reduce_kernel" - 61: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 62: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 63: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 64: 0%....50%....100% - 38 passes
+==PROF== Profiling "unrolled_elementwise_kernel" - 65: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 66: 0%....50%....100% - 38 passes
+==PROF== Profiling "ampere_bf16_s16816gemm_bf16_6..." - 67: 0%....50%....100% - 38 passes
+==PROF== Profiling "unrolled_elementwise_kernel" - 68: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 69: 0%....50%....100% - 38 passes
+==PROF== Profiling "reduce_kernel" - 70: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 71: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 72: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 73: 0%....50%....100% - 38 passes
+==PROF== Profiling "unrolled_elementwise_kernel" - 74: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 75: 0%....50%....100% - 38 passes
+==PROF== Profiling "ampere_bf16_s16816gemm_bf16_6..." - 76: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 77: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 78: 0%....50%....100% - 38 passes
+==PROF== Profiling "CatArrayBatchedCopy" - 79: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 80: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 81: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 82: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 83: 0%....50%....100% - 38 passes
+==PROF== Profiling "CatArrayBatchedCopy" - 84: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 85: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 86: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 87: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 88: 0%....50%....100% - 38 passes
+==PROF== Profiling "CatArrayBatchedCopy_vectorized" - 89: 0%....50%....100% - 38 passes
+==PROF== Profiling "CatArrayBatchedCopy_vectorized" - 90: 0%....50%....100% - 38 passes
+==PROF== Profiling "flash_fwd_splitkv_kernel" - 91: 0%....50%....100% - 38 passes
+==PROF== Profiling "flash_fwd_splitkv_combine_ker..." - 92: 0%....50%....100% - 38 passes
+==PROF== Profiling "ampere_bf16_s16816gemm_bf16_6..." - 93: 0%....50%....100% - 38 passes
+==PROF== Profiling "unrolled_elementwise_kernel" - 94: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 95: 0%....50%....100% - 38 passes
+==PROF== Profiling "reduce_kernel" - 96: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 97: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 98: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 99: 0%....50%....100% - 38 passes
+==PROF== Profiling "unrolled_elementwise_kernel" - 100: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 101: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 102: 0%....50%....100% - 38 passes
+==PROF== Profiling "ampere_bf16_s16816gemm_bf16_6..." - 103: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 104: 0%....50%....100% - 38 passes
+==PROF== Profiling "ampere_bf16_s16816gemm_bf16_6..." - 105: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 106: 0%....50%....100% - 38 passes
+==PROF== Profiling "ampere_bf16_s16816gemm_bf16_6..." - 107: 0%....50%....100% - 38 passes
+==PROF== Profiling "unrolled_elementwise_kernel" - 108: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 109: 0%....50%....100% - 38 passes
+==PROF== Profiling "reduce_kernel" - 110: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 111: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 112: 0%....50%....100% - 38 passes
+==PROF== Profiling "elementwise_kernel" - 113: 0%....50%....100% - 38 passes
+==PROF== Profiling "unrolled_elementwise_kernel" - 114: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 115: 0%....50%....100% - 38 passes
+==PROF== Profiling "vectorized_elementwise_kernel" - 116: 0%....50%....100% - 38 passes
+done
+==PROF== Disconnected from process 3872639
+==PROF== Report: /work/hdd/bikd/neilas3/598/runs/baseline_profile/baseline_20261008/ncu/olmo.ncu-rep
+decode_b1  gate_up_proj/ampere_bf16_s16816gemm_bf16_64x64_ldg8_f2f_stages_64x5_tn   2 kernels     348.9 us    219.68 MB   629.6 GB/s (109% of 578)
+decode_b1  qkv_proj/ampere_bf16_s16816gemm_bf16_64x64_sliced1x2_ldg8_f2f_stages_64x5_tn   3 kernels     205.9 us    127.08 MB   617.2 GB/s (107% of 578)
+decode_b1  down_proj/ampere_bf16_s16816gemm_bf16_64x64_sliced1x2_ldg8_f2f_stages_64x5_tn   1 kernels     166.1 us    108.51 MB   653.4 GB/s (113% of 578)
+decode_b1  o_proj/ampere_bf16_s16816gemm_bf16_64x64_sliced1x2_ldg8_f2f_stages_64x5_tn   1 kernels      68.6 us     42.17 MB   614.3 GB/s (106% of 578)
+decode_b1  kv_cache/void at::native::<unnamed>::CatArrayBatchedCopy_vectorized<at::native::<unnamed>::OpaqueType<(unsigned int)2>, unsigned int, (int)3, (int)128, (int)1, (int)16, (int)8>(char *, at::native::<unnamed>::CatArrInputTensorMetadata<T1, T2, T4, T5>, at::native::<unnamed>::TensorSizeStride<T2, (unsigned int)4>, int, T2)   2 kernels      28.3 us     16.08 MB   568.3 GB/s (98% of 578)
+decode_b1  rope/void at::native::elementwise_kernel<(int)128, (int)4, void at::native::gpu_kernel_impl<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)   4 kernels      26.3 us      0.32 MB    12.2 GB/s (2% of 578)
+decode_b1  attn_core/void pytorch_flash::flash_fwd_splitkv_kernel<Flash_fwd_kernel_traits<(int)128, (int)64, (int)128, (int)4, (bool)0, (bool)0, cutlass::bfloat16_t, Flash_kernel_traits<(int)128, (int)64, (int)128, (int)4, cutlass::bfloat16_t>>, (bool)0, (bool)0, (bool)0, (bool)0, (bool)1, (bool)0, (bool)1, (bool)0>(pytorch_flash::Flash_fwd_params)   1 kernels      22.9 us     11.01 MB   481.1 GB/s (83% of 578)
+decode_b1  rmsnorm/void at::native::unrolled_elementwise_kernel<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>, std::array<char *, (unsigned long)3>, (int)4, TrivialOffsetCalculator<(int)2, unsigned int>, TrivialOffsetCalculator<(int)1, unsigned int>, at::native::memory::LoadWithCast<(int)2>, at::native::memory::StoreWithCast<(int)1>>(int, T1, T2, T4, T5, T6, T7)   2 kernels      11.3 us      0.17 MB    14.9 GB/s (3% of 578)
+decode_b1  qk_norm/void at::native::unrolled_elementwise_kernel<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>, std::array<char *, (unsigned long)3>, (int)4, TrivialOffsetCalculator<(int)2, unsigned int>, TrivialOffsetCalculator<(int)1, unsigned int>, at::native::memory::LoadWithCast<(int)2>, at::native::memory::StoreWithCast<(int)1>>(int, T1, T2, T4, T5, T6, T7)   2 kernels      11.3 us      0.16 MB    14.5 GB/s (2% of 578)
+decode_b1  qk_norm/void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 3)]::operator ()() const::[lambda() (instance 7)]::operator ()() const::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (int)4, TrivialOffsetCalculator<(int)1, unsigned int>, TrivialOffsetCalculator<(int)1, unsigned int>, at::native::memory::LoadWithCast<(int)1>, at::native::memory::StoreWithCast<(int)1>>(int, T1, T2, T4, T5, T6, T7)   2 kernels       9.6 us      0.09 MB     9.8 GB/s (2% of 578)
+decode_b1  rope/void at::native::<unnamed>::CatArrayBatchedCopy<at::native::<unnamed>::OpaqueType<(unsigned int)2>, unsigned int, (int)4, (int)64, (int)64>(T1 *, at::native::<unnamed>::CatArrInputTensorMetadata<T1, T2, T4, T5>, at::native::<unnamed>::TensorSizeStride<T2, (unsigned int)4>, int, T2)   2 kernels       9.6 us      0.05 MB     4.8 GB/s (1% of 578)
+decode_b1  rmsnorm/void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 3)]::operator ()() const::[lambda() (instance 7)]::operator ()() const::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (int)4, TrivialOffsetCalculator<(int)1, unsigned int>, TrivialOffsetCalculator<(int)1, unsigned int>, at::native::memory::LoadWithCast<(int)1>, at::native::memory::StoreWithCast<(int)1>>(int, T1, T2, T4, T5, T6, T7)   2 kernels       9.5 us      0.09 MB     9.8 GB/s (2% of 578)
+decode_b1  rmsnorm/void at::native::reduce_kernel<(int)512, (int)1, at::native::ReduceOp<float, at::native::MeanOps<float, float, float, float>, unsigned int, float, (int)4, (int)4>>(T3)   2 kernels       9.2 us      0.15 MB    16.5 GB/s (3% of 578)
+decode_b1  qk_norm/void at::native::reduce_kernel<(int)512, (int)1, at::native::ReduceOp<float, at::native::MeanOps<float, float, float, float>, unsigned int, float, (int)4, (int)4>>(T3)   2 kernels       9.2 us      0.15 MB    16.3 GB/s (3% of 578)
+decode_b1  rope/void at::native::elementwise_kernel<(int)128, (int)4, void at::native::gpu_kernel_impl_nocast<at::native::neg_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 2)]::operator ()() const::[lambda() (instance 9)]::operator ()() const::[lambda(c10::BFloat16) (instance 1)]>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)   2 kernels       8.2 us      0.05 MB     6.2 GB/s (1% of 578)
+decode_b1  attn_core/void pytorch_flash::flash_fwd_splitkv_combine_kernel<Flash_fwd_kernel_traits<(int)128, (int)64, (int)128, (int)4, (bool)0, (bool)0, cutlass::bfloat16_t, Flash_kernel_traits<(int)128, (int)64, (int)128, (int)4, cutlass::bfloat16_t>>, (int)4, (int)3, (bool)1>(pytorch_flash::Flash_fwd_params)   1 kernels       6.2 us      0.12 MB    19.5 GB/s (3% of 578)
+decode_b1  qk_norm/void at::native::elementwise_kernel<(int)128, (int)2, void at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)   2 kernels       6.2 us      0.06 MB    10.4 GB/s (2% of 578)
+decode_b1  rmsnorm/void at::native::elementwise_kernel<(int)128, (int)2, void at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)   2 kernels       6.1 us      0.07 MB    10.6 GB/s (2% of 578)
+decode_b1  qk_norm/void at::native::vectorized_elementwise_kernel<(int)4, at::native::rsqrt_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 2)]::operator ()() const::[lambda() (instance 2)]::operator ()() const::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels       4.9 us      0.01 MB     2.9 GB/s (0% of 578)
+decode_b1  qk_norm/void at::native::vectorized_elementwise_kernel<(int)4, at::native::bfloat16_copy_kernel_cuda(at::TensorIteratorBase &)::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels       4.9 us      0.05 MB    10.1 GB/s (2% of 578)
+decode_b1  rope/void at::native::vectorized_elementwise_kernel<(int)4, at::native::CUDAFunctor_add<float>, std::array<char *, (unsigned long)3>, (bool)0>(int, T2, T3)   2 kernels       4.9 us      0.08 MB    17.1 GB/s (3% of 578)
+decode_b1  rmsnorm/void at::native::vectorized_elementwise_kernel<(int)4, at::native::rsqrt_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 2)]::operator ()() const::[lambda() (instance 2)]::operator ()() const::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels       4.9 us      0.01 MB     3.1 GB/s (0% of 578)
+decode_b1  qk_norm/void at::native::vectorized_elementwise_kernel<(int)4, void at::native::<unnamed>::pow_tensor_scalar_kernel_impl<float, float>(at::TensorIteratorBase &, T2)::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels       4.8 us      0.05 MB    10.1 GB/s (2% of 578)
+decode_b1  rope/void at::native::vectorized_elementwise_kernel<(int)4, at::native::bfloat16_copy_kernel_cuda(at::TensorIteratorBase &)::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels       4.8 us      0.05 MB    10.1 GB/s (2% of 578)
+decode_b1  rmsnorm/void at::native::vectorized_elementwise_kernel<(int)4, void at::native::<unnamed>::pow_tensor_scalar_kernel_impl<float, float>(at::TensorIteratorBase &, T2)::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels       4.8 us      0.05 MB    10.1 GB/s (2% of 578)
+decode_b1  rmsnorm/void at::native::vectorized_elementwise_kernel<(int)4, at::native::bfloat16_copy_kernel_cuda(at::TensorIteratorBase &)::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels       4.8 us      0.05 MB    10.3 GB/s (2% of 578)
+decode_b1  layer/void at::native::vectorized_elementwise_kernel<(int)4, at::native::CUDAFunctor_add<c10::BFloat16>, std::array<char *, (unsigned long)3>, (bool)0>(int, T2, T3)   2 kernels       4.7 us      0.05 MB    10.8 GB/s (2% of 578)
+decode_b1  qk_norm/void at::native::vectorized_elementwise_kernel<(int)4, at::native::CUDAFunctorOnSelf_add<float>, std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels       4.7 us      0.01 MB     2.3 GB/s (0% of 578)
+decode_b1  rmsnorm/void at::native::vectorized_elementwise_kernel<(int)4, at::native::CUDAFunctorOnSelf_add<float>, std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels       4.6 us      0.01 MB     2.4 GB/s (0% of 578)
+decode_b1  act/void at::native::vectorized_elementwise_kernel<(int)4, at::native::<unnamed>::silu_kernel(at::TensorIteratorBase &)::[lambda() (instance 1)]::operator ()() const::[lambda() (instance 6)]::operator ()() const::[lambda(c10::BFloat16) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   1 kernels       3.1 us      0.04 MB    12.6 GB/s (2% of 578)
+decode_b1  mlp/void at::native::vectorized_elementwise_kernel<(int)4, at::native::BinaryFunctor<c10::BFloat16, c10::BFloat16, c10::BFloat16, at::native::binary_internal::MulFunctor<float>>, std::array<char *, (unsigned long)3>, (bool)0>(int, T2, T3)   1 kernels       2.6 us      0.06 MB    21.6 GB/s (4% of 578)
+prefill_b1 gate_up_proj/void cutlass::Kernel2<cutlass_80_tensorop_bf16_s16816gemm_relu_bf16_256x128_32x3_tn_align8>(T1::Params)   2 kernels     998.0 us    341.20 MB   341.9 GB/s (59% of 578)
+prefill_b1 qkv_proj/void cutlass::Kernel2<cutlass_80_tensorop_bf16_s16816gemm_relu_bf16_128x256_32x3_tn_align8>(T1::Params)   3 kernels     489.7 us    154.11 MB   314.7 GB/s (54% of 578)
+prefill_b1 down_proj/void cutlass::Kernel2<cutlass_80_tensorop_bf16_s16816gemm_relu_bf16_128x256_32x3_tn_align8>(T1::Params)   1 kernels     420.1 us    130.63 MB   310.9 GB/s (54% of 578)
+prefill_b1 o_proj/void cutlass::Kernel2<cutlass_80_tensorop_bf16_s16816gemm_relu_bf16_128x256_32x3_tn_align8>(T1::Params)   1 kernels     163.8 us     51.03 MB   311.6 GB/s (54% of 578)
+prefill_b1 rope/void at::native::elementwise_kernel<(int)128, (int)4, void at::native::gpu_kernel_impl<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)   4 kernels     109.6 us     55.73 MB   508.5 GB/s (88% of 578)
+prefill_b1 rope/void at::native::elementwise_kernel<(int)128, (int)2, void at::native::gpu_kernel_impl_nocast<at::native::CUDAFunctor_add<float>>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)   2 kernels      92.1 us     56.96 MB   618.3 GB/s (107% of 578)
+prefill_b1 qk_norm/void at::native::elementwise_kernel<(int)128, (int)4, void at::native::gpu_kernel_impl<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)   2 kernels      68.7 us     37.35 MB   543.4 GB/s (94% of 578)
+prefill_b1 rmsnorm/void at::native::elementwise_kernel<(int)128, (int)4, void at::native::gpu_kernel_impl<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)   2 kernels      68.6 us     37.56 MB   547.7 GB/s (95% of 578)
+prefill_b1 qk_norm/void at::native::elementwise_kernel<(int)128, (int)2, void at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)   2 kernels      62.9 us     37.16 MB   590.4 GB/s (102% of 578)
+prefill_b1 rmsnorm/void at::native::elementwise_kernel<(int)128, (int)2, void at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)   2 kernels      62.1 us     36.92 MB   594.1 GB/s (103% of 578)
+prefill_b1 mlp/void at::native::vectorized_elementwise_kernel<(int)4, at::native::BinaryFunctor<c10::BFloat16, c10::BFloat16, c10::BFloat16, at::native::binary_internal::MulFunctor<float>>, std::array<char *, (unsigned long)3>, (bool)0>(int, T2, T3)   1 kernels      59.7 us     37.73 MB   632.3 GB/s (109% of 578)
+prefill_b1 qk_norm/void at::native::vectorized_elementwise_kernel<(int)4, void at::native::<unnamed>::pow_tensor_scalar_kernel_impl<float, float>(at::TensorIteratorBase &, T2)::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels      59.6 us     36.72 MB   616.0 GB/s (107% of 578)
+prefill_b1 rmsnorm/void at::native::vectorized_elementwise_kernel<(int)4, void at::native::<unnamed>::pow_tensor_scalar_kernel_impl<float, float>(at::TensorIteratorBase &, T2)::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels      58.9 us     36.03 MB   611.6 GB/s (106% of 578)
+prefill_b1 attn_core/void pytorch_flash::flash_fwd_kernel<Flash_fwd_kernel_traits<(int)128, (int)64, (int)64, (int)4, (bool)0, (bool)0, cutlass::bfloat16_t, Flash_kernel_traits<(int)128, (int)64, (int)64, (int)4, cutlass::bfloat16_t>>, (bool)0, (bool)1, (bool)0, (bool)0, (bool)1, (bool)1, (bool)0, (bool)0>(pytorch_flash::Flash_fwd_params)   1 kernels      56.3 us     26.62 MB   473.0 GB/s (82% of 578)
+prefill_b1 kv_cache/void at::native::<unnamed>::CatArrayBatchedCopy<at::native::<unnamed>::OpaqueType<(unsigned int)2>, unsigned int, (int)4, (int)64, (int)64>(T1 *, at::native::<unnamed>::CatArrInputTensorMetadata<T1, T2, T4, T5>, at::native::<unnamed>::TensorSizeStride<T2, (unsigned int)4>, int, T2)   2 kernels      56.2 us     19.15 MB   340.7 GB/s (59% of 578)
+prefill_b1 rope/void at::native::<unnamed>::CatArrayBatchedCopy<at::native::<unnamed>::OpaqueType<(unsigned int)2>, unsigned int, (int)4, (int)64, (int)64>(T1 *, at::native::<unnamed>::CatArrInputTensorMetadata<T1, T2, T4, T5>, at::native::<unnamed>::TensorSizeStride<T2, (unsigned int)4>, int, T2)   2 kernels      50.0 us     19.77 MB   395.3 GB/s (68% of 578)
+prefill_b1 rmsnorm/void at::native::reduce_kernel<(int)512, (int)1, at::native::ReduceOp<float, at::native::MeanOps<float, float, float, float>, unsigned int, float, (int)4, (int)4>>(T3)   2 kernels      48.6 us     23.75 MB   489.0 GB/s (85% of 578)
+prefill_b1 rmsnorm/void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 3)]::operator ()() const::[lambda() (instance 7)]::operator ()() const::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (int)4, TrivialOffsetCalculator<(int)1, unsigned int>, TrivialOffsetCalculator<(int)1, unsigned int>, at::native::memory::LoadWithCast<(int)1>, at::native::memory::StoreWithCast<(int)1>>(int, T1, T2, T4, T5, T6, T7)   2 kernels      48.4 us     27.17 MB   561.6 GB/s (97% of 578)
+prefill_b1 qk_norm/void at::native::unrolled_elementwise_kernel<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 3)]::operator ()() const::[lambda() (instance 7)]::operator ()() const::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (int)4, TrivialOffsetCalculator<(int)1, unsigned int>, TrivialOffsetCalculator<(int)1, unsigned int>, at::native::memory::LoadWithCast<(int)1>, at::native::memory::StoreWithCast<(int)1>>(int, T1, T2, T4, T5, T6, T7)   2 kernels      48.1 us     26.77 MB   556.5 GB/s (96% of 578)
+prefill_b1 qk_norm/void at::native::reduce_kernel<(int)512, (int)1, at::native::ReduceOp<float, at::native::MeanOps<float, float, float, float>, unsigned int, float, (int)4, (int)4>>(T3)   2 kernels      48.0 us     23.67 MB   493.4 GB/s (85% of 578)
+prefill_b1 layer/void at::native::vectorized_elementwise_kernel<(int)4, at::native::CUDAFunctor_add<c10::BFloat16>, std::array<char *, (unsigned long)3>, (bool)0>(int, T2, T3)   2 kernels      44.7 us     27.02 MB   604.7 GB/s (105% of 578)
+prefill_b1 rmsnorm/void at::native::vectorized_elementwise_kernel<(int)4, at::native::bfloat16_copy_kernel_cuda(at::TensorIteratorBase &)::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels      44.6 us     26.85 MB   602.0 GB/s (104% of 578)
+prefill_b1 qk_norm/void at::native::vectorized_elementwise_kernel<(int)4, at::native::bfloat16_copy_kernel_cuda(at::TensorIteratorBase &)::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels      44.5 us     27.23 MB   612.2 GB/s (106% of 578)
+prefill_b1 rope/void at::native::vectorized_elementwise_kernel<(int)4, at::native::bfloat16_copy_kernel_cuda(at::TensorIteratorBase &)::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels      43.0 us     26.48 MB   615.6 GB/s (106% of 578)
+prefill_b1 act/void at::native::vectorized_elementwise_kernel<(int)4, at::native::<unnamed>::silu_kernel(at::TensorIteratorBase &)::[lambda() (instance 1)]::operator ()() const::[lambda() (instance 6)]::operator ()() const::[lambda(c10::BFloat16) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   1 kernels      40.1 us     24.50 MB   611.1 GB/s (106% of 578)
+prefill_b1 rope/void at::native::elementwise_kernel<(int)128, (int)4, void at::native::gpu_kernel_impl_nocast<at::native::neg_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 2)]::operator ()() const::[lambda() (instance 9)]::operator ()() const::[lambda(c10::BFloat16) (instance 1)]>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)   2 kernels      20.2 us      8.31 MB   412.5 GB/s (71% of 578)
+prefill_b1 qk_norm/void at::native::vectorized_elementwise_kernel<(int)4, at::native::rsqrt_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 2)]::operator ()() const::[lambda() (instance 2)]::operator ()() const::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels       5.2 us      0.02 MB     3.9 GB/s (1% of 578)
+prefill_b1 rmsnorm/void at::native::vectorized_elementwise_kernel<(int)4, at::native::rsqrt_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 2)]::operator ()() const::[lambda() (instance 2)]::operator ()() const::[lambda(float) (instance 1)], std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels       5.0 us      0.02 MB     3.6 GB/s (1% of 578)
+prefill_b1 qk_norm/void at::native::vectorized_elementwise_kernel<(int)4, at::native::CUDAFunctorOnSelf_add<float>, std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels       5.0 us      0.02 MB     3.2 GB/s (1% of 578)
+prefill_b1 rmsnorm/void at::native::vectorized_elementwise_kernel<(int)4, at::native::CUDAFunctorOnSelf_add<float>, std::array<char *, (unsigned long)2>, (bool)0>(int, T2, T3)   2 kernels       4.9 us      0.02 MB     3.2 GB/s (1% of 578)
+done Thu Oct  8 20:18:41 CDT 2026

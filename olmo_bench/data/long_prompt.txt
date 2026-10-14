@@ -1,0 +1,1087 @@
+Can you summarize the following text? 
+
+So far, we have focused on programming a heterogeneous computing system with one
+
+host and one device. In high-performance computing (HPC), applications require the
+
+aggregate computing power of a cluster of computing nodes. Many of the HPC clusters
+
+today have one or more hosts and one or more devices in each node. Historically, these
+
+clusters have been programmed predominately with Message Passing Interface (MPI).
+
+In this chapter we will present an introduction to joint MPI/CUDA programming. We
+
+will present only the MPI concepts that programmers need to understand to scale their
+
+heterogeneous applications to multiple nodes in a cluster environment. In particular, we
+
+will focus on domain partitioning, point-to-point communication, and collective com-
+
+munication in the context of scaling a CUDA kernel into multiple nodes.
+
+20.1 Background
+
+Although practically no top supercomputers used GPUs before 2009, the need for
+
+better energy efficiency has led to fast adoption of GPUs in recent years. Many of
+
+the top supercomputers in the world today use both CPUs and GPUs in each
+
+node. The effectiveness of this approach is validated by their high rankings in the
+
+Green500 list, which reflects their high energy efficiency.
+
+The dominating programming interface for computing clusters today is MPI
+
+(Gropp et al., 1999), which is a set of API functions for communication between
+
+processes running in a computing cluster. MPI assumes a distributed memory
+
+model in which processes exchange information by sending messages to each
+
+other. When an application uses API communication functions, it does not need
+
+to deal with the details of the interconnect network. The MPI implementation
+
+allows the processes to address each other using logical numbers, in much the
+
+same way as using phone numbers in a telephone system: Telephone users can
+
+dial each other using phone numbers without knowing exactly where the called
+
+person is and how the call is routed.
+
+In a typical MPI application, data and work are partitioned among processes.
+
+As is shown in Fig. 20.1, each node can contain one or more processes, shown as
+
+clouds within nodes. As these processes progress, they may need data from each
+
+other. This need is satisfied by sending and receiving messages. In some cases,
+
+the processes also need to synchronize with each other and generate collective
+
+results when collaborating on a large task. This is done with collective communi-
+
+cation API functions.
+
+20.2 A running example
+
+As a running example we will use a three-dimensional (3D) stencil computation
+
+that was introduced in Chapter 8, Stencil. We assume that the computation calcu-
+
+lates heat transfer based on a finite difference method for solving a partial differ-
+
+ential equation that describes the physical laws of heat transfer. In particular, we
+
+will use the Jacobi iterative method, in which in each iteration or time step, the
+
+value of a grid point is calculated as a weighted sum of neighbors (north, east,
+
+south, west, up, down) and its own value from the previous time step. To achieve
+
+high numerical stability, multiple indirect neighbors in each direction are also
+
+used in the computation of a grid point. This is a higher-order stencil
+
+FIGURE 20.1
+
+Programmer’s view of MPI processes. MPI, Message Passing Interface.20.2 A running example
+
+computation, as we discussed in Chapter 8, Stencil. For the purpose of this chap-
+
+ter we assume that four points in each direction will be used.
+
+As is shown in Fig. 20.2, there are a total of 24 neighbor points for calculating
+
+the next step value of a grid point. Each point in the grid has x, y, and z coordi-
+
+nates. For a grid point where the coordinate value is x = i, y = j, and z = k, or (i,
+
+j, k), its 24 neighbors are (i2 4, j, k), (i2 3, j, k), (i2 2, j, k), (i2 1, j, k), (i +
+
+1, j, k), (i + 2, j, k), (i + 3, j, k), (i + 4, j, k), (i, j2 4, k), (i, j2 3, k), (i, j2 2, k),
+
+(i, j2 1, k), (i, j + 1, k), (i, j + 2, k), (i, j + 3, k), (i, j + 4, k), (i, j, k2 4), (i, j, k
+
+2 3), (i, j, k2 2), (i, j, k2 1), (i, j, k + 1), (i, j, k + 2), (i, j, k + 3) and (i, j, k +
+
+4). Since the data value of each grid point for the next time step is calculated on
+
+the basis of the current data values of 25 points (24 neighbors and itself), this is a
+
+25-point stencil computation.
+
+We assume that the system is modeled as a structured grid in which spacing
+
+between grid points is constant within each direction. This allows us to use a 3D
+
+array in which each element stores the state of a grid point, as we discussed in
+
+Chapter 8, Stencil. The physical distance between adjacent elements in each
+
+dimension can be represented by a grid spacing variable. Note that this grid data
+
+structure is similar to that used in the electrostatic potential calculation in
+
+Chapter 18, Electrostatic Potential Map. Fig. 20.3 illustrates a 3D array that repre-
+
+sents a rectangular ventilation duct, with x and y dimensions as the cross sections
+
+of the duct and the z dimension the direction of the heat flow along the duct.
+
+We assume that the data is placed in the memory space in the row-major lay-
+
+out, where x is the lowest dimension, y is the next, and z is the highest. That is,
+
+all elements with y = 0 and z = 0 will be placed in consecutive memory loca-
+
+tions according to their x coordinate. Fig. 20.4 shows a small example of the
+
+FIGURE 20.2
+
+A 25-point stencil computation example, with four neighbors in each of the x, y, and z
+
+directions.
+
+FIGURE 20.3
+
+3D Grid array for the modeling heat transfer in a duct.
+
+FIGURE 20.4
+
+A small example of memory layout for the 3D grid.
+
+grid data layout. This small example has only 16 data elements in the grid: two
+
+elements in the x dimension, two in the y dimension, and four in the z dimen-
+
+sion. Both x elements with y = 0 and z = 0 are placed in memory first. They are
+
+followed by all elements with y = 1 and z = 0. The next group will be elements
+
+with y = 0 and z = 1.
+
+When one uses a computing cluster, it is common to divide the input data into
+
+several partitions, called domain partitions, and assign each partition to a node in
+
+the cluster. In Fig. 20.3 we show that the 3D array is divided into four domain
+
+partitions: D0, D1, D2, and D3. Each of the partitions will be assigned to an MPI
+
+compute process.
+
+The domain partitions can be further illustrated with Fig. 20.4. The first sec-
+
+tion, or slice, of four elements (z = 0) is in the first partition; the second section
+
+(z = 1) is in the second partition; the third section (z = 2) is in the third partition;
+
+and the fourth section (z = 3) is in the fourth partition. This is obviously a toy
+
+example. In a real application there are typically hundreds or even thousands of
+
+elements in each dimension. For the rest of this chapter it is useful to remember
+
+that all elements in a z slice are in consecutive memory locations.
+
+20.3 Message passing interface basics
+
+Like CUDA, MPI programs are based on the SPMD parallel programming model.
+
+All MPI processes execute the same program. The MPI system provides a set of20.3 Message passing interface basics
+
+API functions to establish communication systems that allow the processes to
+
+communicate with each other. Fig. 20.5 shows five essential MPI functions that
+
+set up and tear down the communication system for an MPI application.
+
+We will use a simple MPI program, shown in Fig. 20.6, to illustrate the usage
+
+the API functions. To launch an MPI application in a cluster, a user needs to sup-
+
+ply the executable file of the program to the mpirun command or the mpiexec
+
+command in the login node of the cluster. Each process starts by initializing the
+
+MPI runtime with an MPI_Init() call (line 05). This initializes the communica-
+
+tion system for all the processes that are running the application. Once the MPI
+
+runtime has been initialized, each process calls two functions to prepare for com-
+
+munication. The first function is MPI_Comm_rank() (line 06), which returns a
+
+unique number to each calling process, which is called the MPI rank or process
+
+FIGURE 20.5
+
+Basic MPI functions for establishing and closing a communication system.
+
+01 #include "mpi.h“
+
+02 int main(int argc, char *argv[]) {
+
+03 int pad = 0, dimx = 480+pad, dimy = 480, dimz = 400, nreps = 100;
+
+04 int pid=-1, np=-1;
+
+05 MPI_Init(&argc, &argv);
+
+06 MPI_Comm_rank(MPI_COMM_WORLD, &pid);
+
+07 MPI_Comm_size(MPI_COMM_WORLD, &np);
+
+08 if(np < 3) {
+
+09 if(0 == pid) printf(“Needed 3 or more processes.\n");
+
+10 MPI_Abort( MPI_COMM_WORLD, 1 ); return 1;
+
+11 }
+
+12 if(pid < np - 1)
+
+13 compute_process(dimx, dimy, dimz / (np - 1), nreps);
+
+14 else
+
+15 data_server( dimx,dimy,dimz );
+
+16 MPI_Finalize();
+
+17 return 0;
+
+18 }
+
+FIGURE 20.6
+
+A simple MPI main program.
+
+id for the process. The numbers that are received by the processes vary from 0 to
+
+the number of processes minus 1. The MPI rank for a process is analogous to the
+
+expression blockIdx.x blockDim.x+threadIdx.x for a CUDA thread. It uniquely
+
+identifies the process in a communication, which is also equivalent to the phone
+
+number in a telephone system. The main differences are that MPI ranks are one-
+
+dimensional.
+
+The MPI_Comm_rank() function in line 06 of Fig. 20.6 takes two parameters.
+
+The first is an MPI built-in type MPI_Comm that specifies the scope of the request,
+
+that is, the collection of processes that form the group identified by a MIP_Comm
+
+variable. Each variable of the MPI_comm type is commonly referred to as a com-
+
+municator. MPI_Comm and other MPI built-in types are defined in the “mpi.h”
+
+header file (line 01), which should be included in all C program files that use
+
+MPI. An MPI application can create one or more communicators, each of which
+
+is a group of MPI processes for the purpose of communication. MPI_Comm_rank
+
+() assigns a unique id to each process in a communicator. In Fig. 20.6 the
+
+parameter value that is passed is MPI_COMM_WORLD, which is used as a default
+
+and means that the communicator includes all MPI processes that are running
+
+the application.1
+
+The second parameter of the MPI_Comm_rank() function is a pointer to an inte-
+
+ger variable into which the function will deposit the returned rank value. In
+
+Fig. 20.6 a variable pid is declared for this purpose. After the MPI_Comm_rank()
+
+has returned, the pid variable will contain the unique id for the calling process.
+
+The second API function is MPI_Comm_size() (line 07), which returns the total
+
+number of MPI processes running in the communicator. The MPI_Comm_size()
+
+function takes two parameters. The first one is of MPI_Comm type that gives the
+
+scope of the request. In Fig. 20.6 the parameter value that is passed in is
+
+MPI_COMM_WORLD, which means that the scope of the MPI_Comm_size() is all the
+
+processes in the application. Since the scope is all MPI processes, the returned
+
+value is the total number of MPI processes that are running the application. This
+
+value is configured by the user when the application is executed by using the
+
+mpirun command or the mpiexec command. However, the user may not have
+
+requested a sufficient number of processes. Also, the system may or may not be
+
+able to create all the processes that the user requested. Therefore it is a good prac-
+
+tice for an MPI application program to check the actual number of processes that
+
+are running.
+
+The second parameter is a pointer to an integer variable into which the
+
+MPI_Comm_size() function will deposit the return value. In Fig. 20.6 a variable np
+
+is declared for this purpose. After the function returns, the variable np contains
+
+the number of MPI processes that are running the application. In Fig. 20.6 we
+
+assume that the application requires at least 3 MPI processes. Therefore it checks
+
+1 Interested readers should refer to the MPI reference manual (Gropp et al., 1999) for details on
+
+creating and using multiple communicators in an application, in particular the definition and use
+
+intracommunicators and intercommunicators.20.4 Message passing interface point-to-point communication
+
+whether the number of processes is at least 3 (line 08). If not, it calls
+
+MPI_Comm_abort() function to terminate the communication connections and
+
+return with an error flag value 1 (line 10).
+
+Fig. 20.6 also shows a common pattern for reporting errors or other chores.
+
+There are multiple MPI processes, but we need to report the error only once. The
+
+application code designates the process with pid = 0 to do the reporting (line 09).
+
+This is similar to the pattern in CUDA kernels in which some tasks need to be
+
+done by only one of the threads in a thread-block.
+
+As is shown in Fig. 20.5, the MPI_Comm_abort() function takes two parameters
+
+(line 10). The first sets the scope of the request. In Fig. 20.6 the scope is set as
+
+MPI_COMM_WORLD, which means all MPI processes that are running the application.
+
+The second parameter is a code for the type of error that caused the abort. Any
+
+number other than 0 indicates that an error has happened.
+
+If the number of processes satisfies the requirement, the application program
+
+goes on to perform the calculation. In Fig. 20.6, the application uses np2 1 pro-
+
+cesses (pid from 0 to np2 2) to perform the calculation (lines 12 13) and one
+
+process (the last one whose pid is np2 1) to perform I/O service for the other
+
+processes (lines 14 15). We will refer to the process that performs the I/O ser-
+
+vices as the data server and the processes that perform the calculation as compute
+
+processes. In Fig. 20.6, if the pid of a process is within the range from 0 to np2 2,
+
+it is a compute process and calls the compute_process() function (line 13). If the
+
+process pid is np2 1, it is the data server and calls the data_server() function
+
+(line 15). This is similar to the pattern in which threads perform different actions
+
+according to their thread ids.
+
+After the application has completed its computation, it notifies the MPI run-
+
+time with a call to MPI_Finalize(), which frees all MPI communication resources
+
+that are allocated to the application (line 16). The application can then exit with a
+
+return value 0, which indicates that no error has occurred (line 17).
+
+20.4 Message passing interface point-to-point
+
+communication
+
+MPI supports two major types of communication. The first is the point-to-point
+
+type, which involves one source process and one destination process. The source
+
+process calls the MPI_Send() function, and the destination process calls the
+
+MPI_Recv() function. This is analogous to a caller dialing a call and a receiver
+
+answering a call in a telephone system.
+
+Fig. 20.7 shows the syntax for using the MPI_Send() function. The first param-
+
+eter is a pointer to the starting location of the memory area where the data to be
+
+sent can be found. The second parameter is an integer that gives that number of
+
+data elements to be sent. The third parameter is of the MPI built-in type
+
+MPI_Datatype. It specifies the type of each data element that is being sent as far
+
+FIGURE 20.7
+
+Syntax for the MPI_Send() function.
+
+FIGURE 20.8
+
+Syntax for the MPI_Recv() function.
+
+as the MPI library implementation is concerned. The values that can be held by
+
+a variable or argument of the MPI_Datatype are defined in mpi.h and include
+
+MPI_DOUBLE (double-precision floating-point), MPI_FLOAT (single-precision
+
+floating-point), MPI_INT (integer), and MPI_CHAR (character). The exact sizes of
+
+these types depend on the size of the corresponding C types in the host proces-
+
+sor. See the MPI reference manual for more sophisticated use of MPI types
+
+(Gropp et al., 1999).
+
+The fourth parameter for MPI_Send() is an integer that gives the MPI rank of
+
+the destination process. The fifth parameter gives a tag that can be used to clas-
+
+sify the messages that are sent by the same process. The sixth parameter is a com-
+
+municator that specifies the context in which the destination MPI rank is defined.
+
+Fig. 20.8 shows the syntax for using the MPI_Recv() function. The first param-
+
+eter is a pointer to the area in memory where the received data should be depos-
+
+ited. The second parameter is an integer that gives the maximum number of
+
+elements that the MPI_Recv() function is allowed to receive. The third parameter
+
+is an MPI_Datatype that specifies the type of each element to be received. The20.4 Message passing interface point-to-point communication
+
+fourth parameter is an integer that gives the process id of the source of the mes-
+
+sage. The fifth parameter is an integer that specifies the tag value that is expected
+
+by the destination process. If the destination process does not want to be limited
+
+to a particular tag value, it can use MPI_ANY_TAG, which means that the receiver is
+
+willing to accept messages of any tag value from the source.
+
+We will first use the data server to illustrate the use of point-to-point commu-
+
+nication. In a real application the data server process would typically perform
+
+data input and output operations for the compute processes. However, input and
+
+output have too much system-dependent complexity. Since I/O is not the focus of
+
+our discussion, we will avoid the complexity of I/O operations in a cluster envi-
+
+ronment. That is, instead of reading data from a file system, we will just have the
+
+data server initialize the data with random numbers and distribute the data to the
+
+compute processes. The first part of the data server code is shown in Fig. 20.9.
+
+The data server function takes four parameters. The first three parameters
+
+specify the size of the 3D grid: the number of elements in the x dimension, dimx;
+
+the number of elements in the y dimension, dimy; and the number of elements in
+
+01 void data_server(int dimx, int dimy, int dimz, int nreps) {
+
+02 int np;
+
+/* Set MPI Communication Size */
+
+03 MPI_Comm_size(MPI_COMM_WORLD, &np);
+
+04 unsigned int num_comp_nodes = np – 1, first_node = 0, last_node = np - 2;
+
+05 unsigned int num_points = dimx * dimy * dimz;
+
+06 unsigned int num_bytes = num_points * sizeof(float);
+
+07 float *input=0, *output=0;
+
+/* Allocate input data */
+
+08 input = (float *)malloc(num_bytes);
+
+09 output = (float *)malloc(num_bytes);
+
+10 if(input == NULL || output == NULL) {
+
+11 printf("server couldn't allocate memory\n");
+
+12 MPI_Abort( MPI_COMM_WORLD, 1 );
+
+13 }
+
+/* Initialize input data */
+
+14 random_data(input, dimx, dimy ,dimz , 1, 10);
+
+/* Calculate number of shared points */
+
+15 int edge_num_points = dimx * dimy * ((dimz / num_comp_nodes) + 4);
+
+16 int int_num_points = dimx * dimy * ((dimz / num_comp_nodes) + 8);
+
+17 float *send_address = input;
+
+/* Send data to the first compute node */
+
+18 MPI_Send(send_address, edge_num_points, MPI_FLOAT, first_node,
+
+0, MPI_COMM_WORLD );
+
+19 send_address += dimx * dimy * ((dimz / num_comp_nodes) - 4);
+
+/* Send data to "internal" compute nodes */
+
+20 for(int process = 1; process < last_node; process++) {
+
+21 MPI_Send(send_address, int_num_points, MPI_FLOAT, process,
+
+0, MPI_COMM_WORLD);
+
+22 send_address += dimx * dimy * (dimz / num_comp_nodes);
+
+}
+
+/* Send data to the last compute node */
+
+23 MPI_Send(send_address, edge_num_points, MPI_FLOAT, last_node,
+
+0, MPI_COMM_WORLD);
+
+FIGURE 20.9
+
+Data server process code (part 1).
+
+the z dimension, dimz. The fourth parameter specifies the number of iterations
+
+that need to be done for all the data points in the grid.
+
+In Fig. 20.9, line 02 declares variable np that will contain the number of pro-
+
+cesses running the application. Line 03 calls MPI_Comm_size(), which will deposit
+
+the number of processes running the application into np. Line 04 declares and
+
+initializes several helper variables. The variable num_comp_procs contains the
+
+number of compute processes. Since we are reserving one process as the data
+
+server, there are np2 1 compute processes. The variable first_proc gives the
+
+process id of the first compute process, which is 0. The variable last_proc gives
+
+the process id of the last compute process, which is np2 2. That is, line 04 desig-
+
+nates the first np2 1 processes, 0 through np2 2, as compute processes. The
+
+process with the largest rank serves as the data server. This reflects the design
+
+decision, and this decision will also be reflected in the compute process code.
+
+Line 05 declares and initializes the num_points variable that gives the total
+
+number of grid data points to be processed, which is simply the product of the
+
+number of elements in each dimension, or dimx dimy dimz. Line 06 declares
+
+and initializes the num_bytes variable, which gives the total number of bytes
+
+needed to store all the grid data points. Since each grid data point is a float,
+
+this value is num_points sizeof(float).
+
+Line 07 declares two pointer variables: input and output. These two pointers
+
+will point to the input data buffer and the output data buffer. Lines 08 and 09
+
+allocate memory for the input and output buffers and assign their addresses to
+
+their respective pointers. Line 10 checks whether the memory allocations were
+
+successful. If either of the memory allocation fails, the corresponding pointer will
+
+have received a NULL pointer from the malloc() function. In this case, the code
+
+aborts the application and reports an error (lines 11 12).
+
+Lines 15 and 16 calculate the number of grid point array elements that should
+
+be sent to each compute process. As is shown in Fig. 20.3, there are two types of
+
+compute processes: edge processes and internal processes. The first process
+
+(process 0, which computes D1) and the last process (process 3, which computes
+
+D4) compute an edge partition that has neighbors only on one side. Partition D1,
+
+which is assigned to process 0, has a neighbor only on the right side (D2).
+
+Partition D4, which is assigned to the last compute process, has a neighbor only
+
+on the left side (D3). We call the compute processes that compute edge partitions
+
+the edge processes. Each of the other processes computes an internal partition
+
+that has neighbors on both sizes. For example, process 1 computes partition D2,
+
+which has a left neighbor (D1) and a right neighbor (D3). We call the processes
+
+that compute internal partitions internal processes.
+
+Recall that in the Jacobi iterative method, each calculation step for a grid
+
+point needs the values of its immediate neighbors from the previous step. This
+
+creates a need for halo cells for grid points at the left and right boundaries of a
+
+partition, which are shown as slices defined by dashed lines at the edge of each
+
+partition in Fig. 20.3. Note that these halo slices are similar to those in the stencil
+
+pattern that was presented in Chapter 8, Stencil. Since we are computing a20.4 Message passing interface point-to-point communication
+
+25-point stencil with four elements in each direction, each process needs to
+
+receive four slices of halo cells that contain all neighbors for each side of the
+
+boundary grid points of its partition. For example, in Fig. 20.3, partition D2 needs
+
+four halo slices from D1 and four halo slices from D3. Note that a halo slice for
+
+D2 is a boundary slice for D1 or D3.
+
+Recall that the total number of grid points is dimx dimy dimz. Since we are
+
+partitioning the grid along the z dimension, the number of grid points in each par-
+
+tition should be dimx dimy (dimz/num_comp_procs). Recall that we will need four
+
+neighbor slices in each direction in order to calculate values within each partition.
+
+Therefore the number of grid points that should be sent to each internal process is
+
+dimx dimy ((dimz/num_comp_procs) + 8). As for an edge process, there is only
+
+one neighbor. As in the case of convolution, we assume that zero values will be
+
+used for the ghost cells and that no input data needs to be sent for them. For
+
+example, partition D1 needs only the four neighbor slices from D2 on the right
+
+side. Therefore the number of grid points to be sent to an edge process is
+
+dimx dimy ((dimz/num_comp_procs) + 4). That is, each process receives four
+
+slices of halo grid points from the neighbor partition on each side.
+
+Line 17 of Fig. 20.9 sets the send_address pointer to point to the beginning
+
+of the input grid point array. To send the appropriate partition to each process, we
+
+will need to add the appropriate offset to this beginning address for each
+
+MPI_Send(). We will come back to this point later.
+
+We are now ready to complete the code for the data server. Line 18 sends pro-
+
+cess 0 its partition. Since this is the first partition, its starting address is also the
+
+starting address of the entire grid, which was set up in line 17. Process 0 is an
+
+edge process, and it does not have a left neighbor. Therefore the number of grid
+
+points to be sent is the value edge_num_points, that is, dimx dimy ((dimz/num_-
+
+comp_procs) + 4). The third parameter specifies that the type of each element is
+
+an MPI_FLOAT which is C float (single-precision, 4 bytes). The fourth parameter
+
+specifies that the value of first_node, that is, 0, is the MPI rank of the destina-
+
+tion process. The fifth parameter specifies 0 for the MPI tag. This is because we
+
+are not using tags to distinguish between messages sent from the data server. The
+
+sixth parameter specifies that the communicator to be used for interpreting
+
+the sender and receiver rank values for the message should be all MPI processes
+
+for the current application
+
+Line 19 of Fig. 20.9 advances the send_address pointer to the beginning of
+
+the data partition for process 1. From Fig. 20.3 there are dimx dimy (dimz/num_-
+
+comp_procs) elements in partition D1, which means that D2 starts at the location
+
+that is dimx dimy (dimz/num_comp_procs) elements from the starting location of
+
+input. Recall that we also need to send the halo cells from D1. Therefore we
+
+adjust the starting address for the MPI_Send() back by four slices, which results
+
+in the expression for advancing the send_address pointer in line 19: dimx dimy
+
+((dimz/num_comp_procs) - 4).
+
+Line 20 is a loop that sends out the MPI messages to the internal processes
+
+(process 1 through process np2 3). In our small example for four compute
+
+processes, np is 5, so the loop sends the MPI messages to process 1 and process
+
+2. These internal processes need to receive halo grid points for neighbors on both
+
+sides. Therefore the second parameter of the MPI_Send() in line 21 uses
+
+int_num_nodes, that is, dimx dimy ((dimz/num_comp_procs) + 8). The rest of the
+
+parameters are similar to that for the MPI_Send() in line 18 with the obvious
+
+exception that the destination process is specified by the loop variable process,
+
+which is incremented from 1 to np2 3 (the last_node is np2 2).
+
+Line 22 advances the send address for each internal process by the number of
+
+grid points in each partition: dimx dimy dimz/num_comp_nodes. Note that the start-
+
+ing locations of the halo grid points for internal processes are dimx dimy dimz/
+
+num_comp_procs points apart. Although we need to pull back the starting address
+
+by four slices to accommodate halo grid points, we do so for every internal pro-
+
+cess, so the net distance between the starting locations remains the number of
+
+grid points in each partition.
+
+Line 23 sends the data to the process np2 2, the last compute process that
+
+has only one neighbor on the left. The reader should be able to reason through all
+
+the parameter values that are used. Note that we are not quite done with the data
+
+server code. We will come back later for the final part of the data server that col-
+
+lects the output values from all compute processes.
+
+We now turn our attention to the compute processes that receive the input
+
+from the data server process. In Fig. 20.10, lines 03 04 establish the process id
+
+for the process and the total number of processes for the application. Line 05
+
+establishes that the data server is process np2 1. Lines 06 07 calculate the num-
+
+ber of grid points and the number of bytes that should be processed by each inter-
+
+nal process. Lines 08 09 calculate the number of grid points and the number of
+
+bytes in each halo (4 slices).
+
+Lines 10 12 allocate the host memory and device memory for the input data.
+
+Although the edge processes need less halo data, they still allocate the same
+
+01 void compute_node_stencil(int dimx, int dimy, int dimz, int nreps ) {
+
+02 int np, pid;
+
+03 MPI_Comm_rank(MPI_COMM_WORLD, &pid);
+
+04 MPI_Comm_size(MPI_COMM_WORLD, &np);
+
+05 int server_process = np - 1;
+
+06 unsigned int num_points = dimx * dimy * (dimz + 8);
+
+07 unsigned int num_bytes = num_points * sizeof(float);
+
+08 unsigned int num_halo_points = 4 * dimx * dimy;
+
+09 unsigned int num_halo_bytes = num_halo_points * sizeof(float);
+
+/* Allocate host memory */
+
+10 float *h_input = (float *)malloc(num_bytes);
+
+/* Allocate device memory for input and output data */
+
+11 float *d_input = NULL;
+
+12 cudaMalloc((void **)&d_input, num_bytes );
+
+13 float *rcv_address = h_input + ((0 == pid) ? num_halo_points : 0);
+
+14 MPI_Recv(rcv_address, num_points, MPI_FLOAT, server_process,
+
+MPI_ANY_TAG, MPI_COMM_WORLD, &status );
+
+15 cudaMemcpy(d_input, h_input, num_bytes, cudaMemcpyHostToDevice);
+
+FIGURE 20.10
+
+Compute process code (part 1).20.4 Message passing interface point-to-point communication
+
+amount of memory for simplicity; part of the allocated memory will not be used
+
+by the edge processes. Line 13 sets the starting address of the host memory for
+
+receiving the input data from the data server. For all compute processes except
+
+process 0, the starting receiving location is simply the starting location of the
+
+allocated memory for the input data. However, for process 0, we adjust the
+
+receiving location by four slices. This is because for simplicity we assume that
+
+the host memory for receiving the input data is arranged in the same way for all
+
+compute processes: four slices of halo elements from the left neighbor followed
+
+by the partition, followed by four slices of halo elements from the right neigh-
+
+bor. However, as we showed in line 15 of Fig. 20.9, the data server will not
+
+send any halo data from the left neighbor to process 0. That is, for process 0,
+
+the MPI message from the data server contains only the partition and the halo
+
+from the right neighbor. Therefore line 13 adjusts the starting host memory
+
+location by four slices so that process 0 will correctly interpret the input data
+
+from the data server.
+
+Line 14 receives the MPI message from the data server. Most of the para-
+
+meters should be familiar. The last parameter reflects any error condition that
+
+has occurred when the data are received. The second parameter specifies that
+
+all compute processes will receive the full amount of data from the data
+
+server. However, the data server will send less data to process 0 and process np
+
+2 2. This is not reflected in the code because MPI_Recv() allows the second
+
+parameter to specify a larger number of data points than are actually received
+
+and will place only the actual number of bytes received from the sender into
+
+the receiving memory. In the case of process 0, the input data from the data
+
+server contains only the partition and the halo from the right neighbor. The
+
+received input will be placed by skipping the first four slices of the allocated
+
+memory, which correspond to the halo for the (nonexistent) left neighbor. This
+
+effect is achieved with the term ((0==pid)? num_halo_points: 0) on line 13.
+
+In the case of process np2 2, the input data contains the halo from the left
+
+neighbor and the partition. The received input will be placed from the begin-
+
+ning of the allocated memory, leaving the last four slices of the allocated
+
+memory unused.
+
+Line 15 copies the received input data to the device memory. In the case of
+
+process 0, the left halo points are not valid. In the case of process np2 2, the
+
+right halo points are not valid. However, for simplicity, all compute nodes send
+
+the full size to the device memory. The assumption is that the kernels will be
+
+launched in such a way that these invalid portions will be correctly ignored. After
+
+line 15, all the input data are in the device memory.
+
+Fig. 20.11 shows part 2 of the compute process code. Lines 16 18 allocate
+
+host memory and device memory for the output data. The output data buffer in
+
+the device memory will be used with the input data buffer in a double-buffering
+
+scheme. That is, they will switch roles in each iteration. We will return to this
+
+point and cover the rest of the code in Fig. 20.11 later. We are now ready to pres-
+
+ent the code that performs computation steps on the grid points.
+
+16 float *h_output = NULL, *d_output = NULL, *d_vsq = NULL;
+
+17 float *h_output = (float *)malloc(num_bytes);
+
+18 cudaMalloc((void **)&d_output, num_bytes );
+
+19 float *h_left_boundary = NULL, *h_right_boundary = NULL;
+
+20 float *h_left_halo = NULL, *h_right_halo = NULL;
+
+/* Allocate host memory for halo data */
+
+21 cudaHostAlloc((void **)&h_left_boundary, num_halo_bytes,
+
+cudaHostAllocDefault);
+
+22 cudaHostAlloc((void **)&h_right_boundary, num_halo_bytes,
+
+cudaHostAllocDefault);
+
+23 cudaHostAlloc((void **)&h_left_halo, num_halo_bytes,
+
+cudaHostAllocDefault);
+
+24 cudaHostAlloc((void **)&h_right_halo, num_halo_bytes,
+
+cudaHostAllocDefault);
+
+/* Create streams used for stencil computation */
+
+25 cudaStream_t stream0, stream1;
+
+26 cudaStreamCreate(&stream0);
+
+27 cudaStreamCreate(&stream1);
+
+FIGURE 20.11
+
+Compute process code (part 2).
+
+20.5 Overlapping computation and communication
+
+A simple way to perform the computation steps is for each compute process to
+
+perform a computation step on its entire partition, exchange halo data with the
+
+left and right neighbors, and repeat. While this is a very simple strategy, it is not
+
+very effective. The reason is that this strategy forces the system to be in one of
+
+the two modes. In the first mode, all compute processes are performing computa-
+
+tion steps. During this time, the communication network is not used. In the second
+
+mode, all compute processes are exchanging halo data with their left and right
+
+neighbors. During this time, the computation hardware is not well utilized.
+
+Ideally, we would like to achieve better performance by utilizing both the com-
+
+munication network and the computation hardware all the time. This can be
+
+achieved by dividing the computation tasks of each compute process into two
+
+stages, as illustrated in Fig. 20.12.
+
+During the first stage (stage 1), each compute process calculates its boundary
+
+slices that will be needed as halo cells by its neighbors in the next iteration. Let’s
+
+continue to assume that we use four slices of halo data. Fig. 20.12 shows the four
+
+halo slices as a dashed transparent piece and the four boundary slices as a colored
+
+piece. Note that the colored piece of process i will be copied into the dashed
+
+piece of process I + 1 and the colored piece of process I + 1 will be copied into
+
+the dashed piece of process i during the next communication. For process 0, the
+
+first phase calculates the right four slices of boundary data. For an internal node
+
+it calculates the left four slices and the right four slices of its boundary data. For
+
+process n2 2, it calculates the left four pieces of its boundary data. The rationale
+
+is that these boundary slices are needed by their neighbors for the next iteration.
+
+If these boundary slices are calculated first, the data can be communicated to the
+
+neighbors while the compute processes calculate the rest of their internal grid
+
+points.20.5 Overlapping computation and communication
+
+FIGURE 20.12
+
+A two-stage strategy for overlapping computation with communication.
+
+During the second stage (stage 2), each compute process performs two activi-
+
+ties in parallel. The first is to communicate its new boundary values to its neigh-
+
+bor processes. This is done by first copying the data from the device memory into
+
+the host memory, followed by sending MPI messages to the neighbors. As we
+
+will discuss later, we need to be careful that the data that is received from the
+
+neighbors is used in the next iteration, not the current iteration. The second activ-
+
+ity is to calculate the rest of the data in the partition. If the communication activ-
+
+ity takes a shorter amount of time than the calculation activity, we can hide the
+
+communication delay and fully utilize the computing hardware all the time. This
+
+is usually achieved by having enough slices in the internal part of each partition
+
+to allow each compute process to perform enough computation to hide the
+
+communication.
+
+To support the parallel activities in stage 2, we need to use two advanced fea-
+
+tures of the CUDA programming model: pinned memory allocation and streams.
+
+A pinned memory allocation requests that the memory that is allocated not be
+
+paged out by the operating system. This is done with the cudaHostAlloc() API
+
+call. Lines 21 24 in Fig. 20.11 allocate pinned memory buffers for the left and
+
+right boundary slices and the left and right halo slices. The left and right bound-
+
+ary slices need to be sent from the device memory to the left and right neighbor
+
+processes. The buffers are used as a host memory staging area for the device to
+
+copy data into and are then used as the source buffer for MPI_Send() to neighbor
+
+processes. The left and right halo slices need to be received from neighbor pro-
+
+cesses. The buffers are used as a host memory staging area for MPI_Recv() to use
+
+as destination buffers and then to copy data from them to the device memory.
+
+These buffers are sometimes referred to as bounce buffers, as their main role is to
+
+serve as temporary buffers that allow the data to be bounced from the device
+
+memory to the remote MPI process and vice versa.
+
+
