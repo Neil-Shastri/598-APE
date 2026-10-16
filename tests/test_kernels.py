@@ -103,6 +103,31 @@ def test_silu_mul(rows):
     check(kernels.silu_mul(g, u), ref, ulp(ref))
 
 
+def test_cuda_graph_replay():
+    norm = make_norm(4096)
+    x = torch.randn(8, 1, 4096, device=DEV, dtype=BF)
+    res = torch.randn_like(x)
+    g = torch.randn(8, 1, 11008, device=DEV, dtype=BF)
+    cos, sin = real_rotary()(x, torch.tensor([[600]], device=DEV), "full_attention")
+
+    def run():
+        return (kernels.rmsnorm(x, norm, residual=res), kernels.silu_mul(g, g),
+                *kernels.qk_norm_rope(x, res, norm, norm, cos, sin, 128))
+
+    with torch.no_grad():
+        run()
+        torch.cuda.synchronize()
+        graph = torch.cuda.CUDAGraph()
+        with torch.cuda.graph(graph):
+            static = run()
+        for t in (x, res, g):
+            t.copy_(torch.randn_like(t))
+        graph.replay()
+        eager = run()
+    for a, b in zip(static, eager):
+        assert torch.equal(a, b)
+
+
 @pytest.fixture
 def tiny_cuda(tiny_dir):
     from olmo_bench.model import load_model

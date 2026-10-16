@@ -1,0 +1,248 @@
+host gpub052.delta.ncsa.illinois.edu  job 22913257  tag x1_22913257  variants: baseline fused static,graph fused,static,graph  Thu Oct 15 00:04:32 CDT 2026
+name, driver_version, clocks.current.sm [MHz], temperature.gpu
+NVIDIA A40, 595.71.05, 1080 MHz, 35
+.............FF....FF....FF....FF.......................                 [100%]
+=================================== FAILURES ===================================
+______________ test_qk_norm_rope[False-sliding_attention-shape0] _______________
+
+shape = (1, 1), layer_type = 'sliding_attention', per_row_positions = False
+
+    @pytest.mark.parametrize("shape", SHAPES)
+    @pytest.mark.parametrize("layer_type", ["sliding_attention", "full_attention"])
+    @pytest.mark.parametrize("per_row_positions", [False, True])
+    def test_qk_norm_rope(shape, layer_type, per_row_positions):
+        b, s = shape
+        q_norm, k_norm = make_norm(4096, 1), make_norm(4096, 2)
+        q = torch.randn(b, s, 4096, device=DEV, dtype=BF) * 2
+        k = torch.randn(b, s, 4096, device=DEV, dtype=BF)
+        # model.generate passes [B, S] position_ids (cos batch B); plain forward gives [1, S]
+        start = torch.arange(b, device=DEV)[:, None] * 37 + 500 if per_row_positions else torch.tensor([[500]], device=DEV)
+        pos = start + torch.arange(s, device=DEV)
+        cos, sin = real_rotary()(q, pos, layer_type)
+        with torch.no_grad():
+            nq = q_norm(q).view(b, s, -1, 128).transpose(1, 2)
+            nk = k_norm(k).view(b, s, -1, 128).transpose(1, 2)
+            ref_q, ref_k = olmo3.apply_rotary_pos_emb(nq, nk, cos, sin)
+            out_q, out_k = kernels.qk_norm_rope(q, k, q_norm, k_norm, cos, sin, 128)
+>       assert out_q.stride() == ref_q.stride()
+E       assert (4096, 128, 4096, 1) == (4096, 128, 128, 1)
+E         
+E         At index 2 diff: 4096 != 128
+E         Use -v to get more diff
+
+tests/test_kernels.py:89: AssertionError
+______________ test_qk_norm_rope[False-sliding_attention-shape1] _______________
+
+shape = (8, 1), layer_type = 'sliding_attention', per_row_positions = False
+
+    @pytest.mark.parametrize("shape", SHAPES)
+    @pytest.mark.parametrize("layer_type", ["sliding_attention", "full_attention"])
+    @pytest.mark.parametrize("per_row_positions", [False, True])
+    def test_qk_norm_rope(shape, layer_type, per_row_positions):
+        b, s = shape
+        q_norm, k_norm = make_norm(4096, 1), make_norm(4096, 2)
+        q = torch.randn(b, s, 4096, device=DEV, dtype=BF) * 2
+        k = torch.randn(b, s, 4096, device=DEV, dtype=BF)
+        # model.generate passes [B, S] position_ids (cos batch B); plain forward gives [1, S]
+        start = torch.arange(b, device=DEV)[:, None] * 37 + 500 if per_row_positions else torch.tensor([[500]], device=DEV)
+        pos = start + torch.arange(s, device=DEV)
+        cos, sin = real_rotary()(q, pos, layer_type)
+        with torch.no_grad():
+            nq = q_norm(q).view(b, s, -1, 128).transpose(1, 2)
+            nk = k_norm(k).view(b, s, -1, 128).transpose(1, 2)
+            ref_q, ref_k = olmo3.apply_rotary_pos_emb(nq, nk, cos, sin)
+            out_q, out_k = kernels.qk_norm_rope(q, k, q_norm, k_norm, cos, sin, 128)
+>       assert out_q.stride() == ref_q.stride()
+E       assert (4096, 128, 4096, 1) == (4096, 128, 128, 1)
+E         
+E         At index 2 diff: 4096 != 128
+E         Use -v to get more diff
+
+tests/test_kernels.py:89: AssertionError
+________________ test_qk_norm_rope[False-full_attention-shape0] ________________
+
+shape = (1, 1), layer_type = 'full_attention', per_row_positions = False
+
+    @pytest.mark.parametrize("shape", SHAPES)
+    @pytest.mark.parametrize("layer_type", ["sliding_attention", "full_attention"])
+    @pytest.mark.parametrize("per_row_positions", [False, True])
+    def test_qk_norm_rope(shape, layer_type, per_row_positions):
+        b, s = shape
+        q_norm, k_norm = make_norm(4096, 1), make_norm(4096, 2)
+        q = torch.randn(b, s, 4096, device=DEV, dtype=BF) * 2
+        k = torch.randn(b, s, 4096, device=DEV, dtype=BF)
+        # model.generate passes [B, S] position_ids (cos batch B); plain forward gives [1, S]
+        start = torch.arange(b, device=DEV)[:, None] * 37 + 500 if per_row_positions else torch.tensor([[500]], device=DEV)
+        pos = start + torch.arange(s, device=DEV)
+        cos, sin = real_rotary()(q, pos, layer_type)
+        with torch.no_grad():
+            nq = q_norm(q).view(b, s, -1, 128).transpose(1, 2)
+            nk = k_norm(k).view(b, s, -1, 128).transpose(1, 2)
+            ref_q, ref_k = olmo3.apply_rotary_pos_emb(nq, nk, cos, sin)
+            out_q, out_k = kernels.qk_norm_rope(q, k, q_norm, k_norm, cos, sin, 128)
+>       assert out_q.stride() == ref_q.stride()
+E       assert (4096, 128, 4096, 1) == (4096, 128, 128, 1)
+E         
+E         At index 2 diff: 4096 != 128
+E         Use -v to get more diff
+
+tests/test_kernels.py:89: AssertionError
+________________ test_qk_norm_rope[False-full_attention-shape1] ________________
+
+shape = (8, 1), layer_type = 'full_attention', per_row_positions = False
+
+    @pytest.mark.parametrize("shape", SHAPES)
+    @pytest.mark.parametrize("layer_type", ["sliding_attention", "full_attention"])
+    @pytest.mark.parametrize("per_row_positions", [False, True])
+    def test_qk_norm_rope(shape, layer_type, per_row_positions):
+        b, s = shape
+        q_norm, k_norm = make_norm(4096, 1), make_norm(4096, 2)
+        q = torch.randn(b, s, 4096, device=DEV, dtype=BF) * 2
+        k = torch.randn(b, s, 4096, device=DEV, dtype=BF)
+        # model.generate passes [B, S] position_ids (cos batch B); plain forward gives [1, S]
+        start = torch.arange(b, device=DEV)[:, None] * 37 + 500 if per_row_positions else torch.tensor([[500]], device=DEV)
+        pos = start + torch.arange(s, device=DEV)
+        cos, sin = real_rotary()(q, pos, layer_type)
+        with torch.no_grad():
+            nq = q_norm(q).view(b, s, -1, 128).transpose(1, 2)
+            nk = k_norm(k).view(b, s, -1, 128).transpose(1, 2)
+            ref_q, ref_k = olmo3.apply_rotary_pos_emb(nq, nk, cos, sin)
+            out_q, out_k = kernels.qk_norm_rope(q, k, q_norm, k_norm, cos, sin, 128)
+>       assert out_q.stride() == ref_q.stride()
+E       assert (4096, 128, 4096, 1) == (4096, 128, 128, 1)
+E         
+E         At index 2 diff: 4096 != 128
+E         Use -v to get more diff
+
+tests/test_kernels.py:89: AssertionError
+_______________ test_qk_norm_rope[True-sliding_attention-shape0] _______________
+
+shape = (1, 1), layer_type = 'sliding_attention', per_row_positions = True
+
+    @pytest.mark.parametrize("shape", SHAPES)
+    @pytest.mark.parametrize("layer_type", ["sliding_attention", "full_attention"])
+    @pytest.mark.parametrize("per_row_positions", [False, True])
+    def test_qk_norm_rope(shape, layer_type, per_row_positions):
+        b, s = shape
+        q_norm, k_norm = make_norm(4096, 1), make_norm(4096, 2)
+        q = torch.randn(b, s, 4096, device=DEV, dtype=BF) * 2
+        k = torch.randn(b, s, 4096, device=DEV, dtype=BF)
+        # model.generate passes [B, S] position_ids (cos batch B); plain forward gives [1, S]
+        start = torch.arange(b, device=DEV)[:, None] * 37 + 500 if per_row_positions else torch.tensor([[500]], device=DEV)
+        pos = start + torch.arange(s, device=DEV)
+        cos, sin = real_rotary()(q, pos, layer_type)
+        with torch.no_grad():
+            nq = q_norm(q).view(b, s, -1, 128).transpose(1, 2)
+            nk = k_norm(k).view(b, s, -1, 128).transpose(1, 2)
+            ref_q, ref_k = olmo3.apply_rotary_pos_emb(nq, nk, cos, sin)
+            out_q, out_k = kernels.qk_norm_rope(q, k, q_norm, k_norm, cos, sin, 128)
+>       assert out_q.stride() == ref_q.stride()
+E       assert (4096, 128, 4096, 1) == (4096, 128, 128, 1)
+E         
+E         At index 2 diff: 4096 != 128
+E         Use -v to get more diff
+
+tests/test_kernels.py:89: AssertionError
+_______________ test_qk_norm_rope[True-sliding_attention-shape1] _______________
+
+shape = (8, 1), layer_type = 'sliding_attention', per_row_positions = True
+
+    @pytest.mark.parametrize("shape", SHAPES)
+    @pytest.mark.parametrize("layer_type", ["sliding_attention", "full_attention"])
+    @pytest.mark.parametrize("per_row_positions", [False, True])
+    def test_qk_norm_rope(shape, layer_type, per_row_positions):
+        b, s = shape
+        q_norm, k_norm = make_norm(4096, 1), make_norm(4096, 2)
+        q = torch.randn(b, s, 4096, device=DEV, dtype=BF) * 2
+        k = torch.randn(b, s, 4096, device=DEV, dtype=BF)
+        # model.generate passes [B, S] position_ids (cos batch B); plain forward gives [1, S]
+        start = torch.arange(b, device=DEV)[:, None] * 37 + 500 if per_row_positions else torch.tensor([[500]], device=DEV)
+        pos = start + torch.arange(s, device=DEV)
+        cos, sin = real_rotary()(q, pos, layer_type)
+        with torch.no_grad():
+            nq = q_norm(q).view(b, s, -1, 128).transpose(1, 2)
+            nk = k_norm(k).view(b, s, -1, 128).transpose(1, 2)
+            ref_q, ref_k = olmo3.apply_rotary_pos_emb(nq, nk, cos, sin)
+            out_q, out_k = kernels.qk_norm_rope(q, k, q_norm, k_norm, cos, sin, 128)
+>       assert out_q.stride() == ref_q.stride()
+E       assert (4096, 128, 4096, 1) == (4096, 128, 128, 1)
+E         
+E         At index 2 diff: 4096 != 128
+E         Use -v to get more diff
+
+tests/test_kernels.py:89: AssertionError
+________________ test_qk_norm_rope[True-full_attention-shape0] _________________
+
+shape = (1, 1), layer_type = 'full_attention', per_row_positions = True
+
+    @pytest.mark.parametrize("shape", SHAPES)
+    @pytest.mark.parametrize("layer_type", ["sliding_attention", "full_attention"])
+    @pytest.mark.parametrize("per_row_positions", [False, True])
+    def test_qk_norm_rope(shape, layer_type, per_row_positions):
+        b, s = shape
+        q_norm, k_norm = make_norm(4096, 1), make_norm(4096, 2)
+        q = torch.randn(b, s, 4096, device=DEV, dtype=BF) * 2
+        k = torch.randn(b, s, 4096, device=DEV, dtype=BF)
+        # model.generate passes [B, S] position_ids (cos batch B); plain forward gives [1, S]
+        start = torch.arange(b, device=DEV)[:, None] * 37 + 500 if per_row_positions else torch.tensor([[500]], device=DEV)
+        pos = start + torch.arange(s, device=DEV)
+        cos, sin = real_rotary()(q, pos, layer_type)
+        with torch.no_grad():
+            nq = q_norm(q).view(b, s, -1, 128).transpose(1, 2)
+            nk = k_norm(k).view(b, s, -1, 128).transpose(1, 2)
+            ref_q, ref_k = olmo3.apply_rotary_pos_emb(nq, nk, cos, sin)
+            out_q, out_k = kernels.qk_norm_rope(q, k, q_norm, k_norm, cos, sin, 128)
+>       assert out_q.stride() == ref_q.stride()
+E       assert (4096, 128, 4096, 1) == (4096, 128, 128, 1)
+E         
+E         At index 2 diff: 4096 != 128
+E         Use -v to get more diff
+
+tests/test_kernels.py:89: AssertionError
+________________ test_qk_norm_rope[True-full_attention-shape1] _________________
+
+shape = (8, 1), layer_type = 'full_attention', per_row_positions = True
+
+    @pytest.mark.parametrize("shape", SHAPES)
+    @pytest.mark.parametrize("layer_type", ["sliding_attention", "full_attention"])
+    @pytest.mark.parametrize("per_row_positions", [False, True])
+    def test_qk_norm_rope(shape, layer_type, per_row_positions):
+        b, s = shape
+        q_norm, k_norm = make_norm(4096, 1), make_norm(4096, 2)
+        q = torch.randn(b, s, 4096, device=DEV, dtype=BF) * 2
+        k = torch.randn(b, s, 4096, device=DEV, dtype=BF)
+        # model.generate passes [B, S] position_ids (cos batch B); plain forward gives [1, S]
+        start = torch.arange(b, device=DEV)[:, None] * 37 + 500 if per_row_positions else torch.tensor([[500]], device=DEV)
+        pos = start + torch.arange(s, device=DEV)
+        cos, sin = real_rotary()(q, pos, layer_type)
+        with torch.no_grad():
+            nq = q_norm(q).view(b, s, -1, 128).transpose(1, 2)
+            nk = k_norm(k).view(b, s, -1, 128).transpose(1, 2)
+            ref_q, ref_k = olmo3.apply_rotary_pos_emb(nq, nk, cos, sin)
+            out_q, out_k = kernels.qk_norm_rope(q, k, q_norm, k_norm, cos, sin, 128)
+>       assert out_q.stride() == ref_q.stride()
+E       assert (4096, 128, 4096, 1) == (4096, 128, 128, 1)
+E         
+E         At index 2 diff: 4096 != 128
+E         Use -v to get more diff
+
+tests/test_kernels.py:89: AssertionError
+=============================== warnings summary ===============================
+tests/test_kernels.py::test_rmsnorm[False-shape0]
+tests/test_kernels.py::test_enable_disable_end_to_end
+tests/test_kernels.py::test_enable_disable_end_to_end
+tests/test_kernels.py::test_enable_disable_end_to_end
+  /u/neilas3/classes/598/venv/lib/python3.13/site-packages/triton/compiler/code_generator.py:643: DeprecationWarning: AnnAssign.__init__ missing 1 required positional argument: 'simple'. This will become an error in Python 3.15.
+    init_node = ast.AnnAssign(target=st_target, value=default_value, annotation=annotation)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_kernels.py::test_qk_norm_rope[False-sliding_attention-shape0]
+FAILED tests/test_kernels.py::test_qk_norm_rope[False-sliding_attention-shape1]
+FAILED tests/test_kernels.py::test_qk_norm_rope[False-full_attention-shape0]
+FAILED tests/test_kernels.py::test_qk_norm_rope[False-full_attention-shape1]
+FAILED tests/test_kernels.py::test_qk_norm_rope[True-sliding_attention-shape0]
+FAILED tests/test_kernels.py::test_qk_norm_rope[True-sliding_attention-shape1]
+FAILED tests/test_kernels.py::test_qk_norm_rope[True-full_attention-shape0]
+FAILED tests/test_kernels.py::test_qk_norm_rope[True-full_attention-shape1]
+8 failed, 48 passed, 4 warnings in 8.76s

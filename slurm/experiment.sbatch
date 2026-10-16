@@ -11,7 +11,7 @@
 #SBATCH --output=results/experiments/slurm-%x-%j.out
 
 # submit from the repo root:
-#   TAG=e1 VARIANTS="baseline fused" sbatch slurm/experiment.sbatch
+#   TAG=e1 VARIANTS="baseline fused static,graph" sbatch slurm/experiment.sbatch
 source ~/classes/598/env.sh
 export HF_HUB_OFFLINE=1
 export PYTHONUNBUFFERED=1

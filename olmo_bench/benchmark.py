@@ -27,24 +27,58 @@ def sync(device):
         torch.cuda.synchronize(device)
 
 
-def timed_prefill(model, input_ids):
+class Eager:
+    # the baseline path: stock HF forward with a DynamicCache
+    def __init__(self, model):
+        self.model = model
+        self.cache = None
+
+    def prefill(self, input_ids):
+        token, self.cache = prefill(self.model, input_ids)
+        return token
+
+    def step(self, token):
+        token, self.cache = decode_step(self.model, token, self.cache)
+        return token
+
+
+def make_runner(model, opts, batch, max_len):
+    if "static" in opts:
+        from olmo_bench.fast_decode import GraphDecoder
+        return GraphDecoder(model, batch, max_len, use_graph="graph" in opts)
+    return Eager(model)
+
+
+def timed_prefill(runner, input_ids):
     sync(input_ids.device)
     t0 = time.perf_counter()
-    token, cache = prefill(model, input_ids)
+    token = runner.prefill(input_ids)
     sync(input_ids.device)
-    return time.perf_counter() - t0, token, cache
+    return time.perf_counter() - t0, token
 
 
-def decode_run(model, input_ids, new_tokens):
+def decode_run(runner, input_ids, new_tokens):
     # the first new token comes from prefill, the other new_tokens - 1 from decode steps
-    ttft, token, cache = timed_prefill(model, input_ids)
+    ttft, token = timed_prefill(runner, input_ids)
     steps = []
     for _ in range(new_tokens - 1):
         t0 = time.perf_counter()
-        token, cache = decode_step(model, token, cache)
+        token = runner.step(token)
         sync(input_ids.device)
         steps.append(time.perf_counter() - t0)
     return ttft, steps
+
+
+def setup_runner(runner, input_ids):
+    # graph capture happens once per config, outside the timed runs
+    if not getattr(runner, "use_graph", False):
+        return 0.0
+    runner.prefill(input_ids)
+    sync(input_ids.device)
+    t0 = time.perf_counter()
+    runner.capture()
+    sync(input_ids.device)
+    return time.perf_counter() - t0
 
 
 def reset_peak(device):
@@ -59,12 +93,13 @@ def peak_mib(device):
             "reserved": torch.cuda.max_memory_reserved(device) / 2**20}
 
 
-def bench_prefill(model, tokenizer, device, batch, seq_len, warmup, repeats):
+def bench_prefill(model, tokenizer, device, batch, seq_len, warmup, repeats, opts=()):
     ids = make_input_ids(tokenizer, batch, seq_len, device, text_for(seq_len))
+    runner = make_runner(model, opts, batch, seq_len + 1)
     reset_peak(device)
     ttft = []
     for i in range(warmup + repeats):
-        t, _, _ = timed_prefill(model, ids)
+        t, _ = timed_prefill(runner, ids)
         if i >= warmup:
             ttft.append(t)
     return {
@@ -78,19 +113,21 @@ def bench_prefill(model, tokenizer, device, batch, seq_len, warmup, repeats):
     }
 
 
-def bench_decode(model, tokenizer, device, batch, seq_len, new_tokens, warmup, repeats):
+def bench_decode(model, tokenizer, device, batch, seq_len, new_tokens, warmup, repeats, opts=()):
     ids = make_input_ids(tokenizer, batch, seq_len, device, text_for(seq_len))
+    runner = make_runner(model, opts, batch, seq_len + new_tokens)
+    setup_s = setup_runner(runner, ids)
     reset_peak(device)
     runs = []
     for i in range(warmup + repeats):
-        ttft, steps = decode_run(model, ids, new_tokens)
+        ttft, steps = decode_run(runner, ids, new_tokens)
         if i >= warmup:
             runs.append((ttft, steps))
     n = new_tokens - 1
     decode_s = [sum(s) for _, s in runs]
     return {
         "mode": "decode", "batch": batch, "seq_len": seq_len, "new_tokens": new_tokens,
-        "decode_steps": n,
+        "decode_steps": n, "setup_s": setup_s,
         "raw": {"ttft_s": [t for t, _ in runs], "step_s": [s for _, s in runs]},
         "metrics": {
             "ttft_ms": summarize([t * 1e3 for t, _ in runs]),
@@ -132,7 +169,7 @@ def main():
     p.add_argument("--run-tag", default=None)
     p.add_argument("--golden-dir", default=str(correctness.GOLDEN_DIR))
     p.add_argument("--skip-check", action="store_true")
-    p.add_argument("--opt", default="", help="comma list of optimizations: fused")
+    p.add_argument("--opt", default="", help="comma list of: fused, static, graph")
     args = p.parse_args()
     opts = parse_opts(args.opt)
     if opts and args.out_root == p.get_default("out_root"):
@@ -158,14 +195,13 @@ def main():
             check = correctness.run_checks(model, tokenizer, device, args.golden_dir, meta)
             correctness.report(check)
     else:
-        # reference outputs from the stock model first, then the same checks with the optimizations on
-        gen = numerics.eager_generate(model)
-        ref = None if args.skip_check else numerics.snapshot(model, tokenizer, device, gen)
+        ref = None if args.skip_check else numerics.snapshot(model, tokenizer, device,
+                                                            numerics.eager_generate(model))
         t1 = time.perf_counter()
         apply_opts(model, opts)
         meta["apply_s"] = time.perf_counter() - t1
         if ref is not None:
-            new = numerics.snapshot(model, tokenizer, device, gen)
+            new = numerics.snapshot(model, tokenizer, device, opt_generate(model, opts))
             check = numerics.compare(ref, new, numerics.golden_generations(meta))
             numerics.report(check)
 
@@ -174,12 +210,12 @@ def main():
     out_dir = Path(args.out_root) / tag
     configs = []
     for batch, seq_len in PREFILL:
-        configs.append(bench_prefill(model, tokenizer, device, batch, seq_len, args.warmup, args.repeats))
+        configs.append(bench_prefill(model, tokenizer, device, batch, seq_len, args.warmup, args.repeats, opts))
         print_config(configs[-1])
         write_results(out_dir, meta, check, configs)  # keep partial results if the job is cut off
     for batch, seq_len, new_tokens in DECODE:
         configs.append(bench_decode(model, tokenizer, device, batch, seq_len, new_tokens,
-                                    args.warmup, args.repeats))
+                                    args.warmup, args.repeats, opts))
         print_config(configs[-1])
         write_results(out_dir, meta, check, configs)
     meta["nvidia_smi_end"] = env_info.gpu_query()
@@ -193,9 +229,11 @@ def main():
 
 def parse_opts(text):
     opts = {o for o in text.split(",") if o}
-    unknown = opts - {"fused"}
+    unknown = opts - {"fused", "static", "graph"}
     if unknown:
         raise SystemExit(f"unknown --opt {sorted(unknown)}")
+    if "graph" in opts:
+        opts.add("static")
     return opts
 
 
@@ -204,6 +242,14 @@ def apply_opts(model, opts):
         from olmo_bench import kernels
         kernels.enable(model)
         kernels.warmup(model)
+
+
+def opt_generate(model, opts):
+    if "static" not in opts:
+        return numerics.eager_generate(model)
+    from olmo_bench.fast_decode import GraphDecoder
+    use_graph = "graph" in opts
+    return lambda ids, n: GraphDecoder(model, ids.shape[0], ids.shape[1] + n, use_graph).greedy_generate(ids, n)
 
 
 def print_config(c):

@@ -14,6 +14,7 @@ Profiling non-GEMM ops (RMSNorm, QK-Norm, RoPE, residual adds, activations) in O
 │   ├── benchmark.py           TTFT / TPOT / tokens per second
 │   ├── correctness.py         output and perplexity checks
 │   ├── kernels.py             fused Triton kernels (--opt fused)
+│   ├── fast_decode.py         static KV cache + CUDA graph decode (--opt static,graph)
 │   ├── numerics.py            accuracy check for optimized runs
 │   ├── env_info.py
 │   ├── stats.py
@@ -83,7 +84,9 @@ Speedup is against the baseline above, same config.
 | commit | optimization | speedup |
 |---|---|---|
 | 8c03ee4 | baseline | 1.00x |
-| | fused Triton kernels: q/k norm + RoPE, post-norm + residual add, SiLU*mul (`--opt fused`) | TTFT 128: 1.25x, 2048: 1.36x, 8192: 1.24x; TPOT b1: 1.32x, b8: 1.13x, b1 8192: 1.10x |
+| 7b9baf8 | fused Triton kernels: q/k norm + RoPE, post-norm + residual add, SiLU*mul (`--opt fused`) | TTFT 128: 1.25x, 2048: 1.36x, 8192: 1.24x; TPOT b1: 1.32x, b8: 1.13x, b1 8192: 1.10x |
+| | static ring-buffer KV cache + CUDA graph decode (`--opt static,graph`) | TPOT b1: 1.26x, b8: 1.30x, b1 8192: 1.44x; TTFT unchanged |
+| | both (`--opt fused,static,graph`) | TTFT 128: 1.41x, 2048: 1.35x, 8192: 1.23x; TPOT b1: 1.38x, b8: 1.44x, b1 8192: 1.56x |
 
 ### Fused Triton kernels (`--opt fused`)
 
@@ -109,5 +112,24 @@ Decode tokens/s went from 26.0 to 34.2 (b1), 176.2 to 198.6 (b8) and 19.6 to 21.
 
 Correctness (`olmo_bench/numerics.py`, compared with the stock model in the same run): perplexity changed by -0.001% (1536 tokens) and +0.015% (8192 tokens), and top-1 agreement over those texts was 99.28% and 99.58%, which passes our 99% / 0.5% gate. All four golden prompts still match. The kernel unit tests (`tests/test_kernels.py`) passed on the A40.
 Each Triton launch costs about 30 us of host time, versus about 6-10 us for a PyTorch op (`python -m olmo_bench.kernels --bench`, job 22913240). Fusing the norm and RoPE chains is a big win, but the SiLU*mul kernel on its own is slower than the two PyTorch ops it replaces in decode.
+
+### Static KV cache + CUDA graphs (`--opt static,graph`)
+
+After fusing, decode was still slow for two reasons. HF's DynamicCache uses `torch.cat` to add each new token, which copies the whole KV cache every step (18.5% of decode GPU time at batch 8). And at batch 1 the GPU was idle about 7 ms per token waiting on the CPU to launch kernels.
+
+`olmo_bench/fast_decode.py` allocates the cache once and writes one slot per token (sliding layers use a 4096 slot ring buffer), then records a decode step as a CUDA graph and replays it. We wrote our own cache because HF's StaticCache keeps the position as a Python int, which doesn't work with graph replay.
+
+Same job as the fused run (22913289):
+
+| config | baseline | static,graph | fused,static,graph |
+|---|---|---|---|
+| prefill b1 128, TTFT (ms) | 46.30 | 41.11 (1.13x) | 32.93 (1.41x) |
+| prefill b1 2048, TTFT (ms) | 390.15 | 393.89 (0.99x) | 288.52 (1.35x) |
+| prefill b1 8192, TTFT (ms) | 2063.11 | 2096.54 (0.98x) | 1678.83 (1.23x) |
+| decode b1 512+128, TPOT (ms) | 38.41 | 30.54 (1.26x) | 27.76 (1.38x) |
+| decode b8 512+128, TPOT (ms) | 45.40 | 34.83 (1.30x) | 31.45 (1.44x) |
+| decode b1 8192+128, TPOT (ms) | 51.15 | 35.57 (1.44x) | 32.74 (1.56x) |
+
+Prefill doesn't change since this only touches decode. The output is bit-exact with the baseline. With both optimizations batch 1 decode is 27.8 ms/token, close to the ~24 ms it takes just to read the weights.
 
 All GPU jobs use the `bikd-delta-gpu` account on the `gpuA40x4` partition. Run them from the repo root on Delta, for example `sbatch slurm/baseline.sbatch`. `scripts/usage.sh` shows how many GPU hours have been used.
