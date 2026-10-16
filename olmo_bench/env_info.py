@@ -29,6 +29,14 @@ def git_info():
     return {"git_hash": head or "uncommitted", "git_dirty": bool(status)}
 
 
+def triton_version():
+    try:
+        import triton
+        return triton.__version__
+    except ImportError:
+        return None
+
+
 def collect(model, device, dtype, model_id, revision):
     device = torch.device(device)
     info = {
@@ -41,6 +49,7 @@ def collect(model, device, dtype, model_id, revision):
         "torch_cuda": torch.version.cuda,
         "cudnn": torch.backends.cudnn.version() if torch.backends.cudnn.is_available() else None,
         "transformers": transformers.__version__,
+        "triton": triton_version(),
         "model_id": model_id,
         "revision": revision,
         "dtype": str(dtype).removeprefix("torch."),

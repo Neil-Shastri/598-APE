@@ -58,7 +58,7 @@ Prefill is GPU-bound: busy 105.9 vs TTFT 109.2 ms (b1), 730.4 vs 740.4 ms (b8).
 ## 4. Memory traffic per category (ncu, layer 3, b1)
 
 ncu flushes caches and locks clocks, so tiny kernels run about 35% slower than in torch; large kernels are within about 5%.
-Values over 100% of 578 are possible because 578 is the useful-bytes ceiling while ncu counts raw DRAM traffic (about 10% overhead, see `docs/platform.md`).
+Values over 100% of 578 are possible because 578 is the useful-bytes ceiling while ncu counts raw DRAM traffic (about 10% overhead, see `results/platform/2026-10-08_a40/`).
 
 Prefill (512 tokens):
 

@@ -6,7 +6,7 @@ from pathlib import Path
 from profiling.labels import GROUP, category
 from profiling.trace_analysis import write_csv
 
-CEILING_GBS = 578  # measured useful bandwidth on the A40, docs/platform.md
+CEILING_GBS = 578  # measured useful bandwidth on the A40, results/platform/2026-10-08_a40/ncu_vecadd.txt
 
 METRICS = {
     "duration": "gpu__time_duration.sum",

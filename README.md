@@ -8,13 +8,13 @@ Profiling non-GEMM ops (RMSNorm, QK-Norm, RoPE, residual adds, activations) in O
 598-project/
 ├── README.md
 ├── requirements.txt
-├── docs/
-│   └── platform.md            GPU specs, software versions, vecadd results
 ├── olmo_bench/
 │   ├── model.py               loads OLMo 3 7B
 │   ├── workload.py            prompts, prefill, decode step
 │   ├── benchmark.py           TTFT / TPOT / tokens per second
 │   ├── correctness.py         output and perplexity checks
+│   ├── kernels.py             fused Triton kernels (--opt fused)
+│   ├── numerics.py            accuracy check for optimized runs
 │   ├── env_info.py
 │   ├── stats.py
 │   └── data/
@@ -30,6 +30,7 @@ Profiling non-GEMM ops (RMSNorm, QK-Norm, RoPE, residual adds, activations) in O
 ├── tests/
 ├── slurm/
 │   ├── baseline.sbatch
+│   ├── experiment.sbatch      baseline and optimized variants in one job
 │   ├── profile_torch.sbatch
 │   ├── profile_nsys.sbatch
 │   └── profile_ncu.sbatch
@@ -43,7 +44,8 @@ Profiling non-GEMM ops (RMSNorm, QK-Norm, RoPE, residual adds, activations) in O
 └── results/
     ├── platform/              GPU check output
     ├── baseline/              benchmark runs and golden outputs
-    └── baseline_profile/      profiler summaries and SUMMARY.md
+    ├── baseline_profile/      profiler summaries and SUMMARY.md
+    └── experiments/           optimization runs
 ```
 
 ## Setup so far
@@ -52,7 +54,7 @@ Profiling non-GEMM ops (RMSNorm, QK-Norm, RoPE, residual adds, activations) in O
 2. Wrote `scripts/env.sh` to load Python 3.13.5 and the CUDA 13.2 toolkit, set `HF_HOME`, and add Nsight Compute to the PATH. Run `source ~/classes/598/env.sh` at the start of every session.
 3. Made a venv and installed torch 2.14.1 (cu130), transformers 5.19.0 and the rest of `requirements.txt`.
 4. Logged in to Hugging Face with a read token and downloaded `allenai/Olmo-3-1025-7B` (revision `a81bae4`) on the login node.
-5. Ran a quick GPU check on one A40 with a vector add kernel to make sure nvcc, compute-sanitizer, nsys and ncu all work (see `docs/platform.md`).
+5. Ran a quick GPU check on one A40 with a vector add kernel to make sure nvcc, compute-sanitizer, nsys and ncu all work. The vector add hit 578 GB/s (83% of the A40's 696 GB/s), which we use as the bandwidth ceiling (`results/platform/2026-10-08_a40/`).
 6. Wrote the benchmark and correctness checks, tested them on a tiny model on my laptop, then ran the first baseline on the A40.
 7. Added an 8192 token prompt so the sliding window layers actually get used.
 8. Profiled the 512 token workload with torch.profiler, Nsight Systems and Nsight Compute (`slurm/profile_*.sbatch`). Summary is in `results/baseline_profile/baseline_20261008/SUMMARY.md`.
@@ -80,6 +82,32 @@ Speedup is against the baseline above, same config.
 
 | commit | optimization | speedup |
 |---|---|---|
-| | baseline | 1.00x |
+| 8c03ee4 | baseline | 1.00x |
+| | fused Triton kernels: q/k norm + RoPE, post-norm + residual add, SiLU*mul (`--opt fused`) | TTFT 128: 1.25x, 2048: 1.36x, 8192: 1.24x; TPOT b1: 1.32x, b8: 1.13x, b1 8192: 1.10x |
+
+### Fused Triton kernels (`--opt fused`)
+
+The baseline profile showed RMSNorm, QK-Norm and RoPE at about 10% of prefill GPU time each, with every op split into 6-8 small fp32 kernels that move 10-11x the bytes they need. In decode, 79% of the ~1979 kernels per token were these small ops. `olmo_bench/kernels.py` replaces them with three Triton kernels, swapped into the HF model classes when `--opt fused` is set:
+- q_norm + k_norm + RoPE in one launch (28 kernels per layer become 1)
+- post-attention / post-MLP RMSNorm fused with the residual add (18 kernels become 2), also used for the final norm
+- SiLU(gate) * up
+
+Math is done in fp32 and rounded to bf16 at the same points as the HF code.
+
+Run: `TAG=x1 VARIANTS="baseline fused" sbatch slurm/experiment.sbatch` (job 22913289, gpub076, both variants on the same GPU). Results are in `results/experiments/x1_22913289/`.
+
+| config | baseline | fused | speedup |
+|---|---|---|---|
+| prefill b1 128, TTFT (ms) | 46.30 | 37.16 | 1.25x |
+| prefill b1 2048, TTFT (ms) | 390.15 | 287.55 | 1.36x |
+| prefill b1 8192, TTFT (ms) | 2063.11 | 1668.87 | 1.24x |
+| decode b1 512+128, TPOT (ms) | 38.41 | 29.20 | 1.32x |
+| decode b8 512+128, TPOT (ms) | 45.40 | 40.29 | 1.13x |
+| decode b1 8192+128, TPOT (ms) | 51.15 | 46.61 | 1.10x |
+
+Decode tokens/s went from 26.0 to 34.2 (b1), 176.2 to 198.6 (b8) and 19.6 to 21.5 (b1 8192). The same-job baseline matches the original baseline within 1%.
+
+Correctness (`olmo_bench/numerics.py`, compared with the stock model in the same run): perplexity changed by -0.001% (1536 tokens) and +0.015% (8192 tokens), and top-1 agreement over those texts was 99.28% and 99.58%, which passes our 99% / 0.5% gate. All four golden prompts still match. The kernel unit tests (`tests/test_kernels.py`) passed on the A40.
+Each Triton launch costs about 30 us of host time, versus about 6-10 us for a PyTorch op (`python -m olmo_bench.kernels --bench`, job 22913240). Fusing the norm and RoPE chains is a big win, but the SiLU*mul kernel on its own is slower than the two PyTorch ops it replaces in decode.
 
 All GPU jobs use the `bikd-delta-gpu` account on the `gpuA40x4` partition. Run them from the repo root on Delta, for example `sbatch slurm/baseline.sbatch`. `scripts/usage.sh` shows how many GPU hours have been used.

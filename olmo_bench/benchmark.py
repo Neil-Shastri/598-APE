@@ -8,7 +8,7 @@ from pathlib import Path
 
 import torch
 
-from olmo_bench import correctness, env_info
+from olmo_bench import correctness, env_info, numerics
 from olmo_bench.model import MODEL_ID, REVISION, load_model
 from olmo_bench.stats import summarize
 from olmo_bench.workload import LONG_TEXT_FILE, TEXT_FILE, decode_step, make_input_ids, prefill
@@ -132,7 +132,11 @@ def main():
     p.add_argument("--run-tag", default=None)
     p.add_argument("--golden-dir", default=str(correctness.GOLDEN_DIR))
     p.add_argument("--skip-check", action="store_true")
+    p.add_argument("--opt", default="", help="comma list of optimizations: fused")
     args = p.parse_args()
+    opts = parse_opts(args.opt)
+    if opts and args.out_root == p.get_default("out_root"):
+        args.out_root = str(env_info.REPO / "results" / "experiments")
 
     device = torch.device(args.device)
     dtype = getattr(torch, args.dtype)
@@ -145,30 +149,61 @@ def main():
                         "texts": {f.name: hashlib.sha256(f.read_bytes()).hexdigest()
                                   for f in (TEXT_FILE, LONG_TEXT_FILE)},
                         "long_text_from": LONG_PROMPT}
+    meta["opts"] = sorted(opts)
     print(json.dumps(meta, indent=2))
 
     check = None
-    if not args.skip_check:
-        check = correctness.run_checks(model, tokenizer, device, args.golden_dir, meta)
-        correctness.report(check)
+    if not opts:
+        if not args.skip_check:
+            check = correctness.run_checks(model, tokenizer, device, args.golden_dir, meta)
+            correctness.report(check)
+    else:
+        # reference outputs from the stock model first, then the same checks with the optimizations on
+        gen = numerics.eager_generate(model)
+        ref = None if args.skip_check else numerics.snapshot(model, tokenizer, device, gen)
+        t1 = time.perf_counter()
+        apply_opts(model, opts)
+        meta["apply_s"] = time.perf_counter() - t1
+        if ref is not None:
+            new = numerics.snapshot(model, tokenizer, device, gen)
+            check = numerics.compare(ref, new, numerics.golden_generations(meta))
+            numerics.report(check)
 
+    tag = args.run_tag or "_".join([datetime.now().strftime("%Y%m%d_%H%M%S"), meta["slurm_job_id"] or "local"]
+                                   + ["-".join(sorted(opts))] * bool(opts))
+    out_dir = Path(args.out_root) / tag
     configs = []
     for batch, seq_len in PREFILL:
         configs.append(bench_prefill(model, tokenizer, device, batch, seq_len, args.warmup, args.repeats))
         print_config(configs[-1])
+        write_results(out_dir, meta, check, configs)  # keep partial results if the job is cut off
     for batch, seq_len, new_tokens in DECODE:
         configs.append(bench_decode(model, tokenizer, device, batch, seq_len, new_tokens,
                                     args.warmup, args.repeats))
         print_config(configs[-1])
+        write_results(out_dir, meta, check, configs)
     meta["nvidia_smi_end"] = env_info.gpu_query()
     meta["total_s"] = time.perf_counter() - t0
 
-    tag = args.run_tag or datetime.now().strftime("%Y%m%d_%H%M%S") + "_" + (meta["slurm_job_id"] or "local")
-    out_dir = Path(args.out_root) / tag
     write_results(out_dir, meta, check, configs)
     print(f"wrote {out_dir}/bench.json and bench.csv ({meta['total_s']:.0f} s total)")
     if check is not None and not check["passed"]:
         print("WARNING: correctness checks failed, see bench.json")
+
+
+def parse_opts(text):
+    opts = {o for o in text.split(",") if o}
+    unknown = opts - {"fused"}
+    if unknown:
+        raise SystemExit(f"unknown --opt {sorted(unknown)}")
+    return opts
+
+
+def apply_opts(model, opts):
+    if "fused" in opts:
+        from olmo_bench import kernels
+        kernels.enable(model)
+        kernels.warmup(model)
 
 
 def print_config(c):
