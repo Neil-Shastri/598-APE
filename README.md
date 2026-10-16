@@ -85,8 +85,8 @@ Speedup is against the baseline above, same config.
 |---|---|---|
 | 8c03ee4 | baseline | 1.00x |
 | 7b9baf8 | fused Triton kernels: q/k norm + RoPE, post-norm + residual add, SiLU*mul (`--opt fused`) | TTFT 128: 1.25x, 2048: 1.36x, 8192: 1.24x; TPOT b1: 1.32x, b8: 1.13x, b1 8192: 1.10x |
-| | static ring-buffer KV cache + CUDA graph decode (`--opt static,graph`) | TPOT b1: 1.26x, b8: 1.30x, b1 8192: 1.44x; TTFT unchanged |
-| | both (`--opt fused,static,graph`) | TTFT 128: 1.41x, 2048: 1.35x, 8192: 1.23x; TPOT b1: 1.38x, b8: 1.44x, b1 8192: 1.56x |
+| c984939 | static ring-buffer KV cache + CUDA graph decode (`--opt static,graph`) | TPOT b1: 1.26x, b8: 1.30x, b1 8192: 1.44x; TTFT unchanged |
+| c984939 | both (`--opt fused,static,graph`) | TTFT 128: 1.41x, 2048: 1.35x, 8192: 1.23x; TPOT b1: 1.38x, b8: 1.44x, b1 8192: 1.56x |
 
 ### Fused Triton kernels (`--opt fused`)
 
