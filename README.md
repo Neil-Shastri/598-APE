@@ -27,6 +27,7 @@ Profiling non-GEMM ops (RMSNorm, QK-Norm, RoPE, residual adds, activations) in O
 │   ├── trace_analysis.py
 │   ├── nsys_gaps.py
 │   ├── ncu_table.py
+│   ├── kernel_groups.py
 │   └── test_profiling.py
 ├── tests/
 ├── slurm/
@@ -46,6 +47,7 @@ Profiling non-GEMM ops (RMSNorm, QK-Norm, RoPE, residual adds, activations) in O
     ├── platform/              GPU check output
     ├── baseline/              benchmark runs and golden outputs
     ├── baseline_profile/      profiler summaries and SUMMARY.md
+    ├── optimized_profile/     same profile with --opt fused,static,graph
     └── experiments/           optimization runs
 ```
 
@@ -131,5 +133,18 @@ Same job as the fused run (22913289):
 | decode b1 8192+128, TPOT (ms) | 51.15 | 35.57 (1.44x) | 32.74 (1.56x) |
 
 Prefill doesn't change since this only touches decode. The output is bit-exact with the baseline. With both optimizations batch 1 decode is 27.8 ms/token, close to the ~24 ms it takes just to read the weights.
+
+### Profile after both optimizations
+
+We profiled `--opt fused,static,graph` the same way as the baseline (512 token prompt, 16 decode steps): `TAG=opt_20261020 OPT=fused,static,graph sbatch slurm/profile_torch.sbatch` (job 23073963). The per-op labels don't work inside a CUDA graph, so `profiling/kernel_groups.py` splits GPU time by kernel name instead (`results/optimized_profile/opt_20261020/kernel_groups.csv`).
+
+| | non-GEMM share of GPU time | kernels per step |
+|---|---|---|
+| prefill b1 | 32.0% -> 5.7% | 1883 -> 534 |
+| prefill b8 | 35.2% -> 6.8% | 1883 -> 534 |
+| decode b1 | 12.1% -> 2.3% | 1915 -> 633 |
+| decode b8 | 10.1% -> 2.0% | 1883 -> 633 |
+
+Most of the remaining time is now matrix multiplies (81-93%), and at decode batch 8 attention is next (16.5%) since the KV cache copy is gone.
 
 All GPU jobs use the `bikd-delta-gpu` account on the `gpuA40x4` partition. Run them from the repo root on Delta, for example `sbatch slurm/baseline.sbatch`. `scripts/usage.sh` shows how many GPU hours have been used.

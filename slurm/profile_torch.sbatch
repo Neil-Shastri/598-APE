@@ -10,17 +10,19 @@
 #SBATCH --time=00:15:00
 #SBATCH --output=results/baseline_profile/slurm-%x-%j.out
 
-# submit from the repo root: TAG=<run_tag> sbatch slurm/profile_torch.sbatch
+# submit from the repo root: TAG=<run_tag> [OPT=fused,static,graph] sbatch slurm/profile_torch.sbatch
 source ~/classes/598/env.sh
 export HF_HUB_OFFLINE=1
 export PYTHONUNBUFFERED=1
 cd $PROJ/598-project
 TAG=${TAG:-$(date +%Y%m%d_%H%M%S)_$SLURM_JOB_ID}
-OUT=results/baseline_profile/$TAG/torch
-RAW=$RUNS/baseline_profile/$TAG/torch
+DIR=baseline_profile
+[ -n "$OPT" ] && DIR=optimized_profile
+OUT=results/$DIR/$TAG/torch
+RAW=$RUNS/$DIR/$TAG/torch
 mkdir -p $OUT $RAW
 
 echo "host $(hostname)  job $SLURM_JOB_ID  tag $TAG  $(date)"
 nvidia-smi --query-gpu=name,driver_version,clocks.sm,temperature.gpu --format=csv
-python -m profiling.run --tool torch --out $OUT --raw $RAW
+python -m profiling.run --tool torch --opt "$OPT" --out $OUT --raw $RAW
 echo "done $(date)"

@@ -1,0 +1,9 @@
+region,version,gpu_ms_per_step,kernels_per_step,gemm_pct,nongemm_pct,attention_pct,kv_cache_pct,nongemm_ms_per_step
+prefill_b1,baseline,105.92,1883,63.3,32.0,1.7,3.0,33.87
+prefill_b8,baseline,730.44,1883,59.7,35.2,1.8,3.3,256.89
+decode_b1,baseline,31.45,1915,81.6,12.1,2.7,3.6,3.81
+decode_b8,baseline,42.27,1883,60.3,10.1,10.5,19.1,4.26
+prefill_b1,optimized,75.46,534,90.0,5.7,2.7,1.7,4.27
+prefill_b8,optimized,515.72,534,88.6,6.8,2.9,1.7,35.25
+decode_b1,optimized,27.6,633,92.5,2.3,4.5,0.7,0.63
+decode_b8,optimized,31.34,633,80.8,2.0,16.5,0.6,0.64
