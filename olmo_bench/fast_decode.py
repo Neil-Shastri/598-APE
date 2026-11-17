@@ -1,4 +1,7 @@
+from contextlib import nullcontext
+
 import torch
+from torch.nn.attention import SDPBackend, sdpa_kernel
 
 
 def round_up(n, m):
@@ -75,7 +78,7 @@ class StaticKV:
 
 class GraphDecoder:
     def __init__(self, model, batch_size, max_len, use_graph=True, additive_mask=False,
-                 cached_slots=False):
+                 cached_slots=False, cudnn_attention=False):
         assert model.config._attn_implementation == "sdpa", "GraphDecoder needs sdpa attention"
         param = next(model.parameters())
         self.model = model
@@ -89,6 +92,8 @@ class GraphDecoder:
         self.sliding_full = False
         self.length = 0
         self.graphs = {}
+        # the decode-step attention backend is fixed when the graph is captured
+        self.cudnn_attention = cudnn_attention
 
     @torch.no_grad()
     def prefill(self, input_ids):
@@ -110,8 +115,9 @@ class GraphDecoder:
     @torch.no_grad()
     def _step(self):
         masks = self.kv.step_masks(self.sliding_full)
-        logits = self.model(input_ids=self.token, position_ids=self.kv.pos.view(1, 1),
-                            attention_mask=masks, past_key_values=self.kv, use_cache=True).logits
+        with sdpa_kernel(SDPBackend.CUDNN_ATTENTION) if self.cudnn_attention else nullcontext():
+            logits = self.model(input_ids=self.token, position_ids=self.kv.pos.view(1, 1),
+                                attention_mask=masks, past_key_values=self.kv, use_cache=True).logits
         self.token.copy_(logits[:, -1:].argmax(-1))
         self.kv.pos.add_(1)
 

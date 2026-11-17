@@ -107,3 +107,16 @@ def test_graph_matches_eager_static(tiny_dir, prompt_len, flags):
     assert torch.equal(dec.greedy_generate(ids, new), eager)
     # the graph stays valid across fresh prefills
     assert torch.equal(dec.greedy_generate(ids, new), eager)
+
+
+@cuda
+def test_cudnn_attention_graph_matches_eager(tiny_dir):
+    from olmo_bench.model import load_model
+    model, tok = load_model("cuda", torch.bfloat16, str(tiny_dir), None)
+    ids = make_input_ids(tok, 2, 20, "cuda")
+    new = 30
+    eager = GraphDecoder(model, 2, 20 + new, use_graph=False, cudnn_attention=True).greedy_generate(ids, new)
+    dec = GraphDecoder(model, 2, 20 + new, cudnn_attention=True)
+    dec.prefill(ids)
+    dec.capture()
+    assert torch.equal(dec.greedy_generate(ids, new), eager)

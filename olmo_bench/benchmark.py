@@ -50,7 +50,8 @@ def make_runner(model, opts, batch, max_len):
 
 
 def decoder_args(opts):
-    return {"use_graph": "graph" in opts, "additive_mask": "mask" in opts, "cached_slots": "slots" in opts}
+    return {"use_graph": "graph" in opts, "additive_mask": "mask" in opts, "cached_slots": "slots" in opts,
+            "cudnn_attention": "cudnn" in opts}
 
 
 def timed_prefill(runner, input_ids):
@@ -233,10 +234,10 @@ def main():
 
 def parse_opts(text):
     opts = {o for o in text.split(",") if o}
-    unknown = opts - {"fused", "static", "graph", "mask", "slots", "qkv", "gateup", "band", "tunable"}
+    unknown = opts - {"fused", "static", "graph", "mask", "slots", "qkv", "gateup", "band", "tunable", "cudnn"}
     if unknown:
         raise SystemExit(f"unknown --opt {sorted(unknown)}")
-    if opts & {"graph", "mask", "slots"}:
+    if opts & {"graph", "mask", "slots", "cudnn"}:
         opts.add("static")
     if opts & {"qkv", "gateup"} and "fused" not in opts:
         raise SystemExit("--opt qkv/gateup needs fused (the merged weights are read by the fused kernels)")

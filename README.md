@@ -94,7 +94,8 @@ Speedup is against the baseline above, same config.
 | 367ed7b | merge q/k/v into one GEMM (`--opt qkv`) | TTFT 2048 -2.8%; TPOT b1 -0.5%, b8 -1.4% vs previous row |
 | a27dee8 | merge gate/up into one GEMM (`--opt gateup`) | TPOT b1 -2.3%, TTFT 2048 -1.7%; TTFT 128 +2.8%, TPOT b8 +0.7% vs previous row |
 | ec614ab | banded attention for sliding layers in long prefill (`--opt band`) | TTFT 8192 -21.7% vs previous row |
-| | TunableOp GEMM selection (`--opt tunable`) | TTFT 128 -5.2%; TPOT b1 -1.9%, b8 -1.2% vs previous row |
+| d047493 | TunableOp GEMM selection (`--opt tunable`) | TTFT 128 -5.2%; TPOT b1 -1.9%, b8 -1.2% vs previous row |
+| | cuDNN attention for the decode step (`--opt cudnn`) | TPOT b1 -1.9%, b8 -2.1%, b1 8192 -5.4% vs previous row |
 
 ### Fused Triton kernels (`--opt fused`)
 
@@ -194,12 +195,31 @@ PyTorch's TunableOp times the cuBLAS kernel against a handful of cuBLASLt algori
 | cuBLASLt workspace 1 vs 8 MiB | 1.00x | no |
 | Triton `num_warps` (2/4/8/16) | best setting saves < 1 us per kernel, about 0.03 ms per token | no |
 | TF32 | no effect, our math is bf16 | no |
-| SDPA backend for the masked decode step | cuDNN is 1.1-1.9x faster than the default memory-efficient kernel | turned into the next optimization |
+| SDPA backend for the masked decode step | cuDNN is 1.1-1.9x faster than the default memory-efficient kernel | yes, `--opt cudnn` below |
 
 ### Ablation
 
 `--opt static` alone (no CUDA graph, no fused kernels): TPOT b1 37.78 -> 37.63 ms, b8 45.37 -> 38.04 ms, b1 8192 51.13 -> 38.61 ms. So the static cache is what fixes batch 8 and long context (no more copying the cache), and the CUDA graph is what fixes batch 1.
 
 All the new optimizations above were measured stacked one at a time in job 23916330 (`slurm/experiment.sbatch`, log in `results/experiments/`). The GPU unit tests ran first (126 passed), and `compute-sanitizer --tool memcheck` on the kernel tests reported 0 errors (job 23916331).
+
+### cuDNN attention in the decode step (`--opt cudnn`)
+
+The knobs sweep showed that for our masked decode attention, PyTorch's default (memory-efficient) kernel is slow at batch 1: it only launches 32 blocks. The cuDNN backend does the same masked attention 1.6x faster at 640 keys and 1.9x faster at 8320. Since the backend gets baked into the CUDA graph when it's captured, `fast_decode.py` just captures the decode step inside `sdpa_kernel(SDPBackend.CUDNN_ATTENTION)`.
+
+Job 23928600, same node, with and without it: TPOT b1 26.27 -> 25.77 ms, b8 30.64 -> 30.00 ms, b1 8192 31.40 -> 29.69 ms. Prefill doesn't change. Numerics pass and the golden prompts match; the 128-token decode run first differs at token 92 (a near tie).
+
+### Where it ended up
+
+Final stack: `--opt fused,static,graph,mask,slots,qkv,gateup,band,tunable,cudnn` (job 23928600) vs the baseline measured in job 23916330 (different node, so allow 1-3%):
+
+| config | baseline | final | speedup |
+|---|---|---|---|
+| prefill b1 128, TTFT (ms) | 45.78 | 31.78 | 1.44x |
+| prefill b1 2048, TTFT (ms) | 392.32 | 275.60 | 1.42x |
+| prefill b1 8192, TTFT (ms) | 2090.82 | 1309.19 | 1.60x |
+| decode b1 512+128, TPOT (ms) | 37.78 | 25.77 | 1.47x |
+| decode b8 512+128, TPOT (ms) | 45.37 | 30.00 | 1.51x |
+| decode b1 8192+128, TPOT (ms) | 51.13 | 29.69 | 1.72x |
 
 All GPU jobs use the `bikd-delta-gpu` account on the `gpuA40x4` partition. Run them from the repo root on Delta, for example `sbatch slurm/baseline.sbatch`. `scripts/usage.sh` shows how many GPU hours have been used.
