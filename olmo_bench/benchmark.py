@@ -45,8 +45,12 @@ class Eager:
 def make_runner(model, opts, batch, max_len):
     if "static" in opts:
         from olmo_bench.fast_decode import GraphDecoder
-        return GraphDecoder(model, batch, max_len, use_graph="graph" in opts)
+        return GraphDecoder(model, batch, max_len, **decoder_args(opts))
     return Eager(model)
+
+
+def decoder_args(opts):
+    return {"use_graph": "graph" in opts, "additive_mask": "mask" in opts}
 
 
 def timed_prefill(runner, input_ids):
@@ -229,10 +233,10 @@ def main():
 
 def parse_opts(text):
     opts = {o for o in text.split(",") if o}
-    unknown = opts - {"fused", "static", "graph"}
+    unknown = opts - {"fused", "static", "graph", "mask"}
     if unknown:
         raise SystemExit(f"unknown --opt {sorted(unknown)}")
-    if "graph" in opts:
+    if opts & {"graph", "mask"}:
         opts.add("static")
     return opts
 
@@ -248,8 +252,8 @@ def opt_generate(model, opts):
     if "static" not in opts:
         return numerics.eager_generate(model)
     from olmo_bench.fast_decode import GraphDecoder
-    use_graph = "graph" in opts
-    return lambda ids, n: GraphDecoder(model, ids.shape[0], ids.shape[1] + n, use_graph).greedy_generate(ids, n)
+    args = decoder_args(opts)
+    return lambda ids, n: GraphDecoder(model, ids.shape[0], ids.shape[1] + n, **args).greedy_generate(ids, n)
 
 
 def print_config(c):

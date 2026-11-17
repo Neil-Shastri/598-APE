@@ -8,7 +8,7 @@ def round_up(n, m):
 class StaticKV:
     # Preallocated K/V per layer. Sliding layers are ring buffers of `sliding_window` slots,
     # full layers have `max_len` slots. Token at position p lives in slot p % size.
-    def __init__(self, config, batch_size, max_len, device, dtype):
+    def __init__(self, config, batch_size, max_len, device, dtype, additive_mask=False):
         head_dim = getattr(config, "head_dim", None) or config.hidden_size // config.num_attention_heads
         self.layer_types = config.layer_types
         self.sizes = [min(config.sliding_window, max_len) if t == "sliding_attention" else max_len
@@ -21,6 +21,12 @@ class StaticKV:
         self.pos = torch.zeros(1, dtype=torch.long, device=device)
         self.prefilling = False
         self.slots = {}
+        self.additive_mask = additive_mask
+        if additive_mask:
+            # cached so the decode step builds each mask with a single `where`
+            self.ar = {n: torch.arange(n, device=device) for n in set(self.sizes)}
+            self.zero = torch.zeros((), device=device, dtype=dtype)
+            self.ninf = torch.full((), float("-inf"), device=device, dtype=dtype)
 
     def update(self, key_states, value_states, layer_idx, *args, **kwargs):
         n = self.sizes[layer_idx]
@@ -52,20 +58,24 @@ class StaticKV:
             n = self.sizes[self.layer_types.index(t)]
             if t == "sliding_attention" and sliding_full:
                 masks[t] = None
+            elif self.additive_mask:
+                # sdpa uses a float mask as is instead of converting a bool one in every layer
+                masks[t] = torch.where(self.ar[n] <= self.pos, self.zero, self.ninf).view(1, 1, 1, n)
             else:
                 masks[t] = (torch.arange(n, device=self.pos.device) <= self.pos).view(1, 1, 1, n)
         return masks
 
 
 class GraphDecoder:
-    def __init__(self, model, batch_size, max_len, use_graph=True):
+    def __init__(self, model, batch_size, max_len, use_graph=True, additive_mask=False):
         assert model.config._attn_implementation == "sdpa", "GraphDecoder needs sdpa attention"
         param = next(model.parameters())
         self.model = model
         self.batch_size = batch_size
         self.max_len = round_up(max_len, 64)
         self.use_graph = use_graph
-        self.kv = StaticKV(model.config, batch_size, self.max_len, param.device, param.dtype)
+        self.kv = StaticKV(model.config, batch_size, self.max_len, param.device, param.dtype,
+                           additive_mask)
         self.token = torch.zeros(batch_size, 1, dtype=torch.long, device=param.device)
         self.sliding_size = min(self.kv.sizes)
         self.sliding_full = False
