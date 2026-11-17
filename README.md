@@ -90,7 +90,8 @@ Speedup is against the baseline above, same config.
 | c984939 | static ring-buffer KV cache + CUDA graph decode (`--opt static,graph`) | TPOT b1: 1.26x, b8: 1.30x, b1 8192: 1.44x; TTFT unchanged |
 | c984939 | both (`--opt fused,static,graph`) | TTFT 128: 1.41x, 2048: 1.35x, 8192: 1.23x; TPOT b1: 1.38x, b8: 1.44x, b1 8192: 1.56x |
 | 54b0a51 | build the decode mask once per step (`--opt mask`) | TPOT b1 -0.6%, b8 -0.5% vs previous row |
-| | compute prefill cache slots once (`--opt slots`) | TTFT 128 -0.5% vs previous row |
+| 95c762c | compute prefill cache slots once (`--opt slots`) | TTFT 128 -0.5% vs previous row |
+| | merge q/k/v into one GEMM (`--opt qkv`) | TTFT 2048 -2.8%; TPOT b1 -0.5%, b8 -1.4% vs previous row |
 
 ### Fused Triton kernels (`--opt fused`)
 
@@ -158,5 +159,11 @@ Measured in job 23916330 (all the new optimizations were stacked one at a time i
 ### Computing the prefill slots once (`--opt slots`)
 
 During prefill every layer worked out which cache slot each prompt token goes into, but the answer only depends on the buffer size (there are two, sliding and full). Now it's computed once per size. Bit-exact. TTFT at 128 tokens went 32.76 -> 32.61 ms; the other configs didn't change, as expected.
+
+### Merging the q/k/v projections (`--opt qkv`)
+
+Each layer did three separate 4096x4096 GEMMs for q, k and v. At batch 1 each one only launches 64 blocks for 84 SMs, so `merge.py` stacks the three weights into one 12288x4096 weight (the old weights become views into it, no extra memory) and the fused attention does one GEMM and slices the result. The Triton q/k-norm+RoPE kernel now takes a row stride so the slices aren't copied.
+
+TTFT 2048 291.5 -> 283.3 ms, TPOT b1 27.56 -> 27.42 ms, b8 31.27 -> 30.82 ms. Numerics pass (same top-1 and perplexity as before). Note: in this job the stack also had a RoPE-table option turned on that we later dropped because it made no measurable difference, so the row before this one is `...,rope`.
 
 All GPU jobs use the `bikd-delta-gpu` account on the `gpuA40x4` partition. Run them from the repo root on Delta, for example `sbatch slurm/baseline.sbatch`. `scripts/usage.sh` shows how many GPU hours have been used.

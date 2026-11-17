@@ -2,6 +2,7 @@
 
 enable(model) swaps the forwards of the Olmo3 attention, decoder layer, MLP and RMSNorm classes:
   - q_norm + k_norm + RoPE        -> one launch (qk_norm_rope)
+  - q/k/v projections             -> one GEMM if merge.merge_qkv(model) was called
   - post-norm + residual add      -> one launch each (rmsnorm with residual), also the final norm
   - silu(gate) * up               -> one launch (silu_mul)
 Rounding follows the HF code: fp32 math, bf16 wherever HF produces a bf16 tensor.
@@ -38,14 +39,14 @@ if triton is not None:
         tl.store(out_ptr + row * N + cols, y)
 
     @triton.jit
-    def _norm_rope_row(x_ptr, w_ptr, o_ptr, cos_ptr, sin_ptr, row, crow, eps,
+    def _norm_rope_row(x_ptr, x_stride, w_ptr, o_ptr, cos_ptr, sin_ptr, row, crow, eps,
                        H: tl.constexpr, D: tl.constexpr):
         HALF: tl.constexpr = D // 2
         d = tl.arange(0, HALF)[None, :]
         lo = tl.arange(0, H)[:, None] * D + d
         hi = lo + HALF
-        x1 = tl.load(x_ptr + row * H * D + lo).to(tl.float32)
-        x2 = tl.load(x_ptr + row * H * D + hi).to(tl.float32)
+        x1 = tl.load(x_ptr + row * x_stride + lo).to(tl.float32)
+        x2 = tl.load(x_ptr + row * x_stride + hi).to(tl.float32)
         rstd = tl.rsqrt((tl.sum(x1 * x1) + tl.sum(x2 * x2)) / (H * D) + eps)
         n1 = (tl.load(w_ptr + lo).to(tl.float32) * (x1 * rstd)).to(tl.bfloat16).to(tl.float32)
         n2 = (tl.load(w_ptr + hi).to(tl.float32) * (x2 * rstd)).to(tl.bfloat16).to(tl.float32)
@@ -57,14 +58,14 @@ if triton is not None:
         tl.store(o_ptr + row * H * D + hi, (n2 * c2 + n1 * s2).to(tl.bfloat16))
 
     @triton.jit(do_not_specialize=["S", "cos_bstride"])
-    def _qk_norm_rope_kernel(q_ptr, k_ptr, qw_ptr, kw_ptr, cos_ptr, sin_ptr, qo_ptr, ko_ptr,
+    def _qk_norm_rope_kernel(q_ptr, k_ptr, q_stride, k_stride, qw_ptr, kw_ptr, cos_ptr, sin_ptr, qo_ptr, ko_ptr,
                              S, cos_bstride, eps, H: tl.constexpr, D: tl.constexpr):
         row = tl.program_id(0)
         crow = (row // S) * cos_bstride + (row % S) * D
         if tl.program_id(1) == 0:
-            _norm_rope_row(q_ptr, qw_ptr, qo_ptr, cos_ptr, sin_ptr, row, crow, eps, H, D)
+            _norm_rope_row(q_ptr, q_stride, qw_ptr, qo_ptr, cos_ptr, sin_ptr, row, crow, eps, H, D)
         else:
-            _norm_rope_row(k_ptr, kw_ptr, ko_ptr, cos_ptr, sin_ptr, row, crow, eps, H, D)
+            _norm_rope_row(k_ptr, k_stride, kw_ptr, ko_ptr, cos_ptr, sin_ptr, row, crow, eps, H, D)
 
     @triton.jit(do_not_specialize=["n"])
     def _silu_mul_kernel(g_ptr, u_ptr, out_ptr, n, BLOCK: tl.constexpr):
@@ -88,15 +89,22 @@ def rmsnorm(x, norm, residual=None):
     return out
 
 
+def _rows(x):
+    # [rows, width] view with unit column stride; slices of a merged GEMM output need no copy
+    x = x.reshape(-1, x.shape[-1])
+    return x if x.stride(-1) == 1 else x.contiguous()
+
+
 def qk_norm_rope(q, k, q_norm, k_norm, cos, sin, head_dim):
-    # q, k: [B, S, H * D] projections; returns [B, H, S, D] views like the HF code
-    q, k = q.contiguous(), k.contiguous()
+    # q, k: [B, S, H * D] projections (rows may be strided); returns [B, H, S, D] views like the HF code
     cos, sin = cos.contiguous(), sin.contiguous()
     assert cos.dtype == torch.float32 and cos.shape[-1] == head_dim
     b, s, hd = q.shape
-    qo, ko = torch.empty_like(q), torch.empty_like(k)
+    qo = torch.empty(q.shape, device=q.device, dtype=q.dtype)
+    ko = torch.empty(k.shape, device=k.device, dtype=k.dtype)
+    q, k = _rows(q), _rows(k)
     cos_bstride = 0 if cos.shape[0] == 1 else s * head_dim
-    _qk_norm_rope_kernel[(b * s, 2)](q, k, q_norm.weight, k_norm.weight, cos, sin, qo, ko,
+    _qk_norm_rope_kernel[(b * s, 2)](q, k, q.stride(0), k.stride(0), q_norm.weight, k_norm.weight, cos, sin, qo, ko,
                                      s, cos_bstride, q_norm.variance_epsilon,
                                      H=hd // head_dim, D=head_dim, num_warps=8, enable_fp_fusion=False)
     shape = (b, s, -1, head_dim)
@@ -118,10 +126,16 @@ def attention_forward(self, hidden_states, position_embeddings, attention_mask, 
     input_shape = hidden_states.shape[:-1]
     hidden_shape = (*input_shape, -1, self.head_dim)
 
+    if hasattr(self, "qkv_proj"):
+        sizes = [self.q_proj.out_features, self.k_proj.out_features, self.v_proj.out_features]
+        q, k, v = self.qkv_proj(hidden_states).split(sizes, -1)
+    else:
+        q, k, v = self.q_proj(hidden_states), self.k_proj(hidden_states), self.v_proj(hidden_states)
+
     cos, sin = position_embeddings
-    query_states, key_states = qk_norm_rope(self.q_proj(hidden_states), self.k_proj(hidden_states),
-                                            self.q_norm, self.k_norm, cos, sin, self.head_dim)
-    value_states = self.v_proj(hidden_states).view(hidden_shape).transpose(1, 2)
+    query_states, key_states = qk_norm_rope(q, k, self.q_norm, self.k_norm, cos, sin, self.head_dim)
+    # strided view of the merged output is fine: SDPA and the caches only need stride(-1) == 1
+    value_states = v.view(hidden_shape).transpose(1, 2)
 
     if past_key_values is not None:
         key_states, value_states = past_key_values.update(key_states, value_states, self.layer_idx)
@@ -210,6 +224,10 @@ def warmup(model):
     q = torch.randn(1, 3, cfg.num_attention_heads * attn.head_dim, device=dev, dtype=torch.bfloat16)
     cos = torch.randn(1, 3, attn.head_dim, device=dev)
     qk_norm_rope(q, q, attn.q_norm, attn.k_norm, cos, cos, attn.head_dim)
+    if hasattr(attn, "qkv_proj"):
+        qkv = torch.randn(1, 3, attn.qkv_proj.out_features, device=dev, dtype=torch.bfloat16)
+        q, k, _ = qkv.split([attn.q_proj.out_features, attn.k_proj.out_features, attn.v_proj.out_features], -1)
+        qk_norm_rope(q, k, attn.q_norm, attn.k_norm, cos, cos, attn.head_dim)
     g = torch.randn(1, 3, cfg.intermediate_size, device=dev, dtype=torch.bfloat16)
     silu_mul(g, g)
     torch.cuda.synchronize()

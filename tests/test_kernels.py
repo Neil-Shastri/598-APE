@@ -95,6 +95,21 @@ def test_qk_norm_rope(shape, layer_type, per_row_positions):
         check(out, ref, tol)
 
 
+@pytest.mark.parametrize("shape", SHAPES)
+def test_qk_norm_rope_strided(shape):
+    # q and k as slices of a merged qkv output give the same bits as contiguous inputs
+    b, s = shape
+    q_norm, k_norm = make_norm(4096, 1), make_norm(4096, 2)
+    qkv = torch.randn(b, s, 3 * 4096, device=DEV, dtype=BF) * 2
+    q, k, _ = qkv.split(4096, -1)
+    cos, sin = real_rotary()(q, torch.arange(s, device=DEV)[None] + 500, "full_attention")
+    with torch.no_grad():
+        out = kernels.qk_norm_rope(q, k, q_norm, k_norm, cos, sin, 128)
+        ref = kernels.qk_norm_rope(q.contiguous(), k.contiguous(), q_norm, k_norm, cos, sin, 128)
+    for o, r in zip(out, ref):
+        assert o.stride() == r.stride() and torch.equal(o, r)
+
+
 @pytest.mark.parametrize("rows", [1, 7, 512, 2048])
 def test_silu_mul(rows):
     g = torch.randn(rows, 11008, device=DEV, dtype=BF) * 4
@@ -167,3 +182,22 @@ def test_enable_rejects_eager_attention(tiny_dir):
     with pytest.raises(AssertionError):
         kernels.enable(model)
     assert not kernels.enabled()
+
+
+def test_merge_end_to_end(tiny_cuda):
+    from olmo_bench.merge import merge_qkv
+    from olmo_bench.workload import greedy_generate, make_input_ids
+
+    model, tok = tiny_cuda
+    ids = make_input_ids(tok, 2, 40, DEV)
+    with torch.no_grad():
+        kernels.enable(model)
+        ref = model(ids).logits
+        ref_gen = greedy_generate(model, ids, 12)
+        merge_qkv(model)
+        kernels.warmup(model)
+        out = model(ids).logits
+        gen = greedy_generate(model, ids, 12)
+    # a merged GEMM may pick another cuBLAS kernel, so bf16 rounding can differ slightly
+    torch.testing.assert_close(out.float(), ref.float(), rtol=0.02, atol=0.02 * ref.float().abs().max().item())
+    assert torch.equal(gen, ref_gen)
