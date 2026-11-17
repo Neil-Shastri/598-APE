@@ -1,11 +1,11 @@
-# 598-project
+# 598-APE
 
 Profiling non-GEMM ops (RMSNorm, QK-Norm, RoPE, residual adds, activations) in OLMo 3 7B inference on NCSA Delta.
 
 ## File structure
 
 ```
-598-project/
+598-APE/
 ├── README.md
 ├── requirements.txt
 ├── olmo_bench/
@@ -14,7 +14,9 @@ Profiling non-GEMM ops (RMSNorm, QK-Norm, RoPE, residual adds, activations) in O
 │   ├── benchmark.py           TTFT / TPOT / tokens per second
 │   ├── correctness.py         output and perplexity checks
 │   ├── kernels.py             fused Triton kernels (--opt fused)
-│   ├── fast_decode.py         static KV cache + CUDA graph decode (--opt static,graph)
+│   ├── fast_decode.py         static KV cache + CUDA graph decode (--opt static,graph,mask,slots,cudnn)
+│   ├── merge.py               merged q/k/v and gate/up weights (--opt qkv,gateup)
+│   ├── band_attention.py      banded sliding-window attention (--opt band)
 │   ├── numerics.py            accuracy check for optimized runs
 │   ├── env_info.py
 │   ├── stats.py
@@ -38,6 +40,7 @@ Profiling non-GEMM ops (RMSNorm, QK-Norm, RoPE, residual adds, activations) in O
 │   └── profile_ncu.sbatch
 ├── scripts/
 │   ├── env.sh
+│   ├── knobs.py               knob sweep (cuBLAS, SDPA backends, Triton warps)
 │   ├── usage.sh
 │   └── gpucheck/
 │       ├── vecadd.cu
@@ -48,7 +51,25 @@ Profiling non-GEMM ops (RMSNorm, QK-Norm, RoPE, residual adds, activations) in O
     ├── baseline/              benchmark runs and golden outputs
     ├── baseline_profile/      profiler summaries and SUMMARY.md
     ├── optimized_profile/     same profile with --opt fused,static,graph
-    └── experiments/           optimization runs
+    ├── experiments/           optimization runs
+    ├── knobs/                 knob sweep results
+    └── tunable/               TunableOp csv for the A40
+```
+
+## Hardware and software
+
+- One NVIDIA GPU with at least 24 GB of memory (we used an A40, 48 GB). The baseline peaks at about 23 GB on the 8192 token prompt.
+- CUDA 13 driver and toolkit, Python 3.13, torch 2.14.1, transformers 5.19.0, Triton 3.8.0 (`requirements.txt`).
+- About 15 GB of disk for the model weights.
+- The tests and the benchmark logic also run on a CPU-only laptop with a tiny model; the GPU tests skip there.
+
+## Running
+
+```
+python -m pytest -q profiling tests                         # unit tests
+python -m olmo_bench.benchmark                               # baseline
+python -m olmo_bench.benchmark --opt fused,static,graph,mask,slots,qkv,gateup,band,tunable,cudnn
+VARIANTS="baseline fused,static,graph" sbatch slurm/experiment.sbatch   # same-node comparison on Delta
 ```
 
 ## Setup so far
@@ -95,7 +116,7 @@ Speedup is against the baseline above, same config.
 | a27dee8 | merge gate/up into one GEMM (`--opt gateup`) | TPOT b1 -2.3%, TTFT 2048 -1.7%; TTFT 128 +2.8%, TPOT b8 +0.7% vs previous row |
 | ec614ab | banded attention for sliding layers in long prefill (`--opt band`) | TTFT 8192 -21.7% vs previous row |
 | d047493 | TunableOp GEMM selection (`--opt tunable`) | TTFT 128 -5.2%; TPOT b1 -1.9%, b8 -1.2% vs previous row |
-| | cuDNN attention for the decode step (`--opt cudnn`) | TPOT b1 -1.9%, b8 -2.1%, b1 8192 -5.4% vs previous row |
+| e5f533d | cuDNN attention for the decode step (`--opt cudnn`) | TPOT b1 -1.9%, b8 -2.1%, b1 8192 -5.4% vs previous row |
 
 ### Fused Triton kernels (`--opt fused`)
 

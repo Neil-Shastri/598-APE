@@ -14,7 +14,7 @@
 source ~/classes/598/env.sh
 export HF_HUB_OFFLINE=1
 export PYTHONUNBUFFERED=1
-cd $PROJ/598-project
+cd $PROJ/598-APE
 
 echo "host $(hostname)  job $SLURM_JOB_ID  $(date)"
 nvidia-smi

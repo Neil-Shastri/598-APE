@@ -14,7 +14,7 @@
 source ~/classes/598/env.sh
 export HF_HUB_OFFLINE=1
 export PYTHONUNBUFFERED=1
-cd $PROJ/598-project
+cd $PROJ/598-APE
 TAG=${TAG:-$(date +%Y%m%d_%H%M%S)_$SLURM_JOB_ID}
 OUT=results/baseline_profile/$TAG/ncu
 RAW=$RUNS/baseline_profile/$TAG/ncu

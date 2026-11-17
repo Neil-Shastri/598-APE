@@ -16,7 +16,7 @@ source ~/classes/598/env.sh
 export HF_HUB_OFFLINE=1
 export PYTHONUNBUFFERED=1
 export TORCHINDUCTOR_CACHE_DIR=/work/nvme/bikd/$USER/598/inductor_cache
-cd $PROJ/598-project
+cd $PROJ/598-APE
 TAG=${TAG:-exp}_$SLURM_JOB_ID
 OUT=results/experiments/$TAG
 mkdir -p $OUT
