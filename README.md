@@ -89,7 +89,8 @@ Speedup is against the baseline above, same config.
 | 7b9baf8 | fused Triton kernels: q/k norm + RoPE, post-norm + residual add, SiLU*mul (`--opt fused`) | TTFT 128: 1.25x, 2048: 1.36x, 8192: 1.24x; TPOT b1: 1.32x, b8: 1.13x, b1 8192: 1.10x |
 | c984939 | static ring-buffer KV cache + CUDA graph decode (`--opt static,graph`) | TPOT b1: 1.26x, b8: 1.30x, b1 8192: 1.44x; TTFT unchanged |
 | c984939 | both (`--opt fused,static,graph`) | TTFT 128: 1.41x, 2048: 1.35x, 8192: 1.23x; TPOT b1: 1.38x, b8: 1.44x, b1 8192: 1.56x |
-| | build the decode mask once per step (`--opt mask`) | TPOT b1 -0.6%, b8 -0.5% vs previous row |
+| 54b0a51 | build the decode mask once per step (`--opt mask`) | TPOT b1 -0.6%, b8 -0.5% vs previous row |
+| | compute prefill cache slots once (`--opt slots`) | TTFT 128 -0.5% vs previous row |
 
 ### Fused Triton kernels (`--opt fused`)
 
@@ -153,5 +154,9 @@ Most of the remaining time is now matrix multiplies (81-93%), and at decode batc
 With the static cache the decode step passes a True/False mask over the whole buffer, and SDPA turns it into a 0/-inf mask again in every one of the 32 layers (3 small kernels each, so 96 per token). Now `fast_decode.py` builds the 0/-inf mask once per step and every layer reuses it. Output is bit-exact.
 
 Measured in job 23916330 (all the new optimizations were stacked one at a time in the same job, `results/experiments/ape2_23916330/`): TPOT b1 27.75 -> 27.57 ms, b8 31.45 -> 31.30 ms, prefill unchanged.
+
+### Computing the prefill slots once (`--opt slots`)
+
+During prefill every layer worked out which cache slot each prompt token goes into, but the answer only depends on the buffer size (there are two, sliding and full). Now it's computed once per size. Bit-exact. TTFT at 128 tokens went 32.76 -> 32.61 ms; the other configs didn't change, as expected.
 
 All GPU jobs use the `bikd-delta-gpu` account on the `gpuA40x4` partition. Run them from the repo root on Delta, for example `sbatch slurm/baseline.sbatch`. `scripts/usage.sh` shows how many GPU hours have been used.

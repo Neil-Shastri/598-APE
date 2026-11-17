@@ -50,7 +50,7 @@ def make_runner(model, opts, batch, max_len):
 
 
 def decoder_args(opts):
-    return {"use_graph": "graph" in opts, "additive_mask": "mask" in opts}
+    return {"use_graph": "graph" in opts, "additive_mask": "mask" in opts, "cached_slots": "slots" in opts}
 
 
 def timed_prefill(runner, input_ids):
@@ -233,10 +233,10 @@ def main():
 
 def parse_opts(text):
     opts = {o for o in text.split(",") if o}
-    unknown = opts - {"fused", "static", "graph", "mask"}
+    unknown = opts - {"fused", "static", "graph", "mask", "slots"}
     if unknown:
         raise SystemExit(f"unknown --opt {sorted(unknown)}")
-    if opts & {"graph", "mask"}:
+    if opts & {"graph", "mask", "slots"}:
         opts.add("static")
     return opts
 

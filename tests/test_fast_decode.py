@@ -6,7 +6,7 @@ from olmo_bench.workload import greedy_generate, make_input_ids
 
 # the tiny model has sliding_window 16
 CASES = [(1, 5), (3, 5), (1, 16), (3, 16), (1, 40), (3, 40)]
-FLAGS = [dict(additive_mask=True)]
+FLAGS = [dict(additive_mask=True), dict(cached_slots=True)]
 ALL_FLAGS = {k: v for f in FLAGS for k, v in f.items()}
 FLAG_SETS = FLAGS + [ALL_FLAGS]
 
@@ -55,10 +55,11 @@ def test_flags_are_bit_exact(tiny, flags, batch, prompt_len):
     assert all(torch.equal(a, b) for a, b in zip(logits, ref_logits))
 
 
-def test_repeated_prefill_is_fresh(tiny):
+@pytest.mark.parametrize("flags", [{}] + FLAG_SETS, ids=flag_id)
+def test_repeated_prefill_is_fresh(tiny, flags):
     model, tok = tiny
     ids = make_input_ids(tok, 2, 12, "cpu")
-    dec = GraphDecoder(model, 2, 40, use_graph=False)
+    dec = GraphDecoder(model, 2, 40, use_graph=False, **flags)
     first = dec.greedy_generate(ids, 20)
     other = make_input_ids(tok, 2, 30, "cpu")[:, 18:]
     dec.greedy_generate(other, 20)

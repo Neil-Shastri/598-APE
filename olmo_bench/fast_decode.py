@@ -8,7 +8,8 @@ def round_up(n, m):
 class StaticKV:
     # Preallocated K/V per layer. Sliding layers are ring buffers of `sliding_window` slots,
     # full layers have `max_len` slots. Token at position p lives in slot p % size.
-    def __init__(self, config, batch_size, max_len, device, dtype, additive_mask=False):
+    def __init__(self, config, batch_size, max_len, device, dtype, additive_mask=False,
+                 cached_slots=False):
         head_dim = getattr(config, "head_dim", None) or config.hidden_size // config.num_attention_heads
         self.layer_types = config.layer_types
         self.sizes = [min(config.sliding_window, max_len) if t == "sliding_attention" else max_len
@@ -22,6 +23,8 @@ class StaticKV:
         self.prefilling = False
         self.slots = {}
         self.additive_mask = additive_mask
+        self.cached_slots = cached_slots
+        self.prefill_slots = {}
         if additive_mask:
             # cached so the decode step builds each mask with a single `where`
             self.ar = {n: torch.arange(n, device=device) for n in set(self.sizes)}
@@ -33,7 +36,11 @@ class StaticKV:
         if self.prefilling:
             length = key_states.shape[2]
             keep = min(length, n)
-            idx = torch.arange(length - keep, length, device=self.pos.device) % n
+            idx = self.prefill_slots.get(n)
+            if idx is None:
+                idx = torch.arange(length - keep, length, device=self.pos.device) % n
+                if self.cached_slots:
+                    self.prefill_slots[n] = idx
             self.keys[layer_idx].index_copy_(2, idx, key_states[:, :, length - keep:])
             self.values[layer_idx].index_copy_(2, idx, value_states[:, :, length - keep:])
             return key_states, value_states
@@ -67,7 +74,8 @@ class StaticKV:
 
 
 class GraphDecoder:
-    def __init__(self, model, batch_size, max_len, use_graph=True, additive_mask=False):
+    def __init__(self, model, batch_size, max_len, use_graph=True, additive_mask=False,
+                 cached_slots=False):
         assert model.config._attn_implementation == "sdpa", "GraphDecoder needs sdpa attention"
         param = next(model.parameters())
         self.model = model
@@ -75,7 +83,7 @@ class GraphDecoder:
         self.max_len = round_up(max_len, 64)
         self.use_graph = use_graph
         self.kv = StaticKV(model.config, batch_size, self.max_len, param.device, param.dtype,
-                           additive_mask)
+                           additive_mask, cached_slots)
         self.token = torch.zeros(batch_size, 1, dtype=torch.long, device=param.device)
         self.sliding_size = min(self.kv.sizes)
         self.sliding_full = False
@@ -87,6 +95,7 @@ class GraphDecoder:
         assert input_ids.shape[0] == self.batch_size and input_ids.shape[1] < self.max_len
         length = input_ids.shape[1]
         self.kv.pos.zero_()
+        self.kv.prefill_slots = {}
         self.kv.prefilling = True
         try:
             out = self.model(input_ids=input_ids, past_key_values=self.kv, use_cache=True, logits_to_keep=1)
