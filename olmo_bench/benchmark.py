@@ -233,7 +233,7 @@ def main():
 
 def parse_opts(text):
     opts = {o for o in text.split(",") if o}
-    unknown = opts - {"fused", "static", "graph", "mask", "slots", "qkv", "gateup"}
+    unknown = opts - {"fused", "static", "graph", "mask", "slots", "qkv", "gateup", "band"}
     if unknown:
         raise SystemExit(f"unknown --opt {sorted(unknown)}")
     if opts & {"graph", "mask", "slots"}:
@@ -254,6 +254,9 @@ def apply_opts(model, opts):
         from olmo_bench import kernels
         kernels.enable(model)
         kernels.warmup(model)
+    if "band" in opts:
+        from olmo_bench import band_attention
+        band_attention.enable(model)
 
 
 def opt_generate(model, opts):

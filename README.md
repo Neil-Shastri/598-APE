@@ -92,7 +92,8 @@ Speedup is against the baseline above, same config.
 | 54b0a51 | build the decode mask once per step (`--opt mask`) | TPOT b1 -0.6%, b8 -0.5% vs previous row |
 | 95c762c | compute prefill cache slots once (`--opt slots`) | TTFT 128 -0.5% vs previous row |
 | 367ed7b | merge q/k/v into one GEMM (`--opt qkv`) | TTFT 2048 -2.8%; TPOT b1 -0.5%, b8 -1.4% vs previous row |
-| | merge gate/up into one GEMM (`--opt gateup`) | TPOT b1 -2.3%, TTFT 2048 -1.7%; TTFT 128 +2.8%, TPOT b8 +0.7% vs previous row |
+| a27dee8 | merge gate/up into one GEMM (`--opt gateup`) | TPOT b1 -2.3%, TTFT 2048 -1.7%; TTFT 128 +2.8%, TPOT b8 +0.7% vs previous row |
+| | banded attention for sliding layers in long prefill (`--opt band`) | TTFT 8192 -21.7% vs previous row |
 
 ### Fused Triton kernels (`--opt fused`)
 
@@ -170,5 +171,11 @@ TTFT 2048 291.5 -> 283.3 ms, TPOT b1 27.56 -> 27.42 ms, b8 31.27 -> 30.82 ms. Nu
 ### Merging the gate/up projections (`--opt gateup`)
 
 Same idea for the MLP: gate and up (11008x4096 each) become one 22016x4096 GEMM, and the fused SiLU*mul kernel reads the two halves with a row stride. TPOT b1 27.42 -> 26.79 ms, b1 at 8192 context 32.53 -> 31.92 ms, TTFT 2048 283.3 -> 278.4 ms. It isn't a win everywhere though: TTFT 128 got slower (32.55 -> 33.45 ms) and TPOT b8 slightly slower (30.82 -> 31.02 ms), since cuBLAS picks a different kernel for the merged shape. TunableOp later fixes most of that.
+
+### Banded sliding-window attention in long prefill (`--opt band`)
+
+24 of the 32 layers only look back 4096 tokens, but in an 8192 token prefill SDPA still scores all 8192x8192 pairs and masks most of them out. `band_attention.py` does the first 4096 queries with plain causal attention and the rest in chunks of 1024 against only their own window of keys, so most of the thrown-away work is skipped. Only prompts longer than the window are affected.
+
+TTFT 8192 1687 -> 1320 ms (-21.7%), everything else unchanged. Long-context perplexity changed by +0.022%, top-1 agreement 99.56%.
 
 All GPU jobs use the `bikd-delta-gpu` account on the `gpuA40x4` partition. Run them from the repo root on Delta, for example `sbatch slurm/baseline.sbatch`. `scripts/usage.sh` shows how many GPU hours have been used.
