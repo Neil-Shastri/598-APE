@@ -3,6 +3,7 @@
 enable(model) swaps the forwards of the Olmo3 attention, decoder layer, MLP and RMSNorm classes:
   - q_norm + k_norm + RoPE        -> one launch (qk_norm_rope)
   - q/k/v projections             -> one GEMM if merge.merge_qkv(model) was called
+  - gate/up projections           -> one GEMM if merge.merge_gateup(model) was called
   - post-norm + residual add      -> one launch each (rmsnorm with residual), also the final norm
   - silu(gate) * up               -> one launch (silu_mul)
 Rounding follows the HF code: fp32 math, bf16 wherever HF produces a bf16 tensor.
@@ -67,15 +68,16 @@ if triton is not None:
         else:
             _norm_rope_row(k_ptr, k_stride, kw_ptr, ko_ptr, cos_ptr, sin_ptr, row, crow, eps, H, D)
 
-    @triton.jit(do_not_specialize=["n"])
-    def _silu_mul_kernel(g_ptr, u_ptr, out_ptr, n, BLOCK: tl.constexpr):
-        offs = tl.program_id(0) * BLOCK + tl.arange(0, BLOCK)
-        mask = offs < n
-        g = tl.load(g_ptr + offs, mask=mask, other=0.0).to(tl.float32)
-        u = tl.load(u_ptr + offs, mask=mask, other=0.0).to(tl.float32)
+    @triton.jit
+    def _silu_mul_kernel(g_ptr, u_ptr, out_ptr, g_stride, u_stride, n, BLOCK: tl.constexpr):
+        row = tl.program_id(0).to(tl.int64)
+        cols = tl.program_id(1) * BLOCK + tl.arange(0, BLOCK)
+        mask = cols < n
+        g = tl.load(g_ptr + row * g_stride + cols, mask=mask, other=0.0).to(tl.float32)
+        u = tl.load(u_ptr + row * u_stride + cols, mask=mask, other=0.0).to(tl.float32)
         # same as torch: x / (1 + expf(-x)) in fp32, rounded to bf16 before the multiply
         act = tl.math.div_rn(g, 1.0 + libdevice.exp(-g)).to(tl.bfloat16).to(tl.float32)
-        tl.store(out_ptr + offs, (act * u).to(tl.bfloat16), mask=mask)
+        tl.store(out_ptr + row * n + cols, (act * u).to(tl.bfloat16), mask=mask)
 
 
 def rmsnorm(x, norm, residual=None):
@@ -112,11 +114,13 @@ def qk_norm_rope(q, k, q_norm, k_norm, cos, sin, head_dim):
 
 
 def silu_mul(gate, up):
-    gate, up = gate.contiguous(), up.contiguous()
-    out = torch.empty_like(gate)
-    n = gate.numel()
+    # gate, up: [..., I], rows may be strided (halves of a merged gate_up output)
+    out = torch.empty(gate.shape, device=gate.device, dtype=gate.dtype)
+    gate, up = _rows(gate), _rows(up)
+    rows, n = gate.shape
     block = 1024
-    _silu_mul_kernel[(triton.cdiv(n, block),)](gate, up, out, n, BLOCK=block, num_warps=4)
+    _silu_mul_kernel[(rows, triton.cdiv(n, block))](gate, up, out, gate.stride(0), up.stride(0), n,
+                                                    BLOCK=block, num_warps=4)
     return out
 
 
@@ -164,7 +168,11 @@ def layer_forward(self, hidden_states, attention_mask=None, position_ids=None, p
 
 
 def mlp_forward(self, x):
-    return self.down_proj(silu_mul(self.gate_proj(x), self.up_proj(x)))
+    if hasattr(self, "gate_up_proj"):
+        gate, up = self.gate_up_proj(x).chunk(2, -1)
+    else:
+        gate, up = self.gate_proj(x), self.up_proj(x)
+    return self.down_proj(silu_mul(gate, up))
 
 
 def norm_forward(self, hidden_states):
@@ -230,6 +238,8 @@ def warmup(model):
         qk_norm_rope(q, k, attn.q_norm, attn.k_norm, cos, cos, attn.head_dim)
     g = torch.randn(1, 3, cfg.intermediate_size, device=dev, dtype=torch.bfloat16)
     silu_mul(g, g)
+    if hasattr(layer.mlp, "gate_up_proj"):
+        silu_mul(*torch.randn(1, 3, 2 * cfg.intermediate_size, device=dev, dtype=torch.bfloat16).chunk(2, -1))
     torch.cuda.synchronize()
 
 

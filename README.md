@@ -91,7 +91,8 @@ Speedup is against the baseline above, same config.
 | c984939 | both (`--opt fused,static,graph`) | TTFT 128: 1.41x, 2048: 1.35x, 8192: 1.23x; TPOT b1: 1.38x, b8: 1.44x, b1 8192: 1.56x |
 | 54b0a51 | build the decode mask once per step (`--opt mask`) | TPOT b1 -0.6%, b8 -0.5% vs previous row |
 | 95c762c | compute prefill cache slots once (`--opt slots`) | TTFT 128 -0.5% vs previous row |
-| | merge q/k/v into one GEMM (`--opt qkv`) | TTFT 2048 -2.8%; TPOT b1 -0.5%, b8 -1.4% vs previous row |
+| 367ed7b | merge q/k/v into one GEMM (`--opt qkv`) | TTFT 2048 -2.8%; TPOT b1 -0.5%, b8 -1.4% vs previous row |
+| | merge gate/up into one GEMM (`--opt gateup`) | TPOT b1 -2.3%, TTFT 2048 -1.7%; TTFT 128 +2.8%, TPOT b8 +0.7% vs previous row |
 
 ### Fused Triton kernels (`--opt fused`)
 
@@ -165,5 +166,9 @@ During prefill every layer worked out which cache slot each prompt token goes in
 Each layer did three separate 4096x4096 GEMMs for q, k and v. At batch 1 each one only launches 64 blocks for 84 SMs, so `merge.py` stacks the three weights into one 12288x4096 weight (the old weights become views into it, no extra memory) and the fused attention does one GEMM and slices the result. The Triton q/k-norm+RoPE kernel now takes a row stride so the slices aren't copied.
 
 TTFT 2048 291.5 -> 283.3 ms, TPOT b1 27.56 -> 27.42 ms, b8 31.27 -> 30.82 ms. Numerics pass (same top-1 and perplexity as before). Note: in this job the stack also had a RoPE-table option turned on that we later dropped because it made no measurable difference, so the row before this one is `...,rope`.
+
+### Merging the gate/up projections (`--opt gateup`)
+
+Same idea for the MLP: gate and up (11008x4096 each) become one 22016x4096 GEMM, and the fused SiLU*mul kernel reads the two halves with a row stride. TPOT b1 27.42 -> 26.79 ms, b1 at 8192 context 32.53 -> 31.92 ms, TTFT 2048 283.3 -> 278.4 ms. It isn't a win everywhere though: TTFT 128 got slower (32.55 -> 33.45 ms) and TPOT b8 slightly slower (30.82 -> 31.02 ms), since cuBLAS picks a different kernel for the merged shape. TunableOp later fixes most of that.
 
 All GPU jobs use the `bikd-delta-gpu` account on the `gpuA40x4` partition. Run them from the repo root on Delta, for example `sbatch slurm/baseline.sbatch`. `scripts/usage.sh` shows how many GPU hours have been used.

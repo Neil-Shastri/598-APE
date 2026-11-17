@@ -233,13 +233,13 @@ def main():
 
 def parse_opts(text):
     opts = {o for o in text.split(",") if o}
-    unknown = opts - {"fused", "static", "graph", "mask", "slots", "qkv"}
+    unknown = opts - {"fused", "static", "graph", "mask", "slots", "qkv", "gateup"}
     if unknown:
         raise SystemExit(f"unknown --opt {sorted(unknown)}")
     if opts & {"graph", "mask", "slots"}:
         opts.add("static")
-    if opts & {"qkv"} and "fused" not in opts:
-        raise SystemExit("--opt qkv needs fused (the merged weights are read by the fused kernels)")
+    if opts & {"qkv", "gateup"} and "fused" not in opts:
+        raise SystemExit("--opt qkv/gateup needs fused (the merged weights are read by the fused kernels)")
     return opts
 
 
@@ -247,6 +247,9 @@ def apply_opts(model, opts):
     if "qkv" in opts:
         from olmo_bench import merge
         merge.merge_qkv(model)
+    if "gateup" in opts:
+        from olmo_bench import merge
+        merge.merge_gateup(model)
     if "fused" in opts:
         from olmo_bench import kernels
         kernels.enable(model)

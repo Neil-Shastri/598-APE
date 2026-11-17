@@ -118,6 +118,12 @@ def test_silu_mul(rows):
     check(kernels.silu_mul(g, u), ref, ulp(ref))
 
 
+@pytest.mark.parametrize("rows", [1, 7, 512, 2048])
+def test_silu_mul_strided(rows):
+    gate, up = (torch.randn(rows, 2 * 11008, device=DEV, dtype=BF) * 4).chunk(2, -1)
+    assert torch.equal(kernels.silu_mul(gate, up), kernels.silu_mul(gate.contiguous(), up.contiguous()))
+
+
 def test_cuda_graph_replay():
     norm = make_norm(4096)
     x = torch.randn(8, 1, 4096, device=DEV, dtype=BF)
@@ -185,7 +191,7 @@ def test_enable_rejects_eager_attention(tiny_dir):
 
 
 def test_merge_end_to_end(tiny_cuda):
-    from olmo_bench.merge import merge_qkv
+    from olmo_bench.merge import merge_gateup, merge_qkv
     from olmo_bench.workload import greedy_generate, make_input_ids
 
     model, tok = tiny_cuda
@@ -195,6 +201,7 @@ def test_merge_end_to_end(tiny_cuda):
         ref = model(ids).logits
         ref_gen = greedy_generate(model, ids, 12)
         merge_qkv(model)
+        merge_gateup(model)
         kernels.warmup(model)
         out = model(ids).logits
         gen = greedy_generate(model, ids, 12)

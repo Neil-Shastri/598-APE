@@ -1,4 +1,4 @@
-"""Merge the q/k/v projections of every layer into one weight (opt-in, used with kernels.enable).
+"""Merge the q/k/v and the gate/up projections of every layer (opt-in, used with kernels.enable).
 
 The merged weight is the only copy: the old Linear weights become row views of it,
 so memory does not grow and the stock HF forward still works.
@@ -26,3 +26,10 @@ def merge_qkv(model):
         attn = layer.self_attn
         if not hasattr(attn, "qkv_proj"):
             attn.qkv_proj = _merge([attn.q_proj, attn.k_proj, attn.v_proj])
+
+
+def merge_gateup(model):
+    for layer in model.model.layers:
+        mlp = layer.mlp
+        if not hasattr(mlp, "gate_up_proj"):
+            mlp.gate_up_proj = _merge([mlp.gate_proj, mlp.up_proj])
