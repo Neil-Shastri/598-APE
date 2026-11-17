@@ -93,7 +93,8 @@ Speedup is against the baseline above, same config.
 | 95c762c | compute prefill cache slots once (`--opt slots`) | TTFT 128 -0.5% vs previous row |
 | 367ed7b | merge q/k/v into one GEMM (`--opt qkv`) | TTFT 2048 -2.8%; TPOT b1 -0.5%, b8 -1.4% vs previous row |
 | a27dee8 | merge gate/up into one GEMM (`--opt gateup`) | TPOT b1 -2.3%, TTFT 2048 -1.7%; TTFT 128 +2.8%, TPOT b8 +0.7% vs previous row |
-| | banded attention for sliding layers in long prefill (`--opt band`) | TTFT 8192 -21.7% vs previous row |
+| ec614ab | banded attention for sliding layers in long prefill (`--opt band`) | TTFT 8192 -21.7% vs previous row |
+| | TunableOp GEMM selection (`--opt tunable`) | TTFT 128 -5.2%; TPOT b1 -1.9%, b8 -1.2% vs previous row |
 
 ### Fused Triton kernels (`--opt fused`)
 
@@ -177,5 +178,28 @@ Same idea for the MLP: gate and up (11008x4096 each) become one 22016x4096 GEMM,
 24 of the 32 layers only look back 4096 tokens, but in an 8192 token prefill SDPA still scores all 8192x8192 pairs and masks most of them out. `band_attention.py` does the first 4096 queries with plain causal attention and the rest in chunks of 1024 against only their own window of keys, so most of the thrown-away work is skipped. Only prompts longer than the window are affected.
 
 TTFT 8192 1687 -> 1320 ms (-21.7%), everything else unchanged. Long-context perplexity changed by +0.022%, top-1 agreement 99.56%.
+
+### TunableOp (`--opt tunable`)
+
+PyTorch's TunableOp times the cuBLAS kernel against a handful of cuBLASLt algorithms for every GEMM shape the first time that shape shows up, and saves the winner to `results/tunable/tunableop_a40.csv`. Later runs just read the csv, so no tuning happens in the timed loop. This fixed most of what the gate/up merge made worse: TTFT 128 33.55 -> 31.80 ms, and decode got a bit faster too (TPOT b1 26.78 -> 26.26 ms, b8 31.01 -> 30.64 ms). Numerics still pass (top-1 99.09% / 99.56%).
+
+### Knobs we tried and didn't keep
+
+`scripts/knobs.py` measures each knob on its own with the real shapes (job 23927854, `results/knobs/`):
+
+| knob | result | kept? |
+|---|---|---|
+| `preferred_blas_library("cublaslt")` | 0.95-1.08x depending on shape, TunableOp already picks per shape | no |
+| `allow_bf16_reduced_precision_reduction = False` | 0.94-1.23x, mixed, and changes results | no |
+| cuBLASLt workspace 1 vs 8 MiB | 1.00x | no |
+| Triton `num_warps` (2/4/8/16) | best setting saves < 1 us per kernel, about 0.03 ms per token | no |
+| TF32 | no effect, our math is bf16 | no |
+| SDPA backend for the masked decode step | cuDNN is 1.1-1.9x faster than the default memory-efficient kernel | turned into the next optimization |
+
+### Ablation
+
+`--opt static` alone (no CUDA graph, no fused kernels): TPOT b1 37.78 -> 37.63 ms, b8 45.37 -> 38.04 ms, b1 8192 51.13 -> 38.61 ms. So the static cache is what fixes batch 8 and long context (no more copying the cache), and the CUDA graph is what fixes batch 1.
+
+All the new optimizations above were measured stacked one at a time in job 23916330 (`slurm/experiment.sbatch`, log in `results/experiments/`). The GPU unit tests ran first (126 passed), and `compute-sanitizer --tool memcheck` on the kernel tests reported 0 errors (job 23916331).
 
 All GPU jobs use the `bikd-delta-gpu` account on the `gpuA40x4` partition. Run them from the repo root on Delta, for example `sbatch slurm/baseline.sbatch`. `scripts/usage.sh` shows how many GPU hours have been used.

@@ -233,7 +233,7 @@ def main():
 
 def parse_opts(text):
     opts = {o for o in text.split(",") if o}
-    unknown = opts - {"fused", "static", "graph", "mask", "slots", "qkv", "gateup", "band"}
+    unknown = opts - {"fused", "static", "graph", "mask", "slots", "qkv", "gateup", "band", "tunable"}
     if unknown:
         raise SystemExit(f"unknown --opt {sorted(unknown)}")
     if opts & {"graph", "mask", "slots"}:
@@ -257,6 +257,26 @@ def apply_opts(model, opts):
     if "band" in opts:
         from olmo_bench import band_attention
         band_attention.enable(model)
+    if "tunable" in opts:
+        enable_tunable()
+
+
+TUNABLE_CSV = env_info.REPO / "results" / "tunable" / "tunableop_a40.csv"
+
+
+def enable_tunable():
+    # GEMM shapes are tuned the first time they show up (warmups, graph capture warmup) and
+    # saved to the csv when the process exits; later runs just read the csv
+    from torch.cuda import tunable
+    TUNABLE_CSV.parent.mkdir(parents=True, exist_ok=True)
+    torch.backends.cuda.cublaslt_workspace_size(8 << 20)
+    tunable.set_filename(str(TUNABLE_CSV))
+    tunable.enable(True)
+    tune = not TUNABLE_CSV.exists()
+    if not tune:
+        tunable.read_file()
+    tunable.tuning_enable(tune)
+    print(f"tunableop: {'tuning, writing' if tune else 'reading'} {TUNABLE_CSV}", flush=True)
 
 
 def opt_generate(model, opts):

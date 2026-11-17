@@ -1,0 +1,875 @@
+host gpub079.delta.ncsa.illinois.edu  job 23916330  tag ape2_23916330  variants: baseline fused,static,graph fused,static,graph,mask fused,static,graph,mask,slots fused,static,graph,mask,slots,rope fused,static,graph,mask,slots,rope,qkv fused,static,graph,mask,slots,rope,qkv,gateup fused,static,graph,mask,slots,rope,qkv,gateup,band fused,static,graph,mask,slots,rope,qkv,gateup,band,tunable static  Fri Nov 13 18:46:38 CST 2026
+name, driver_version, clocks.current.sm [MHz], temperature.gpu
+NVIDIA A40, 595.71.05, 210 MHz, 35
+........................................................................ [ 57%]
+......................................................                   [100%]
+=============================== warnings summary ===============================
+tests/test_kernels.py::test_rmsnorm[True-shape0]
+tests/test_kernels.py::test_qk_norm_rope[False-sliding_attention-shape0]
+tests/test_kernels.py::test_enable_disable_end_to_end
+tests/test_kernels.py::test_enable_disable_end_to_end
+tests/test_kernels.py::test_enable_disable_end_to_end
+  /u/neilas3/classes/598/venv/lib/python3.13/site-packages/triton/compiler/code_generator.py:643: DeprecationWarning: AnnAssign.__init__ missing 1 required positional argument: 'simple'. This will become an error in Python 3.15.
+    init_node = ast.AnnAssign(target=st_target, value=default_value, annotation=annotation)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+126 passed, 5 warnings in 15.48s
+=== variant baseline  Fri Nov 13 18:47:33 CST 2026
+Loading weights:   0%|          | 0/355 [00:00<?, ?it/s]Loading weights:   0%|          | 1/355 [00:00<04:14,  1.39it/s]Loading weights:   1%|          | 2/355 [00:01<04:23,  1.34it/s]Loading weights:   1%|          | 3/355 [00:01<02:41,  2.18it/s]Loading weights:   1%|          | 4/355 [00:01<01:52,  3.11it/s]Loading weights:   1%|▏         | 5/355 [00:01<01:26,  4.07it/s]Loading weights:   3%|▎         | 12/355 [00:01<00:22, 15.36it/s]Loading weights:   4%|▍         | 15/355 [00:02<00:26, 12.89it/s]Loading weights:   5%|▌         | 18/355 [00:02<00:21, 15.47it/s]Loading weights:   6%|▋         | 23/355 [00:02<00:15, 21.83it/s]Loading weights:   8%|▊         | 27/355 [00:02<00:23, 13.87it/s]Loading weights:   9%|▊         | 31/355 [00:03<00:18, 17.46it/s]Loading weights:  10%|█         | 36/355 [00:03<00:16, 19.64it/s]Loading weights:  11%|█         | 39/355 [00:03<00:17, 17.78it/s]Loading weights:  13%|█▎        | 45/355 [00:03<00:12, 24.72it/s]Loading weights:  14%|█▍        | 49/355 [00:04<00:17, 17.10it/s]Loading weights:  16%|█▌        | 56/355 [00:04<00:12, 24.67it/s]Loading weights:  17%|█▋        | 60/355 [00:04<00:16, 17.64it/s]Loading weights:  18%|█▊        | 65/355 [00:04<00:13, 20.99it/s]Loading weights:  19%|█▉        | 69/355 [00:04<00:13, 21.72it/s]Loading weights:  20%|██        | 72/355 [00:05<00:14, 19.23it/s]Loading weights:  22%|██▏       | 77/355 [00:05<00:11, 24.24it/s]Loading weights:  23%|██▎       | 81/355 [00:05<00:14, 19.49it/s]Loading weights:  24%|██▎       | 84/355 [00:05<00:12, 20.88it/s]Loading weights:  25%|██▍       | 88/355 [00:05<00:10, 24.32it/s]Loading weights:  26%|██▌       | 92/355 [00:05<00:13, 19.00it/s]Loading weights:  27%|██▋       | 95/355 [00:06<00:12, 20.42it/s]Loading weights:  28%|██▊       | 100/355 [00:06<00:09, 25.93it/s]Loading weights:  29%|██▉       | 104/355 [00:06<00:15, 16.72it/s]Loading weights:  31%|███▏      | 111/355 [00:06<00:10, 22.40it/s]Loading weights:  32%|███▏      | 115/355 [00:07<00:16, 14.39it/s]Loading weights:  34%|███▍      | 122/355 [00:07<00:11, 20.83it/s]Loading weights:  35%|███▌      | 126/355 [00:07<00:13, 16.98it/s]Loading weights:  37%|███▋      | 133/355 [00:07<00:09, 23.73it/s]Loading weights:  39%|███▉      | 138/355 [00:08<00:11, 18.68it/s]Loading weights:  41%|████      | 144/355 [00:08<00:08, 23.95it/s]Loading weights:  42%|████▏     | 149/355 [00:08<00:10, 18.77it/s]Loading weights:  44%|████▎     | 155/355 [00:08<00:08, 24.06it/s]Loading weights:  45%|████▍     | 159/355 [00:09<00:11, 17.73it/s]Loading weights:  47%|████▋     | 166/355 [00:09<00:07, 24.44it/s]Loading weights:  48%|████▊     | 171/355 [00:09<00:09, 18.46it/s]Loading weights:  50%|████▉     | 177/355 [00:10<00:07, 23.65it/s]Loading weights:  51%|█████▏    | 182/355 [00:10<00:09, 18.59it/s]Loading weights:  53%|█████▎    | 187/355 [00:10<00:07, 22.57it/s]Loading weights:  54%|█████▍    | 191/355 [00:11<00:09, 16.72it/s]Loading weights:  56%|█████▌    | 199/355 [00:11<00:06, 24.72it/s]Loading weights:  57%|█████▋    | 204/355 [00:11<00:07, 19.23it/s]Loading weights:  59%|█████▊    | 208/355 [00:11<00:06, 21.88it/s]Loading weights:  60%|█████▉    | 212/355 [00:11<00:06, 21.45it/s]Loading weights:  61%|██████    | 216/355 [00:12<00:06, 20.54it/s]Loading weights:  62%|██████▏   | 219/355 [00:12<00:06, 22.03it/s]Loading weights:  63%|██████▎   | 223/355 [00:12<00:06, 21.43it/s]Loading weights:  64%|██████▎   | 226/355 [00:12<00:06, 18.81it/s]Loading weights:  65%|██████▍   | 230/355 [00:12<00:05, 22.50it/s]Loading weights:  66%|██████▌   | 234/355 [00:12<00:05, 21.57it/s]Loading weights:  67%|██████▋   | 237/355 [00:13<00:06, 18.23it/s]Loading weights:  68%|██████▊   | 243/355 [00:13<00:04, 25.60it/s]Loading weights:  70%|██████▉   | 247/355 [00:13<00:05, 19.43it/s]Loading weights:  71%|███████▏  | 253/355 [00:13<00:04, 22.16it/s]Loading weights:  72%|███████▏  | 256/355 [00:13<00:04, 20.15it/s]Loading weights:  73%|███████▎  | 259/355 [00:14<00:05, 18.02it/s]Loading weights:  74%|███████▍  | 264/355 [00:14<00:03, 23.19it/s]Loading weights:  75%|███████▌  | 267/355 [00:14<00:04, 20.54it/s]Loading weights:  76%|███████▌  | 270/355 [00:14<00:04, 18.17it/s]Loading weights:  78%|███████▊  | 276/355 [00:14<00:03, 25.50it/s]Loading weights:  79%|███████▉  | 280/355 [00:15<00:04, 16.94it/s]Loading weights:  80%|████████  | 285/355 [00:15<00:03, 21.66it/s]Loading weights:  81%|████████▏ | 289/355 [00:15<00:03, 21.15it/s]Loading weights:  82%|████████▏ | 292/355 [00:15<00:03, 18.76it/s]Loading weights:  84%|████████▎ | 297/355 [00:15<00:02, 24.01it/s]Loading weights:  85%|████████▍ | 301/355 [00:16<00:02, 19.21it/s]Loading weights:  86%|████████▌ | 304/355 [00:16<00:02, 20.62it/s]Loading weights:  87%|████████▋ | 309/355 [00:16<00:01, 25.89it/s]Loading weights:  88%|████████▊ | 313/355 [00:16<00:02, 17.26it/s]Loading weights:  90%|█████████ | 320/355 [00:16<00:01, 25.13it/s]Loading weights:  91%|█████████▏| 324/355 [00:17<00:01, 17.62it/s]Loading weights:  93%|█████████▎| 331/355 [00:17<00:00, 24.70it/s]Loading weights:  95%|█████████▍| 336/355 [00:17<00:01, 18.93it/s]Loading weights:  96%|█████████▋| 342/355 [00:17<00:00, 24.32it/s]Loading weights:  97%|█████████▋| 346/355 [00:18<00:00, 17.39it/s]Loading weights:  99%|█████████▉| 353/355 [00:18<00:00, 22.35it/s]Loading weights: 100%|██████████| 355/355 [00:18<00:00, 18.99it/s]
+{
+  "timestamp": "2026-11-14T00:48:07+00:00",
+  "hostname": "gpub079.delta.ncsa.illinois.edu",
+  "slurm_job_id": "23916330",
+  "cuda_visible_devices": "0",
+  "python": "3.13.5",
+  "torch": "2.14.1+cu130",
+  "torch_cuda": "13.0",
+  "cudnn": 92400,
+  "transformers": "5.19.0",
+  "triton": "3.8.0",
+  "model_id": "allenai/Olmo-3-1025-7B",
+  "revision": "a81bae42db3975be1671e27b9c9a56da1a9f980f",
+  "dtype": "bfloat16",
+  "attn_implementation": "sdpa",
+  "device": "cuda",
+  "gpu_name": "NVIDIA A40",
+  "nvidia_smi": "0, NVIDIA A40, 595.71.05, 14193 MiB, 46068 MiB, 0 %, 1740 MHz, 36",
+  "git_hash": "uncommitted",
+  "git_dirty": false,
+  "load_s": 20.671775149996392,
+  "workload": {
+    "prefill": [
+      [
+        1,
+        128
+      ],
+      [
+        1,
+        2048
+      ],
+      [
+        1,
+        8192
+      ]
+    ],
+    "decode": [
+      [
+        1,
+        512,
+        128
+      ],
+      [
+        8,
+        512,
+        128
+      ],
+      [
+        1,
+        8192,
+        128
+      ]
+    ],
+    "warmup": 3,
+    "repeats": 5,
+    "texts": {
+      "scandal_in_bohemia.txt": "1ea089c8ec3d69ea499efea24a957908fbaed75bc5e110f865320d0f1acc89d2",
+      "long_prompt.txt": "d88e8b7f30c5178955df2d6e4074de12acc43fde5dc96c9323224a190b16026f"
+    },
+    "long_text_from": 8192
+  },
+  "opts": []
+}
+--- 'The capital of France is'  matches_generate=True
+The capital of France is known for its rich history and culture, which includes
+A. A significant number of ancient ruins and monuments.
+B. A lack of historical significance.
+C.
+--- 'Water boils at sea level when it reaches a temperature of'  matches_generate=True
+Water boils at sea level when it reaches a temperature of 
+A. 100 degrees Celsius
+B. 50 degrees Celsius
+C. 150 degrees Celsius
+D. 200 degrees Celsius
+
+Answer: A
+--- 'Once upon a time, in a small village by the sea, there lived'  matches_generate=True
+Once upon a time, in a small village by the sea, there lived a young girl named Lily. She had long, golden hair that shimmered like the sun and eyes as blue as the sky. Lily loved to spend her days
+--- 'The theory of general relativity, proposed by Albert Einstein,'  matches_generate=True
+The theory of general relativity, proposed by Albert Einstein, describes gravity as the curvature of spacetime caused by mass and energy. This curvature dictates the motion of objects and light, with massive objects like stars and planets war
+perplexity over 1536 tokens: 2.906
+long-context perplexity over 8192 tokens: 3.730
+golden compared: /u/neilas3/classes/598/598-project/results/baseline/golden/NVIDIA_A40_bfloat16_sdpa.json match=True
+CORRECTNESS PASS
+prefill b=1 s=128  ttft_ms=45.78 (cv 0.003)  prefill_tok_s=2795.86 (cv 0.003)  peak=14067 MiB
+prefill b=1 s=2048  ttft_ms=392.32 (cv 0.004)  prefill_tok_s=5220.21 (cv 0.004)  peak=16157 MiB
+prefill b=1 s=8192  ttft_ms=2090.82 (cv 0.002)  prefill_tok_s=3918.07 (cv 0.002)  peak=22908 MiB
+decode  b=1 s=512  ttft_ms=109.55 (cv 0.001)  tpot_ms=37.78 (cv 0.001)  decode_tok_s=26.47 (cv 0.001)  e2e_tok_s=26.08 (cv 0.001)  step_ms=37.81 (cv 0.005)  peak=14552 MiB
+decode  b=8 s=512  ttft_ms=745.61 (cv 0.002)  tpot_ms=45.37 (cv 0.000)  decode_tok_s=176.31 (cv 0.000)  e2e_tok_s=157.36 (cv 0.000)  step_ms=45.41 (cv 0.018)  peak=18887 MiB
+decode  b=1 s=8192  ttft_ms=2136.89 (cv 0.002)  tpot_ms=51.13 (cv 0.000)  decode_tok_s=19.56 (cv 0.000)  e2e_tok_s=14.83 (cv 0.001)  step_ms=51.10 (cv 0.004)  peak=21390 MiB
+wrote results/experiments/ape2_23916330/baseline/bench.json and bench.csv (214 s total)
+=== variant fused,static,graph  Fri Nov 13 18:51:21 CST 2026
+Loading weights:   0%|          | 0/355 [00:00<?, ?it/s]Loading weights:   0%|          | 1/355 [00:00<02:38,  2.24it/s]Loading weights:   1%|          | 2/355 [00:00<02:47,  2.11it/s]Loading weights:   1%|          | 4/355 [00:01<01:13,  4.75it/s]Loading weights:   3%|▎         | 10/355 [00:01<00:24, 14.06it/s]Loading weights:   4%|▍         | 15/355 [00:01<00:17, 19.99it/s]Loading weights:   6%|▋         | 23/355 [00:01<00:10, 31.59it/s]Loading weights:   8%|▊         | 28/355 [00:01<00:10, 30.13it/s]Loading weights:  10%|█         | 36/355 [00:01<00:08, 37.93it/s]Loading weights:  12%|█▏        | 41/355 [00:01<00:07, 39.84it/s]Loading weights:  13%|█▎        | 47/355 [00:01<00:07, 41.24it/s]Loading weights:  15%|█▍        | 52/355 [00:02<00:07, 42.54it/s]Loading weights:  16%|█▋        | 58/355 [00:02<00:06, 43.22it/s]Loading weights:  18%|█▊        | 63/355 [00:02<00:06, 43.99it/s]Loading weights:  19%|█▉        | 69/355 [00:02<00:06, 44.29it/s]Loading weights:  21%|██        | 74/355 [00:02<00:06, 44.78it/s]Loading weights:  22%|██▏       | 79/355 [00:02<00:06, 42.32it/s]Loading weights:  24%|██▎       | 84/355 [00:02<00:06, 43.27it/s]Loading weights:  25%|██▌       | 90/355 [00:02<00:06, 43.68it/s]Loading weights:  27%|██▋       | 95/355 [00:03<00:05, 44.33it/s]Loading weights:  29%|██▊       | 102/355 [00:03<00:05, 46.89it/s]Loading weights:  30%|███       | 107/355 [00:03<00:05, 46.68it/s]Loading weights:  32%|███▏      | 113/355 [00:03<00:05, 46.14it/s]Loading weights:  33%|███▎      | 118/355 [00:03<00:05, 46.27it/s]Loading weights:  35%|███▍      | 124/355 [00:03<00:05, 45.83it/s]Loading weights:  36%|███▋      | 129/355 [00:03<00:04, 46.05it/s]Loading weights:  38%|███▊      | 135/355 [00:03<00:04, 45.72it/s]Loading weights:  39%|███▉      | 140/355 [00:04<00:04, 45.97it/s]Loading weights:  41%|████      | 146/355 [00:04<00:05, 40.40it/s]Loading weights:  43%|████▎     | 152/355 [00:04<00:04, 43.64it/s]Loading weights:  45%|████▍     | 158/355 [00:04<00:04, 44.70it/s]Loading weights:  46%|████▌     | 163/355 [00:04<00:04, 44.60it/s]Loading weights:  48%|████▊     | 169/355 [00:04<00:04, 45.46it/s]Loading weights:  50%|████▉     | 177/355 [00:04<00:03, 52.49it/s]Loading weights:  52%|█████▏    | 183/355 [00:04<00:03, 45.03it/s]Loading weights:  54%|█████▎    | 190/355 [00:05<00:03, 47.25it/s]Loading weights:  55%|█████▍    | 195/355 [00:05<00:03, 47.09it/s]Loading weights:  57%|█████▋    | 201/355 [00:05<00:03, 46.45it/s]Loading weights:  58%|█████▊    | 206/355 [00:05<00:03, 46.54it/s]Loading weights:  60%|█████▉    | 212/355 [00:05<00:03, 46.09it/s]Loading weights:  61%|██████    | 217/355 [00:05<00:02, 46.23it/s]Loading weights:  63%|██████▎   | 223/355 [00:05<00:02, 45.91it/s]Loading weights:  64%|██████▍   | 228/355 [00:05<00:02, 46.09it/s]Loading weights:  66%|██████▌   | 234/355 [00:06<00:02, 45.82it/s]Loading weights:  67%|██████▋   | 239/355 [00:06<00:02, 46.02it/s]Loading weights:  69%|██████▉   | 245/355 [00:06<00:02, 40.45it/s]Loading weights:  72%|███████▏  | 254/355 [00:06<00:01, 50.52it/s]Loading weights:  73%|███████▎  | 260/355 [00:06<00:02, 43.71it/s]Loading weights:  75%|███████▌  | 267/355 [00:06<00:01, 45.90it/s]Loading weights:  77%|███████▋  | 272/355 [00:06<00:01, 45.64it/s]Loading weights:  78%|███████▊  | 278/355 [00:07<00:01, 45.06it/s]Loading weights:  80%|███████▉  | 283/355 [00:07<00:01, 45.44it/s]Loading weights:  81%|████████▏ | 289/355 [00:07<00:01, 40.06it/s]Loading weights:  84%|████████▍ | 298/355 [00:07<00:01, 49.62it/s]Loading weights:  86%|████████▌ | 304/355 [00:07<00:01, 43.37it/s]Loading weights:  88%|████████▊ | 311/355 [00:07<00:00, 45.55it/s]Loading weights:  89%|████████▉ | 316/355 [00:07<00:00, 45.78it/s]Loading weights:  91%|█████████ | 322/355 [00:08<00:00, 45.33it/s]Loading weights:  92%|█████████▏| 327/355 [00:08<00:00, 45.50it/s]Loading weights:  94%|█████████▍| 333/355 [00:08<00:00, 44.91it/s]Loading weights:  95%|█████████▌| 338/355 [00:08<00:00, 45.34it/s]Loading weights:  97%|█████████▋| 344/355 [00:08<00:00, 45.06it/s]Loading weights:  98%|█████████▊| 349/355 [00:08<00:00, 45.31it/s]Loading weights: 100%|██████████| 355/355 [00:08<00:00, 40.83it/s]
+{
+  "timestamp": "2026-11-14T00:51:45+00:00",
+  "hostname": "gpub079.delta.ncsa.illinois.edu",
+  "slurm_job_id": "23916330",
+  "cuda_visible_devices": "0",
+  "python": "3.13.5",
+  "torch": "2.14.1+cu130",
+  "torch_cuda": "13.0",
+  "cudnn": 92400,
+  "transformers": "5.19.0",
+  "triton": "3.8.0",
+  "model_id": "allenai/Olmo-3-1025-7B",
+  "revision": "a81bae42db3975be1671e27b9c9a56da1a9f980f",
+  "dtype": "bfloat16",
+  "attn_implementation": "sdpa",
+  "device": "cuda",
+  "gpu_name": "NVIDIA A40",
+  "nvidia_smi": "0, NVIDIA A40, 595.71.05, 14193 MiB, 46068 MiB, 0 %, 1740 MHz, 57",
+  "git_hash": "uncommitted",
+  "git_dirty": false,
+  "load_s": 10.815961375948973,
+  "workload": {
+    "prefill": [
+      [
+        1,
+        128
+      ],
+      [
+        1,
+        2048
+      ],
+      [
+        1,
+        8192
+      ]
+    ],
+    "decode": [
+      [
+        1,
+        512,
+        128
+      ],
+      [
+        8,
+        512,
+        128
+      ],
+      [
+        1,
+        8192,
+        128
+      ]
+    ],
+    "warmup": 3,
+    "repeats": 5,
+    "texts": {
+      "scandal_in_bohemia.txt": "1ea089c8ec3d69ea499efea24a957908fbaed75bc5e110f865320d0f1acc89d2",
+      "long_prompt.txt": "d88e8b7f30c5178955df2d6e4074de12acc43fde5dc96c9323224a190b16026f"
+    },
+    "long_text_from": 8192
+  },
+  "opts": [
+    "fused",
+    "graph",
+    "static"
+  ]
+}
+scandal_in_bohemia.txt (1536 tokens): ppl 2.9063 -> 2.9063 (-0.001%), top-1 agreement 0.9928
+long_prompt.txt (8192 tokens): ppl 3.7298 -> 3.7304 (+0.015%), top-1 agreement 0.9958
+generations match eager: [True, True, True, True]
+generations match golden: [True, True, True, True]
+workload tokens match: 0.719, first divergence: 92
+NUMERICS PASS
+prefill b=1 s=128  ttft_ms=32.74 (cv 0.001)  prefill_tok_s=3909.07 (cv 0.001)  peak=14080 MiB
+prefill b=1 s=2048  ttft_ms=289.16 (cv 0.004)  prefill_tok_s=7082.67 (cv 0.004)  peak=15241 MiB
+prefill b=1 s=8192  ttft_ms=1680.34 (cv 0.001)  prefill_tok_s=4875.20 (cv 0.001)  peak=17453 MiB
+decode  b=1 s=512  ttft_ms=78.99 (cv 0.004)  tpot_ms=27.75 (cv 0.000)  decode_tok_s=36.04 (cv 0.000)  e2e_tok_s=35.53 (cv 0.000)  step_ms=27.74 (cv 0.002)  peak=14366 MiB
+decode  b=8 s=512  ttft_ms=539.04 (cv 0.001)  tpot_ms=31.45 (cv 0.000)  decode_tok_s=254.41 (cv 0.000)  e2e_tok_s=225.91 (cv 0.000)  step_ms=31.43 (cv 0.002)  peak=16972 MiB
+decode  b=1 s=8192  ttft_ms=1704.53 (cv 0.001)  tpot_ms=32.74 (cv 0.000)  decode_tok_s=30.55 (cv 0.000)  e2e_tok_s=21.84 (cv 0.000)  step_ms=32.71 (cv 0.004)  peak=17505 MiB
+wrote results/experiments/ape2_23916330/fused,static,graph/bench.json and bench.csv (164 s total)
+=== variant fused,static,graph,mask  Fri Nov 13 18:54:19 CST 2026
+Loading weights:   0%|          | 0/355 [00:00<?, ?it/s]Loading weights:   0%|          | 1/355 [00:00<04:20,  1.36it/s]Loading weights:   1%|          | 2/355 [00:01<04:34,  1.29it/s]Loading weights:   1%|          | 4/355 [00:01<01:56,  3.01it/s]Loading weights:   3%|▎         | 10/355 [00:01<00:36,  9.52it/s]Loading weights:   4%|▍         | 14/355 [00:01<00:24, 13.82it/s]Loading weights:   5%|▍         | 17/355 [00:02<00:21, 16.09it/s]Loading weights:   7%|▋         | 24/355 [00:02<00:12, 26.15it/s]Loading weights:   8%|▊         | 29/355 [00:02<00:12, 25.96it/s]Loading weights:  10%|▉         | 35/355 [00:02<00:10, 29.35it/s]Loading weights:  11%|█         | 39/355 [00:02<00:10, 30.99it/s]Loading weights:  13%|█▎        | 47/355 [00:02<00:07, 38.91it/s]Loading weights:  15%|█▍        | 52/355 [00:02<00:07, 40.66it/s]Loading weights:  16%|█▋        | 58/355 [00:02<00:07, 41.90it/s]Loading weights:  18%|█▊        | 63/355 [00:03<00:06, 42.89it/s]Loading weights:  19%|█▉        | 69/355 [00:03<00:06, 43.40it/s]Loading weights:  21%|██        | 74/355 [00:03<00:06, 44.06it/s]Loading weights:  23%|██▎       | 80/355 [00:03<00:06, 44.14it/s]Loading weights:  24%|██▍       | 85/355 [00:03<00:06, 44.63it/s]Loading weights:  26%|██▌       | 91/355 [00:03<00:05, 44.63it/s]Loading weights:  27%|██▋       | 96/355 [00:03<00:05, 44.97it/s]Loading weights:  29%|██▊       | 102/355 [00:03<00:05, 44.82it/s]Loading weights:  30%|███       | 107/355 [00:04<00:05, 45.10it/s]Loading weights:  32%|███▏      | 112/355 [00:04<00:07, 30.53it/s]Loading weights:  33%|███▎      | 116/355 [00:04<00:09, 25.57it/s]Loading weights:  35%|███▍      | 123/355 [00:04<00:07, 32.16it/s]Loading weights:  36%|███▌      | 127/355 [00:05<00:09, 23.11it/s]Loading weights:  38%|███▊      | 134/355 [00:05<00:07, 30.19it/s]Loading weights:  39%|███▉      | 139/355 [00:05<00:09, 23.31it/s]Loading weights:  41%|████      | 145/355 [00:05<00:07, 28.56it/s]Loading weights:  42%|████▏     | 149/355 [00:05<00:09, 21.14it/s]Loading weights:  44%|████▍     | 156/355 [00:06<00:08, 24.13it/s]Loading weights:  45%|████▌     | 160/355 [00:06<00:08, 23.27it/s]Loading weights:  47%|████▋     | 167/355 [00:06<00:06, 29.91it/s]Loading weights:  48%|████▊     | 171/355 [00:06<00:08, 22.85it/s]Loading weights:  50%|█████     | 178/355 [00:06<00:05, 30.24it/s]Loading weights:  52%|█████▏    | 183/355 [00:07<00:06, 24.90it/s]Loading weights:  53%|█████▎    | 188/355 [00:07<00:05, 28.78it/s]Loading weights:  54%|█████▍    | 192/355 [00:07<00:07, 23.10it/s]Loading weights:  56%|█████▋    | 200/355 [00:07<00:04, 32.48it/s]Loading weights:  58%|█████▊    | 205/355 [00:07<00:04, 30.47it/s]Loading weights:  60%|█████▉    | 212/355 [00:08<00:04, 35.71it/s]Loading weights:  61%|██████    | 217/355 [00:08<00:03, 38.04it/s]Loading weights:  63%|██████▎   | 223/355 [00:08<00:03, 40.00it/s]Loading weights:  64%|██████▍   | 228/355 [00:08<00:03, 41.54it/s]Loading weights:  66%|██████▌   | 233/355 [00:08<00:03, 40.34it/s]Loading weights:  67%|██████▋   | 238/355 [00:08<00:02, 41.88it/s]Loading weights:  69%|██████▉   | 245/355 [00:08<00:03, 35.49it/s]Loading weights:  71%|███████   | 252/355 [00:08<00:02, 42.14it/s]Loading weights:  72%|███████▏  | 257/355 [00:09<00:03, 31.95it/s]Loading weights:  74%|███████▎  | 261/355 [00:09<00:02, 32.76it/s]Loading weights:  75%|███████▍  | 265/355 [00:09<00:02, 33.99it/s]Loading weights:  76%|███████▌  | 269/355 [00:09<00:04, 20.40it/s]Loading weights:  78%|███████▊  | 276/355 [00:09<00:02, 27.98it/s]Loading weights:  79%|███████▉  | 281/355 [00:10<00:03, 20.15it/s]Loading weights:  81%|████████  | 287/355 [00:10<00:02, 25.64it/s]Loading weights:  82%|████████▏ | 291/355 [00:10<00:03, 18.26it/s]Loading weights:  84%|████████▍ | 298/355 [00:11<00:02, 25.07it/s]Loading weights:  85%|████████▌ | 303/355 [00:11<00:02, 18.89it/s]Loading weights:  86%|████████▋ | 307/355 [00:11<00:02, 21.51it/s]Loading weights:  88%|████████▊ | 311/355 [00:11<00:01, 23.14it/s]Loading weights:  89%|████████▊ | 315/355 [00:11<00:01, 25.18it/s]Loading weights:  91%|█████████ | 322/355 [00:11<00:01, 31.56it/s]Loading weights:  92%|█████████▏| 326/355 [00:12<00:00, 32.49it/s]Loading weights:  94%|█████████▎| 332/355 [00:12<00:00, 35.76it/s]Loading weights:  95%|█████████▍| 336/355 [00:12<00:00, 35.92it/s]Loading weights:  97%|█████████▋| 344/355 [00:12<00:00, 42.64it/s]Loading weights:  98%|█████████▊| 349/355 [00:12<00:00, 43.53it/s]Loading weights: 100%|██████████| 355/355 [00:12<00:00, 28.12it/s]
+{
+  "timestamp": "2026-11-14T00:54:46+00:00",
+  "hostname": "gpub079.delta.ncsa.illinois.edu",
+  "slurm_job_id": "23916330",
+  "cuda_visible_devices": "0",
+  "python": "3.13.5",
+  "torch": "2.14.1+cu130",
+  "torch_cuda": "13.0",
+  "cudnn": 92400,
+  "transformers": "5.19.0",
+  "triton": "3.8.0",
+  "model_id": "allenai/Olmo-3-1025-7B",
+  "revision": "a81bae42db3975be1671e27b9c9a56da1a9f980f",
+  "dtype": "bfloat16",
+  "attn_implementation": "sdpa",
+  "device": "cuda",
+  "gpu_name": "NVIDIA A40",
+  "nvidia_smi": "0, NVIDIA A40, 595.71.05, 14193 MiB, 46068 MiB, 0 %, 1740 MHz, 58",
+  "git_hash": "uncommitted",
+  "git_dirty": false,
+  "load_s": 14.646862749941647,
+  "workload": {
+    "prefill": [
+      [
+        1,
+        128
+      ],
+      [
+        1,
+        2048
+      ],
+      [
+        1,
+        8192
+      ]
+    ],
+    "decode": [
+      [
+        1,
+        512,
+        128
+      ],
+      [
+        8,
+        512,
+        128
+      ],
+      [
+        1,
+        8192,
+        128
+      ]
+    ],
+    "warmup": 3,
+    "repeats": 5,
+    "texts": {
+      "scandal_in_bohemia.txt": "1ea089c8ec3d69ea499efea24a957908fbaed75bc5e110f865320d0f1acc89d2",
+      "long_prompt.txt": "d88e8b7f30c5178955df2d6e4074de12acc43fde5dc96c9323224a190b16026f"
+    },
+    "long_text_from": 8192
+  },
+  "opts": [
+    "fused",
+    "graph",
+    "mask",
+    "static"
+  ]
+}
+scandal_in_bohemia.txt (1536 tokens): ppl 2.9063 -> 2.9063 (-0.001%), top-1 agreement 0.9928
+long_prompt.txt (8192 tokens): ppl 3.7298 -> 3.7304 (+0.015%), top-1 agreement 0.9958
+generations match eager: [True, True, True, True]
+generations match golden: [True, True, True, True]
+workload tokens match: 0.719, first divergence: 92
+NUMERICS PASS
+prefill b=1 s=128  ttft_ms=32.76 (cv 0.001)  prefill_tok_s=3907.49 (cv 0.001)  peak=14080 MiB
+prefill b=1 s=2048  ttft_ms=290.33 (cv 0.008)  prefill_tok_s=7054.11 (cv 0.008)  peak=15241 MiB
+prefill b=1 s=8192  ttft_ms=1682.83 (cv 0.001)  prefill_tok_s=4868.00 (cv 0.001)  peak=17453 MiB
+decode  b=1 s=512  ttft_ms=78.78 (cv 0.004)  tpot_ms=27.57 (cv 0.000)  decode_tok_s=36.27 (cv 0.000)  e2e_tok_s=35.75 (cv 0.000)  step_ms=27.56 (cv 0.002)  peak=14366 MiB
+decode  b=8 s=512  ttft_ms=539.96 (cv 0.000)  tpot_ms=31.29 (cv 0.000)  decode_tok_s=255.66 (cv 0.000)  e2e_tok_s=226.85 (cv 0.000)  step_ms=31.28 (cv 0.002)  peak=16972 MiB
+decode  b=1 s=8192  ttft_ms=1702.69 (cv 0.001)  tpot_ms=32.71 (cv 0.000)  decode_tok_s=30.57 (cv 0.000)  e2e_tok_s=21.85 (cv 0.000)  step_ms=32.69 (cv 0.004)  peak=17505 MiB
+wrote results/experiments/ape2_23916330/fused,static,graph,mask/bench.json and bench.csv (168 s total)
+=== variant fused,static,graph,mask,slots  Fri Nov 13 18:57:20 CST 2026
+Loading weights:   0%|          | 0/355 [00:00<?, ?it/s]Loading weights:   0%|          | 1/355 [00:00<02:42,  2.18it/s]Loading weights:   1%|          | 2/355 [00:01<05:02,  1.17it/s]Loading weights:   1%|          | 4/355 [00:01<02:05,  2.81it/s]Loading weights:   1%|▏         | 5/355 [00:01<01:37,  3.60it/s]Loading weights:   4%|▎         | 13/355 [00:01<00:25, 13.17it/s]Loading weights:   5%|▍         | 16/355 [00:02<00:30, 11.23it/s]Loading weights:   7%|▋         | 24/355 [00:02<00:16, 20.24it/s]Loading weights:   8%|▊         | 28/355 [00:02<00:20, 16.06it/s]Loading weights:   9%|▊         | 31/355 [00:02<00:18, 17.77it/s]Loading weights:  10%|█         | 36/355 [00:03<00:15, 20.44it/s]Loading weights:  11%|█         | 39/355 [00:03<00:17, 18.26it/s]Loading weights:  13%|█▎        | 46/355 [00:03<00:11, 26.35it/s]Loading weights:  14%|█▍        | 50/355 [00:03<00:15, 19.61it/s]Loading weights:  15%|█▍        | 53/355 [00:03<00:14, 20.98it/s]Loading weights:  16%|█▋        | 58/355 [00:04<00:12, 23.07it/s]Loading weights:  17%|█▋        | 61/355 [00:04<00:14, 19.90it/s]Loading weights:  19%|█▉        | 68/355 [00:04<00:10, 28.14it/s]Loading weights:  20%|██        | 72/355 [00:04<00:14, 19.91it/s]Loading weights:  22%|██▏       | 79/355 [00:04<00:10, 25.75it/s]Loading weights:  23%|██▎       | 83/355 [00:05<00:13, 19.89it/s]Loading weights:  25%|██▌       | 90/355 [00:05<00:09, 26.76it/s]Loading weights:  26%|██▋       | 94/355 [00:05<00:11, 22.52it/s]Loading weights:  28%|██▊       | 100/355 [00:05<00:08, 28.40it/s]Loading weights:  29%|██▉       | 104/355 [00:06<00:12, 20.27it/s]Loading weights:  31%|███▏      | 111/355 [00:06<00:09, 26.04it/s]Loading weights:  32%|███▏      | 115/355 [00:06<00:10, 23.94it/s]Loading weights:  35%|███▍      | 123/355 [00:06<00:07, 33.09it/s]Loading weights:  36%|███▌      | 128/355 [00:06<00:06, 32.52it/s]Loading weights:  38%|███▊      | 135/355 [00:06<00:06, 34.08it/s]Loading weights:  40%|███▉      | 141/355 [00:07<00:05, 38.11it/s]Loading weights:  41%|████      | 146/355 [00:07<00:05, 38.46it/s]Loading weights:  44%|████▎     | 155/355 [00:07<00:04, 48.52it/s]Loading weights:  45%|████▌     | 161/355 [00:07<00:04, 43.03it/s]Loading weights:  47%|████▋     | 168/355 [00:07<00:04, 45.67it/s]Loading weights:  49%|████▊     | 173/355 [00:07<00:03, 45.96it/s]Loading weights:  50%|█████     | 179/355 [00:07<00:03, 45.74it/s]Loading weights:  52%|█████▏    | 184/355 [00:07<00:03, 45.97it/s]Loading weights:  54%|█████▎    | 190/355 [00:08<00:04, 40.67it/s]Loading weights:  55%|█████▌    | 196/355 [00:08<00:03, 41.87it/s]Loading weights:  57%|█████▋    | 202/355 [00:08<00:03, 45.36it/s]Loading weights:  59%|█████▉    | 210/355 [00:08<00:02, 52.20it/s]Loading weights:  61%|██████    | 216/355 [00:08<00:03, 44.94it/s]Loading weights:  63%|██████▎   | 223/355 [00:08<00:02, 47.16it/s]Loading weights:  64%|██████▍   | 228/355 [00:08<00:02, 46.95it/s]Loading weights:  66%|██████▌   | 233/355 [00:09<00:02, 44.55it/s]Loading weights:  67%|██████▋   | 238/355 [00:09<00:03, 32.66it/s]Loading weights:  69%|██████▊   | 244/355 [00:09<00:03, 36.08it/s]Loading weights:  70%|███████   | 249/355 [00:09<00:03, 32.61it/s]Loading weights:  72%|███████▏  | 255/355 [00:09<00:02, 35.88it/s]Loading weights:  73%|███████▎  | 259/355 [00:09<00:02, 32.40it/s]Loading weights:  75%|███████▌  | 267/355 [00:10<00:02, 39.59it/s]Loading weights:  77%|███████▋  | 272/355 [00:10<00:02, 41.05it/s]Loading weights:  78%|███████▊  | 278/355 [00:10<00:01, 42.06it/s]Loading weights:  80%|███████▉  | 283/355 [00:10<00:01, 43.19it/s]Loading weights:  81%|████████▏ | 289/355 [00:10<00:01, 43.34it/s]Loading weights:  83%|████████▎ | 294/355 [00:10<00:01, 44.03it/s]Loading weights:  85%|████████▍ | 300/355 [00:10<00:01, 44.19it/s]Loading weights:  86%|████████▌ | 305/355 [00:10<00:01, 44.56it/s]Loading weights:  88%|████████▊ | 311/355 [00:11<00:00, 44.22it/s]Loading weights:  89%|████████▉ | 316/355 [00:11<00:00, 44.44it/s]Loading weights:  91%|█████████ | 322/355 [00:11<00:00, 44.51it/s]Loading weights:  92%|█████████▏| 327/355 [00:11<00:00, 45.10it/s]Loading weights:  94%|█████████▍| 333/355 [00:11<00:00, 44.81it/s]Loading weights:  95%|█████████▌| 338/355 [00:11<00:00, 45.16it/s]Loading weights:  97%|█████████▋| 343/355 [00:11<00:00, 38.49it/s]Loading weights:  98%|█████████▊| 348/355 [00:12<00:00, 31.35it/s]Loading weights:  99%|█████████▉| 352/355 [00:12<00:00, 29.94it/s]Loading weights: 100%|██████████| 355/355 [00:12<00:00, 28.99it/s]
+{
+  "timestamp": "2026-11-14T00:57:48+00:00",
+  "hostname": "gpub079.delta.ncsa.illinois.edu",
+  "slurm_job_id": "23916330",
+  "cuda_visible_devices": "0",
+  "python": "3.13.5",
+  "torch": "2.14.1+cu130",
+  "torch_cuda": "13.0",
+  "cudnn": 92400,
+  "transformers": "5.19.0",
+  "triton": "3.8.0",
+  "model_id": "allenai/Olmo-3-1025-7B",
+  "revision": "a81bae42db3975be1671e27b9c9a56da1a9f980f",
+  "dtype": "bfloat16",
+  "attn_implementation": "sdpa",
+  "device": "cuda",
+  "gpu_name": "NVIDIA A40",
+  "nvidia_smi": "0, NVIDIA A40, 595.71.05, 14193 MiB, 46068 MiB, 0 %, 1740 MHz, 58",
+  "git_hash": "uncommitted",
+  "git_dirty": false,
+  "load_s": 14.283333236002363,
+  "workload": {
+    "prefill": [
+      [
+        1,
+        128
+      ],
+      [
+        1,
+        2048
+      ],
+      [
+        1,
+        8192
+      ]
+    ],
+    "decode": [
+      [
+        1,
+        512,
+        128
+      ],
+      [
+        8,
+        512,
+        128
+      ],
+      [
+        1,
+        8192,
+        128
+      ]
+    ],
+    "warmup": 3,
+    "repeats": 5,
+    "texts": {
+      "scandal_in_bohemia.txt": "1ea089c8ec3d69ea499efea24a957908fbaed75bc5e110f865320d0f1acc89d2",
+      "long_prompt.txt": "d88e8b7f30c5178955df2d6e4074de12acc43fde5dc96c9323224a190b16026f"
+    },
+    "long_text_from": 8192
+  },
+  "opts": [
+    "fused",
+    "graph",
+    "mask",
+    "slots",
+    "static"
+  ]
+}
+scandal_in_bohemia.txt (1536 tokens): ppl 2.9063 -> 2.9063 (-0.001%), top-1 agreement 0.9928
+long_prompt.txt (8192 tokens): ppl 3.7298 -> 3.7304 (+0.015%), top-1 agreement 0.9958
+generations match eager: [True, True, True, True]
+generations match golden: [True, True, True, True]
+workload tokens match: 0.719, first divergence: 92
+NUMERICS PASS
+prefill b=1 s=128  ttft_ms=32.61 (cv 0.002)  prefill_tok_s=3924.88 (cv 0.002)  peak=14080 MiB
+prefill b=1 s=2048  ttft_ms=290.79 (cv 0.006)  prefill_tok_s=7042.87 (cv 0.006)  peak=15241 MiB
+prefill b=1 s=8192  ttft_ms=1687.24 (cv 0.002)  prefill_tok_s=4855.25 (cv 0.002)  peak=17453 MiB
+decode  b=1 s=512  ttft_ms=78.84 (cv 0.002)  tpot_ms=27.57 (cv 0.000)  decode_tok_s=36.27 (cv 0.000)  e2e_tok_s=35.75 (cv 0.000)  step_ms=27.56 (cv 0.002)  peak=14366 MiB
+decode  b=8 s=512  ttft_ms=542.08 (cv 0.001)  tpot_ms=31.29 (cv 0.000)  decode_tok_s=255.65 (cv 0.000)  e2e_tok_s=226.74 (cv 0.000)  step_ms=31.28 (cv 0.002)  peak=16972 MiB
+decode  b=1 s=8192  ttft_ms=1710.36 (cv 0.002)  tpot_ms=32.72 (cv 0.000)  decode_tok_s=30.57 (cv 0.000)  e2e_tok_s=21.82 (cv 0.001)  step_ms=32.69 (cv 0.004)  peak=17505 MiB
+wrote results/experiments/ape2_23916330/fused,static,graph,mask,slots/bench.json and bench.csv (167 s total)
+=== variant fused,static,graph,mask,slots,rope  Fri Nov 13 19:00:22 CST 2026
+Loading weights:   0%|          | 0/355 [00:00<?, ?it/s]Loading weights:   0%|          | 1/355 [00:00<02:37,  2.24it/s]Loading weights:   1%|          | 2/355 [00:00<02:46,  2.12it/s]Loading weights:   1%|          | 4/355 [00:01<01:13,  4.76it/s]Loading weights:   3%|▎         | 11/355 [00:01<00:21, 15.79it/s]Loading weights:   4%|▍         | 15/355 [00:01<00:17, 19.49it/s]Loading weights:   6%|▌         | 21/355 [00:01<00:12, 27.18it/s]Loading weights:   7%|▋         | 26/355 [00:01<00:10, 30.41it/s]Loading weights:  10%|▉         | 34/355 [00:01<00:07, 40.61it/s]Loading weights:  11%|█         | 39/355 [00:01<00:08, 35.77it/s]Loading weights:  13%|█▎        | 47/355 [00:01<00:07, 42.39it/s]Loading weights:  15%|█▍        | 52/355 [00:02<00:06, 43.31it/s]Loading weights:  16%|█▋        | 58/355 [00:02<00:06, 43.70it/s]Loading weights:  18%|█▊        | 63/355 [00:02<00:06, 44.38it/s]Loading weights:  19%|█▉        | 69/355 [00:02<00:07, 39.54it/s]Loading weights:  22%|██▏       | 78/355 [00:02<00:05, 49.47it/s]Loading weights:  24%|██▎       | 84/355 [00:02<00:06, 43.49it/s]Loading weights:  25%|██▌       | 90/355 [00:02<00:06, 43.83it/s]Loading weights:  27%|██▋       | 95/355 [00:03<00:05, 44.42it/s]Loading weights:  29%|██▊       | 102/355 [00:03<00:05, 46.75it/s]Loading weights:  30%|███       | 107/355 [00:03<00:05, 46.63it/s]Loading weights:  32%|███▏      | 113/355 [00:03<00:05, 46.08it/s]Loading weights:  33%|███▎      | 118/355 [00:03<00:05, 46.27it/s]Loading weights:  35%|███▍      | 124/355 [00:03<00:05, 45.82it/s]Loading weights:  36%|███▋      | 129/355 [00:03<00:04, 46.05it/s]Loading weights:  38%|███▊      | 135/355 [00:03<00:04, 45.81it/s]Loading weights:  39%|███▉      | 140/355 [00:04<00:04, 46.03it/s]Loading weights:  41%|████      | 146/355 [00:04<00:04, 45.78it/s]Loading weights:  43%|████▎     | 151/355 [00:04<00:04, 46.03it/s]Loading weights:  44%|████▍     | 157/355 [00:04<00:04, 45.82it/s]Loading weights:  46%|████▌     | 162/355 [00:04<00:04, 46.06it/s]Loading weights:  47%|████▋     | 168/355 [00:04<00:04, 45.75it/s]Loading weights:  49%|████▊     | 173/355 [00:04<00:03, 46.03it/s]Loading weights:  50%|█████     | 179/355 [00:04<00:03, 45.79it/s]Loading weights:  52%|█████▏    | 184/355 [00:04<00:03, 46.02it/s]Loading weights:  54%|█████▎    | 190/355 [00:05<00:03, 45.74it/s]Loading weights:  55%|█████▍    | 195/355 [00:05<00:03, 45.98it/s]Loading weights:  57%|█████▋    | 201/355 [00:05<00:03, 45.72it/s]Loading weights:  58%|█████▊    | 206/355 [00:05<00:03, 46.06it/s]Loading weights:  60%|█████▉    | 212/355 [00:05<00:03, 45.83it/s]Loading weights:  61%|██████    | 217/355 [00:05<00:02, 46.04it/s]Loading weights:  63%|██████▎   | 223/355 [00:05<00:02, 45.83it/s]Loading weights:  64%|██████▍   | 228/355 [00:05<00:02, 46.03it/s]Loading weights:  66%|██████▌   | 234/355 [00:06<00:02, 45.83it/s]Loading weights:  67%|██████▋   | 239/355 [00:06<00:02, 46.08it/s]Loading weights:  69%|██████▉   | 245/355 [00:06<00:02, 45.76it/s]Loading weights:  70%|███████   | 250/355 [00:06<00:02, 45.74it/s]Loading weights:  72%|███████▏  | 255/355 [00:06<00:02, 42.81it/s]Loading weights:  73%|███████▎  | 260/355 [00:06<00:02, 43.37it/s]Loading weights:  75%|███████▌  | 267/355 [00:06<00:01, 46.07it/s]Loading weights:  77%|███████▋  | 272/355 [00:06<00:01, 46.13it/s]Loading weights:  78%|███████▊  | 278/355 [00:07<00:01, 45.63it/s]Loading weights:  80%|███████▉  | 283/355 [00:07<00:01, 45.34it/s]Loading weights:  81%|████████▏ | 289/355 [00:07<00:01, 44.91it/s]Loading weights:  83%|████████▎ | 294/355 [00:07<00:01, 45.18it/s]Loading weights:  85%|████████▍ | 300/355 [00:07<00:01, 44.98it/s]Loading weights:  86%|████████▌ | 305/355 [00:07<00:01, 45.16it/s]Loading weights:  88%|████████▊ | 311/355 [00:07<00:00, 44.89it/s]Loading weights:  89%|████████▉ | 316/355 [00:07<00:00, 45.25it/s]Loading weights:  91%|█████████ | 322/355 [00:08<00:00, 39.60it/s]Loading weights:  93%|█████████▎| 331/355 [00:08<00:00, 49.52it/s]Loading weights:  95%|█████████▍| 337/355 [00:08<00:00, 43.37it/s]Loading weights:  97%|█████████▋| 343/355 [00:08<00:00, 43.61it/s]Loading weights:  98%|█████████▊| 348/355 [00:08<00:00, 44.08it/s]Loading weights: 100%|██████████| 355/355 [00:08<00:00, 40.87it/s]
+{
+  "timestamp": "2026-11-14T01:00:45+00:00",
+  "hostname": "gpub079.delta.ncsa.illinois.edu",
+  "slurm_job_id": "23916330",
+  "cuda_visible_devices": "0",
+  "python": "3.13.5",
+  "torch": "2.14.1+cu130",
+  "torch_cuda": "13.0",
+  "cudnn": 92400,
+  "transformers": "5.19.0",
+  "triton": "3.8.0",
+  "model_id": "allenai/Olmo-3-1025-7B",
+  "revision": "a81bae42db3975be1671e27b9c9a56da1a9f980f",
+  "dtype": "bfloat16",
+  "attn_implementation": "sdpa",
+  "device": "cuda",
+  "gpu_name": "NVIDIA A40",
+  "nvidia_smi": "0, NVIDIA A40, 595.71.05, 14193 MiB, 46068 MiB, 0 %, 1740 MHz, 60",
+  "git_hash": "uncommitted",
+  "git_dirty": false,
+  "load_s": 10.684104244923219,
+  "workload": {
+    "prefill": [
+      [
+        1,
+        128
+      ],
+      [
+        1,
+        2048
+      ],
+      [
+        1,
+        8192
+      ]
+    ],
+    "decode": [
+      [
+        1,
+        512,
+        128
+      ],
+      [
+        8,
+        512,
+        128
+      ],
+      [
+        1,
+        8192,
+        128
+      ]
+    ],
+    "warmup": 3,
+    "repeats": 5,
+    "texts": {
+      "scandal_in_bohemia.txt": "1ea089c8ec3d69ea499efea24a957908fbaed75bc5e110f865320d0f1acc89d2",
+      "long_prompt.txt": "d88e8b7f30c5178955df2d6e4074de12acc43fde5dc96c9323224a190b16026f"
+    },
+    "long_text_from": 8192
+  },
+  "opts": [
+    "fused",
+    "graph",
+    "mask",
+    "rope",
+    "slots",
+    "static"
+  ]
+}
+scandal_in_bohemia.txt (1536 tokens): ppl 2.9063 -> 2.9063 (-0.001%), top-1 agreement 0.9928
+long_prompt.txt (8192 tokens): ppl 3.7298 -> 3.7304 (+0.015%), top-1 agreement 0.9958
+generations match eager: [True, True, True, True]
+generations match golden: [True, True, True, True]
+workload tokens match: 0.719, first divergence: 92
+NUMERICS PASS
+prefill b=1 s=128  ttft_ms=32.52 (cv 0.002)  prefill_tok_s=3936.56 (cv 0.002)  peak=14080 MiB
+prefill b=1 s=2048  ttft_ms=291.48 (cv 0.005)  prefill_tok_s=7026.28 (cv 0.005)  peak=15247 MiB
+prefill b=1 s=8192  ttft_ms=1693.54 (cv 0.001)  prefill_tok_s=4837.20 (cv 0.001)  peak=17469 MiB
+decode  b=1 s=512  ttft_ms=78.86 (cv 0.003)  tpot_ms=27.56 (cv 0.000)  decode_tok_s=36.29 (cv 0.000)  e2e_tok_s=35.77 (cv 0.000)  step_ms=27.54 (cv 0.002)  peak=14367 MiB
+decode  b=8 s=512  ttft_ms=542.54 (cv 0.001)  tpot_ms=31.27 (cv 0.000)  decode_tok_s=255.86 (cv 0.000)  e2e_tok_s=226.86 (cv 0.000)  step_ms=31.26 (cv 0.002)  peak=16973 MiB
+decode  b=1 s=8192  ttft_ms=1709.86 (cv 0.001)  tpot_ms=32.69 (cv 0.000)  decode_tok_s=30.59 (cv 0.000)  e2e_tok_s=21.84 (cv 0.000)  step_ms=32.66 (cv 0.004)  peak=17522 MiB
+wrote results/experiments/ape2_23916330/fused,static,graph,mask,slots,rope/bench.json and bench.csv (164 s total)
+=== variant fused,static,graph,mask,slots,rope,qkv  Fri Nov 13 19:03:19 CST 2026
+Loading weights:   0%|          | 0/355 [00:00<?, ?it/s]Loading weights:   0%|          | 1/355 [00:00<02:42,  2.17it/s]Loading weights:   1%|          | 2/355 [00:01<03:45,  1.56it/s]Loading weights:   1%|          | 4/355 [00:01<01:38,  3.55it/s]Loading weights:   3%|▎         | 10/355 [00:01<00:31, 11.04it/s]Loading weights:   4%|▍         | 14/355 [00:01<00:22, 15.15it/s]Loading weights:   5%|▍         | 17/355 [00:01<00:22, 15.34it/s]Loading weights:   7%|▋         | 24/355 [00:01<00:13, 25.26it/s]Loading weights:   8%|▊         | 28/355 [00:02<00:14, 22.63it/s]Loading weights:  10%|█         | 36/355 [00:02<00:11, 28.83it/s]Loading weights:  11%|█▏        | 40/355 [00:02<00:11, 26.43it/s]Loading weights:  13%|█▎        | 47/355 [00:02<00:10, 30.69it/s]Loading weights:  14%|█▍        | 51/355 [00:02<00:10, 30.00it/s]Loading weights:  16%|█▋        | 58/355 [00:03<00:10, 28.65it/s]Loading weights:  18%|█▊        | 64/355 [00:03<00:09, 32.18it/s]Loading weights:  19%|█▉        | 69/355 [00:03<00:08, 32.04it/s]Loading weights:  21%|██        | 73/355 [00:03<00:08, 31.34it/s]Loading weights:  23%|██▎       | 80/355 [00:03<00:07, 34.90it/s]Loading weights:  24%|██▎       | 84/355 [00:03<00:08, 33.57it/s]Loading weights:  25%|██▌       | 90/355 [00:03<00:06, 39.24it/s]Loading weights:  27%|██▋       | 95/355 [00:04<00:07, 34.46it/s]Loading weights:  29%|██▊       | 102/355 [00:04<00:06, 39.27it/s]Loading weights:  30%|███       | 107/355 [00:04<00:06, 40.92it/s]Loading weights:  32%|███▏      | 112/355 [00:04<00:07, 30.38it/s]Loading weights:  33%|███▎      | 116/355 [00:04<00:08, 26.81it/s]Loading weights:  35%|███▍      | 123/355 [00:04<00:06, 33.33it/s]Loading weights:  36%|███▌      | 127/355 [00:05<00:08, 25.36it/s]Loading weights:  37%|███▋      | 133/355 [00:05<00:07, 31.29it/s]Loading weights:  39%|███▊      | 137/355 [00:05<00:09, 23.80it/s]Loading weights:  41%|████      | 144/355 [00:05<00:06, 31.43it/s]Loading weights:  42%|████▏     | 149/355 [00:06<00:08, 24.39it/s]Loading weights:  44%|████▍     | 156/355 [00:06<00:06, 31.60it/s]Loading weights:  45%|████▌     | 161/355 [00:06<00:07, 25.67it/s]Loading weights:  47%|████▋     | 166/355 [00:06<00:06, 29.47it/s]Loading weights:  48%|████▊     | 170/355 [00:06<00:08, 22.10it/s]Loading weights:  50%|█████     | 178/355 [00:06<00:05, 31.13it/s]Loading weights:  52%|█████▏    | 183/355 [00:07<00:06, 25.43it/s]Loading weights:  53%|█████▎    | 189/355 [00:07<00:05, 30.60it/s]Loading weights:  55%|█████▍    | 194/355 [00:07<00:06, 24.21it/s]Loading weights:  56%|█████▋    | 200/355 [00:07<00:05, 29.70it/s]Loading weights:  58%|█████▊    | 205/355 [00:08<00:06, 24.62it/s]Loading weights:  59%|█████▉    | 211/355 [00:08<00:04, 29.47it/s]Loading weights:  61%|██████    | 215/355 [00:08<00:06, 22.49it/s]Loading weights:  63%|██████▎   | 222/355 [00:08<00:04, 29.84it/s]Loading weights:  64%|██████▍   | 227/355 [00:08<00:04, 27.48it/s]Loading weights:  66%|██████▌   | 233/355 [00:08<00:03, 33.07it/s]Loading weights:  67%|██████▋   | 238/355 [00:09<00:03, 30.50it/s]Loading weights:  69%|██████▉   | 245/355 [00:09<00:03, 35.53it/s]Loading weights:  70%|███████   | 250/355 [00:09<00:02, 37.77it/s]Loading weights:  72%|███████▏  | 256/355 [00:09<00:02, 38.60it/s]Loading weights:  74%|███████▎  | 261/355 [00:09<00:02, 40.27it/s]Loading weights:  75%|███████▌  | 267/355 [00:09<00:02, 41.45it/s]Loading weights:  77%|███████▋  | 272/355 [00:09<00:01, 42.53it/s]Loading weights:  78%|███████▊  | 278/355 [00:10<00:01, 42.88it/s]Loading weights:  80%|███████▉  | 283/355 [00:10<00:01, 43.67it/s]Loading weights:  81%|████████▏ | 289/355 [00:10<00:01, 44.04it/s]Loading weights:  83%|████████▎ | 294/355 [00:10<00:01, 44.36it/s]Loading weights:  85%|████████▍ | 300/355 [00:10<00:01, 43.89it/s]Loading weights:  86%|████████▌ | 305/355 [00:10<00:01, 44.52it/s]Loading weights:  88%|████████▊ | 311/355 [00:10<00:00, 44.14it/s]Loading weights:  89%|████████▉ | 316/355 [00:10<00:00, 44.67it/s]Loading weights:  91%|█████████ | 322/355 [00:11<00:00, 44.42it/s]Loading weights:  92%|█████████▏| 327/355 [00:11<00:00, 44.23it/s]Loading weights:  94%|█████████▍| 333/355 [00:11<00:00, 44.24it/s]Loading weights:  95%|█████████▌| 338/355 [00:11<00:00, 44.63it/s]Loading weights:  97%|█████████▋| 344/355 [00:11<00:00, 41.38it/s]Loading weights:  98%|█████████▊| 349/355 [00:11<00:00, 37.14it/s]Loading weights: 100%|█████████▉| 354/355 [00:11<00:00, 37.94it/s]Loading weights: 100%|██████████| 355/355 [00:11<00:00, 29.97it/s]
+{
+  "timestamp": "2026-11-14T01:03:45+00:00",
+  "hostname": "gpub079.delta.ncsa.illinois.edu",
+  "slurm_job_id": "23916330",
+  "cuda_visible_devices": "0",
+  "python": "3.13.5",
+  "torch": "2.14.1+cu130",
+  "torch_cuda": "13.0",
+  "cudnn": 92400,
+  "transformers": "5.19.0",
+  "triton": "3.8.0",
+  "model_id": "allenai/Olmo-3-1025-7B",
+  "revision": "a81bae42db3975be1671e27b9c9a56da1a9f980f",
+  "dtype": "bfloat16",
+  "attn_implementation": "sdpa",
+  "device": "cuda",
+  "gpu_name": "NVIDIA A40",
+  "nvidia_smi": "0, NVIDIA A40, 595.71.05, 14193 MiB, 46068 MiB, 0 %, 1740 MHz, 59",
+  "git_hash": "uncommitted",
+  "git_dirty": false,
+  "load_s": 13.828765910933726,
+  "workload": {
+    "prefill": [
+      [
+        1,
+        128
+      ],
+      [
+        1,
+        2048
+      ],
+      [
+        1,
+        8192
+      ]
+    ],
+    "decode": [
+      [
+        1,
+        512,
+        128
+      ],
+      [
+        8,
+        512,
+        128
+      ],
+      [
+        1,
+        8192,
+        128
+      ]
+    ],
+    "warmup": 3,
+    "repeats": 5,
+    "texts": {
+      "scandal_in_bohemia.txt": "1ea089c8ec3d69ea499efea24a957908fbaed75bc5e110f865320d0f1acc89d2",
+      "long_prompt.txt": "d88e8b7f30c5178955df2d6e4074de12acc43fde5dc96c9323224a190b16026f"
+    },
+    "long_text_from": 8192
+  },
+  "opts": [
+    "fused",
+    "graph",
+    "mask",
+    "qkv",
+    "rope",
+    "slots",
+    "static"
+  ]
+}
+scandal_in_bohemia.txt (1536 tokens): ppl 2.9063 -> 2.9063 (-0.001%), top-1 agreement 0.9928
+long_prompt.txt (8192 tokens): ppl 3.7298 -> 3.7304 (+0.015%), top-1 agreement 0.9958
+generations match eager: [True, True, True, True]
+generations match golden: [True, True, True, True]
+workload tokens match: 0.719, first divergence: 92
+NUMERICS PASS
+prefill b=1 s=128  ttft_ms=32.55 (cv 0.001)  prefill_tok_s=3932.17 (cv 0.001)  peak=14079 MiB
+prefill b=1 s=2048  ttft_ms=283.28 (cv 0.004)  prefill_tok_s=7229.55 (cv 0.004)  peak=15242 MiB
+prefill b=1 s=8192  ttft_ms=1693.75 (cv 0.002)  prefill_tok_s=4836.60 (cv 0.002)  peak=17470 MiB
+decode  b=1 s=512  ttft_ms=78.68 (cv 0.002)  tpot_ms=27.42 (cv 0.000)  decode_tok_s=36.47 (cv 0.000)  e2e_tok_s=35.95 (cv 0.000)  step_ms=27.40 (cv 0.002)  peak=14359 MiB
+decode  b=8 s=512  ttft_ms=538.20 (cv 0.002)  tpot_ms=30.82 (cv 0.000)  decode_tok_s=259.61 (cv 0.000)  e2e_tok_s=230.01 (cv 0.000)  step_ms=30.81 (cv 0.002)  peak=16973 MiB
+decode  b=1 s=8192  ttft_ms=1708.50 (cv 0.001)  tpot_ms=32.53 (cv 0.000)  decode_tok_s=30.74 (cv 0.000)  e2e_tok_s=21.92 (cv 0.000)  step_ms=32.50 (cv 0.004)  peak=17522 MiB
+wrote results/experiments/ape2_23916330/fused,static,graph,mask,slots,rope,qkv/bench.json and bench.csv (166 s total)
+=== variant fused,static,graph,mask,slots,rope,qkv,gateup  Fri Nov 13 19:06:18 CST 2026
+Loading weights:   0%|          | 0/355 [00:00<?, ?it/s]Loading weights:   0%|          | 1/355 [00:01<07:13,  1.22s/it]Loading weights:   1%|          | 3/355 [00:01<02:19,  2.52it/s]Loading weights:   1%|▏         | 5/355 [00:01<01:19,  4.41it/s]Loading weights:   4%|▍         | 14/355 [00:01<00:22, 15.45it/s]Loading weights:   5%|▌         | 18/355 [00:01<00:17, 19.09it/s]Loading weights:   7%|▋         | 25/355 [00:01<00:12, 26.71it/s]Loading weights:   8%|▊         | 29/355 [00:02<00:11, 28.84it/s]Loading weights:  10%|█         | 36/355 [00:02<00:09, 35.09it/s]Loading weights:  12%|█▏        | 41/355 [00:02<00:08, 37.69it/s]Loading weights:  13%|█▎        | 47/355 [00:02<00:07, 39.79it/s]Loading weights:  15%|█▍        | 52/355 [00:02<00:07, 41.40it/s]Loading weights:  16%|█▋        | 58/355 [00:02<00:07, 37.70it/s]Loading weights:  19%|█▊        | 66/355 [00:02<00:06, 45.79it/s]Loading weights:  20%|██        | 71/355 [00:03<00:07, 39.19it/s]Loading weights:  23%|██▎       | 80/355 [00:03<00:05, 46.87it/s]Loading weights:  24%|██▍       | 86/355 [00:03<00:06, 43.12it/s]Loading weights:  26%|██▌       | 92/355 [00:03<00:05, 44.14it/s]Loading weights:  28%|██▊       | 100/355 [00:03<00:05, 50.65it/s]Loading weights:  30%|██▉       | 106/355 [00:03<00:05, 44.23it/s]Loading weights:  32%|███▏      | 112/355 [00:03<00:05, 44.40it/s]Loading weights:  33%|███▎      | 117/355 [00:04<00:05, 44.98it/s]Loading weights:  35%|███▍      | 124/355 [00:04<00:04, 47.22it/s]Loading weights:  36%|███▋      | 129/355 [00:04<00:04, 47.06it/s]Loading weights:  38%|███▊      | 135/355 [00:04<00:04, 46.45it/s]Loading weights:  39%|███▉      | 140/355 [00:04<00:04, 46.48it/s]Loading weights:  41%|████      | 146/355 [00:04<00:04, 46.08it/s]Loading weights:  43%|████▎     | 151/355 [00:04<00:04, 46.28it/s]Loading weights:  44%|████▍     | 157/355 [00:04<00:04, 46.02it/s]Loading weights:  46%|████▌     | 162/355 [00:04<00:04, 46.20it/s]Loading weights:  47%|████▋     | 168/355 [00:05<00:04, 45.75it/s]Loading weights:  49%|████▊     | 173/355 [00:05<00:03, 45.99it/s]Loading weights:  50%|█████     | 179/355 [00:05<00:04, 40.48it/s]Loading weights:  53%|█████▎    | 188/355 [00:05<00:03, 50.54it/s]Loading weights:  55%|█████▍    | 194/355 [00:05<00:03, 44.16it/s]Loading weights:  57%|█████▋    | 201/355 [00:05<00:03, 46.52it/s]Loading weights:  58%|█████▊    | 206/355 [00:05<00:03, 46.53it/s]Loading weights:  60%|█████▉    | 212/355 [00:06<00:03, 46.07it/s]Loading weights:  61%|██████    | 217/355 [00:06<00:02, 46.25it/s]Loading weights:  63%|██████▎   | 223/355 [00:06<00:02, 45.92it/s]Loading weights:  64%|██████▍   | 228/355 [00:06<00:02, 46.11it/s]Loading weights:  66%|██████▌   | 234/355 [00:06<00:02, 45.78it/s]Loading weights:  67%|██████▋   | 239/355 [00:06<00:02, 46.04it/s]Loading weights:  69%|██████▉   | 245/355 [00:06<00:02, 45.69it/s]Loading weights:  70%|███████   | 250/355 [00:06<00:02, 45.70it/s]Loading weights:  72%|███████▏  | 256/355 [00:07<00:02, 45.15it/s]Loading weights:  74%|███████▎  | 261/355 [00:07<00:02, 44.94it/s]Loading weights:  75%|███████▌  | 267/355 [00:07<00:01, 44.68it/s]Loading weights:  77%|███████▋  | 272/355 [00:07<00:01, 45.12it/s]Loading weights:  78%|███████▊  | 278/355 [00:07<00:01, 45.11it/s]Loading weights:  80%|███████▉  | 283/355 [00:07<00:01, 44.91it/s]Loading weights:  81%|████████▏ | 289/355 [00:07<00:01, 44.56it/s]Loading weights:  83%|████████▎ | 294/355 [00:07<00:01, 44.92it/s]Loading weights:  85%|████████▍ | 300/355 [00:08<00:01, 44.86it/s]Loading weights:  86%|████████▌ | 305/355 [00:08<00:01, 44.82it/s]Loading weights:  88%|████████▊ | 311/355 [00:08<00:00, 44.66it/s]Loading weights:  89%|████████▉ | 316/355 [00:08<00:00, 45.03it/s]Loading weights:  90%|█████████ | 321/355 [00:08<00:00, 42.35it/s]Loading weights:  92%|█████████▏| 326/355 [00:08<00:00, 43.26it/s]Loading weights:  94%|█████████▍| 333/355 [00:08<00:00, 45.77it/s]Loading weights:  95%|█████████▌| 338/355 [00:08<00:00, 45.94it/s]Loading weights:  97%|█████████▋| 344/355 [00:08<00:00, 45.42it/s]Loading weights:  98%|█████████▊| 349/355 [00:09<00:00, 45.50it/s]Loading weights: 100%|██████████| 355/355 [00:09<00:00, 38.69it/s]
+{
+  "timestamp": "2026-11-14T01:06:44+00:00",
+  "hostname": "gpub079.delta.ncsa.illinois.edu",
+  "slurm_job_id": "23916330",
+  "cuda_visible_devices": "0",
+  "python": "3.13.5",
+  "torch": "2.14.1+cu130",
+  "torch_cuda": "13.0",
+  "cudnn": 92400,
+  "transformers": "5.19.0",
+  "triton": "3.8.0",
+  "model_id": "allenai/Olmo-3-1025-7B",
+  "revision": "a81bae42db3975be1671e27b9c9a56da1a9f980f",
+  "dtype": "bfloat16",
+  "attn_implementation": "sdpa",
+  "device": "cuda",
+  "gpu_name": "NVIDIA A40",
+  "nvidia_smi": "0, NVIDIA A40, 595.71.05, 14193 MiB, 46068 MiB, 0 %, 1740 MHz, 57",
+  "git_hash": "uncommitted",
+  "git_dirty": false,
+  "load_s": 11.38541620306205,
+  "workload": {
+    "prefill": [
+      [
+        1,
+        128
+      ],
+      [
+        1,
+        2048
+      ],
+      [
+        1,
+        8192
+      ]
+    ],
+    "decode": [
+      [
+        1,
+        512,
+        128
+      ],
+      [
+        8,
+        512,
+        128
+      ],
+      [
+        1,
+        8192,
+        128
+      ]
+    ],
+    "warmup": 3,
+    "repeats": 5,
+    "texts": {
+      "scandal_in_bohemia.txt": "1ea089c8ec3d69ea499efea24a957908fbaed75bc5e110f865320d0f1acc89d2",
+      "long_prompt.txt": "d88e8b7f30c5178955df2d6e4074de12acc43fde5dc96c9323224a190b16026f"
+    },
+    "long_text_from": 8192
+  },
+  "opts": [
+    "fused",
+    "gateup",
+    "graph",
+    "mask",
+    "qkv",
+    "rope",
+    "slots",
+    "static"
+  ]
+}
+scandal_in_bohemia.txt (1536 tokens): ppl 2.9063 -> 2.9063 (-0.001%), top-1 agreement 0.9928
+long_prompt.txt (8192 tokens): ppl 3.7298 -> 3.7304 (+0.015%), top-1 agreement 0.9958
+generations match eager: [True, True, True, True]
+generations match golden: [True, True, True, True]
+workload tokens match: 0.719, first divergence: 92
+NUMERICS PASS
+prefill b=1 s=128  ttft_ms=33.45 (cv 0.037)  prefill_tok_s=3826.09 (cv 0.035)  peak=14079 MiB
+prefill b=1 s=2048  ttft_ms=278.42 (cv 0.003)  prefill_tok_s=7355.83 (cv 0.003)  peak=15242 MiB
+prefill b=1 s=8192  ttft_ms=1687.15 (cv 0.001)  prefill_tok_s=4855.52 (cv 0.001)  peak=17470 MiB
+decode  b=1 s=512  ttft_ms=74.22 (cv 0.004)  tpot_ms=26.79 (cv 0.000)  decode_tok_s=37.33 (cv 0.000)  e2e_tok_s=36.83 (cv 0.000)  step_ms=26.77 (cv 0.003)  peak=14359 MiB
+decode  b=8 s=512  ttft_ms=527.66 (cv 0.001)  tpot_ms=31.02 (cv 0.000)  decode_tok_s=257.92 (cv 0.000)  e2e_tok_s=229.26 (cv 0.000)  step_ms=31.00 (cv 0.002)  peak=16973 MiB
+decode  b=1 s=8192  ttft_ms=1721.17 (cv 0.003)  tpot_ms=31.92 (cv 0.000)  decode_tok_s=31.33 (cv 0.000)  e2e_tok_s=22.16 (cv 0.001)  step_ms=31.89 (cv 0.004)  peak=17510 MiB
+wrote results/experiments/ape2_23916330/fused,static,graph,mask,slots,rope,qkv,gateup/bench.json and bench.csv (162 s total)
+=== variant fused,static,graph,mask,slots,rope,qkv,gateup,band  Fri Nov 13 19:09:15 CST 2026
+Loading weights:   0%|          | 0/355 [00:00<?, ?it/s]Loading weights:   0%|          | 1/355 [00:00<02:38,  2.23it/s]Loading weights:   1%|          | 2/355 [00:00<02:47,  2.10it/s]Loading weights:   1%|          | 4/355 [00:01<01:14,  4.73it/s]Loading weights:   3%|▎         | 12/355 [00:01<00:19, 17.45it/s]Loading weights:   5%|▍         | 16/355 [00:01<00:17, 18.85it/s]Loading weights:   7%|▋         | 25/355 [00:01<00:10, 30.58it/s]Loading weights:   8%|▊         | 30/355 [00:01<00:09, 33.97it/s]Loading weights:  10%|█         | 36/355 [00:01<00:08, 36.95it/s]Loading weights:  12%|█▏        | 41/355 [00:01<00:08, 39.16it/s]Loading weights:  13%|█▎        | 47/355 [00:01<00:07, 40.76it/s]Loading weights:  15%|█▍        | 52/355 [00:02<00:07, 42.12it/s]Loading weights:  16%|█▋        | 58/355 [00:02<00:07, 38.14it/s]Loading weights:  18%|█▊        | 65/355 [00:02<00:06, 44.01it/s]Loading weights:  20%|█▉        | 70/355 [00:02<00:06, 42.57it/s]Loading weights:  22%|██▏       | 78/355 [00:02<00:05, 49.93it/s]Loading weights:  24%|██▎       | 84/355 [00:02<00:06, 43.61it/s]Loading weights:  26%|██▌       | 91/355 [00:02<00:06, 41.27it/s]Loading weights:  28%|██▊       | 100/355 [00:03<00:05, 50.26it/s]Loading weights:  30%|██▉       | 106/355 [00:03<00:05, 44.15it/s]Loading weights:  32%|███▏      | 113/355 [00:03<00:05, 46.45it/s]Loading weights:  33%|███▎      | 118/355 [00:03<00:05, 46.52it/s]Loading weights:  35%|███▍      | 124/355 [00:03<00:05, 46.05it/s]Loading weights:  36%|███▋      | 129/355 [00:03<00:04, 46.24it/s]Loading weights:  38%|███▊      | 135/355 [00:03<00:04, 45.89it/s]Loading weights:  39%|███▉      | 140/355 [00:04<00:04, 46.16it/s]Loading weights:  41%|████      | 146/355 [00:04<00:04, 45.86it/s]Loading weights:  43%|████▎     | 151/355 [00:04<00:04, 46.10it/s]Loading weights:  44%|████▍     | 157/355 [00:04<00:04, 45.80it/s]Loading weights:  46%|████▌     | 162/355 [00:04<00:04, 46.01it/s]Loading weights:  47%|████▋     | 168/355 [00:04<00:04, 45.77it/s]Loading weights:  49%|████▊     | 173/355 [00:04<00:03, 46.03it/s]Loading weights:  50%|█████     | 179/355 [00:04<00:03, 45.74it/s]Loading weights:  52%|█████▏    | 184/355 [00:04<00:03, 46.00it/s]Loading weights:  54%|█████▎    | 190/355 [00:05<00:03, 45.69it/s]Loading weights:  55%|█████▍    | 195/355 [00:05<00:03, 45.96it/s]Loading weights:  57%|█████▋    | 201/355 [00:05<00:03, 45.68it/s]Loading weights:  58%|█████▊    | 206/355 [00:05<00:03, 45.89it/s]Loading weights:  60%|█████▉    | 212/355 [00:05<00:03, 45.63it/s]Loading weights:  61%|██████    | 217/355 [00:05<00:03, 45.95it/s]Loading weights:  63%|██████▎   | 223/355 [00:05<00:02, 45.66it/s]Loading weights:  64%|██████▍   | 228/355 [00:05<00:02, 45.94it/s]Loading weights:  66%|██████▌   | 234/355 [00:06<00:02, 45.57it/s]Loading weights:  67%|██████▋   | 239/355 [00:06<00:02, 45.81it/s]Loading weights:  69%|██████▉   | 245/355 [00:06<00:02, 45.48it/s]Loading weights:  70%|███████   | 250/355 [00:06<00:02, 45.50it/s]Loading weights:  72%|███████▏  | 256/355 [00:06<00:02, 44.97it/s]Loading weights:  74%|███████▎  | 261/355 [00:06<00:02, 44.94it/s]Loading weights:  75%|███████▌  | 267/355 [00:06<00:01, 44.73it/s]Loading weights:  77%|███████▋  | 272/355 [00:06<00:01, 45.14it/s]Loading weights:  78%|███████▊  | 278/355 [00:07<00:01, 45.06it/s]Loading weights:  80%|███████▉  | 283/355 [00:07<00:01, 45.00it/s]Loading weights:  81%|████████▏ | 289/355 [00:07<00:01, 44.64it/s]Loading weights:  83%|████████▎ | 294/355 [00:07<00:01, 45.08it/s]Loading weights:  85%|████████▍ | 300/355 [00:07<00:01, 44.86it/s]Loading weights:  86%|████████▌ | 305/355 [00:07<00:01, 44.95it/s]Loading weights:  88%|████████▊ | 311/355 [00:07<00:01, 39.59it/s]Loading weights:  90%|█████████ | 320/355 [00:07<00:00, 49.63it/s]Loading weights:  92%|█████████▏| 326/355 [00:08<00:00, 43.17it/s]Loading weights:  94%|█████████▍| 333/355 [00:08<00:00, 45.34it/s]Loading weights:  95%|█████████▌| 338/355 [00:08<00:00, 45.54it/s]Loading weights:  97%|█████████▋| 344/355 [00:08<00:00, 45.13it/s]Loading weights:  98%|█████████▊| 349/355 [00:08<00:00, 45.27it/s]Loading weights: 100%|██████████| 355/355 [00:08<00:00, 40.79it/s]
+{
+  "timestamp": "2026-11-14T01:09:39+00:00",
+  "hostname": "gpub079.delta.ncsa.illinois.edu",
+  "slurm_job_id": "23916330",
+  "cuda_visible_devices": "0",
+  "python": "3.13.5",
+  "torch": "2.14.1+cu130",
+  "torch_cuda": "13.0",
+  "cudnn": 92400,
+  "transformers": "5.19.0",
+  "triton": "3.8.0",
+  "model_id": "allenai/Olmo-3-1025-7B",
+  "revision": "a81bae42db3975be1671e27b9c9a56da1a9f980f",
+  "dtype": "bfloat16",
+  "attn_implementation": "sdpa",
+  "device": "cuda",
+  "gpu_name": "NVIDIA A40",
+  "nvidia_smi": "0, NVIDIA A40, 595.71.05, 14193 MiB, 46068 MiB, 0 %, 1740 MHz, 59",
+  "git_hash": "uncommitted",
+  "git_dirty": false,
+  "load_s": 10.72392313706223,
+  "workload": {
+    "prefill": [
+      [
+        1,
+        128
+      ],
+      [
+        1,
+        2048
+      ],
+      [
+        1,
+        8192
+      ]
+    ],
+    "decode": [
+      [
+        1,
+        512,
+        128
+      ],
+      [
+        8,
+        512,
+        128
+      ],
+      [
+        1,
+        8192,
+        128
+      ]
+    ],
+    "warmup": 3,
+    "repeats": 5,
+    "texts": {
+      "scandal_in_bohemia.txt": "1ea089c8ec3d69ea499efea24a957908fbaed75bc5e110f865320d0f1acc89d2",
+      "long_prompt.txt": "d88e8b7f30c5178955df2d6e4074de12acc43fde5dc96c9323224a190b16026f"
+    },
+    "long_text_from": 8192
+  },
+  "opts": [
+    "band",
+    "fused",
+    "gateup",
+    "graph",
+    "mask",
+    "qkv",
+    "rope",
+    "slots",
+    "static"
+  ]
+}
+scandal_in_bohemia.txt (1536 tokens): ppl 2.9063 -> 2.9063 (-0.001%), top-1 agreement 0.9928
+long_prompt.txt (8192 tokens): ppl 3.7298 -> 3.7306 (+0.022%), top-1 agreement 0.9956
+generations match eager: [True, True, True, True]
+generations match golden: [True, True, True, True]
+workload tokens match: 0.719, first divergence: 92
+NUMERICS PASS
+prefill b=1 s=128  ttft_ms=33.55 (cv 0.001)  prefill_tok_s=3815.61 (cv 0.001)  peak=14090 MiB
+prefill b=1 s=2048  ttft_ms=279.38 (cv 0.005)  prefill_tok_s=7330.40 (cv 0.005)  peak=15252 MiB
+prefill b=1 s=8192  ttft_ms=1320.28 (cv 0.001)  prefill_tok_s=6204.75 (cv 0.001)  peak=17481 MiB
+decode  b=1 s=512  ttft_ms=74.39 (cv 0.007)  tpot_ms=26.78 (cv 0.000)  decode_tok_s=37.34 (cv 0.000)  e2e_tok_s=36.83 (cv 0.000)  step_ms=26.77 (cv 0.003)  peak=14369 MiB
+decode  b=8 s=512  ttft_ms=528.62 (cv 0.002)  tpot_ms=31.01 (cv 0.000)  decode_tok_s=257.97 (cv 0.000)  e2e_tok_s=229.24 (cv 0.000)  step_ms=31.00 (cv 0.002)  peak=16983 MiB
+decode  b=1 s=8192  ttft_ms=1337.73 (cv 0.002)  tpot_ms=31.92 (cv 0.000)  decode_tok_s=31.33 (cv 0.000)  e2e_tok_s=23.74 (cv 0.001)  step_ms=31.90 (cv 0.004)  peak=17520 MiB
+wrote results/experiments/ape2_23916330/fused,static,graph,mask,slots,rope,qkv,gateup,band/bench.json and bench.csv (155 s total)
+=== variant fused,static,graph,mask,slots,rope,qkv,gateup,band,tunable  Fri Nov 13 19:12:04 CST 2026
+Loading weights:   0%|          | 0/355 [00:00<?, ?it/s]Loading weights:   0%|          | 1/355 [00:00<04:19,  1.36it/s]Loading weights:   1%|          | 2/355 [00:01<03:29,  1.69it/s]Loading weights:   1%|          | 4/355 [00:01<01:29,  3.92it/s]Loading weights:   3%|▎         | 12/355 [00:01<00:22, 14.94it/s]Loading weights:   5%|▍         | 16/355 [00:01<00:20, 16.86it/s]Loading weights:   7%|▋         | 25/355 [00:01<00:11, 28.08it/s]Loading weights:   8%|▊         | 30/355 [00:01<00:10, 31.79it/s]Loading weights:  10%|█         | 36/355 [00:02<00:09, 35.23it/s]Loading weights:  12%|█▏        | 41/355 [00:02<00:08, 37.83it/s]Loading weights:  13%|█▎        | 47/355 [00:02<00:07, 39.85it/s]Loading weights:  15%|█▍        | 52/355 [00:02<00:07, 41.37it/s]Loading weights:  16%|█▋        | 58/355 [00:02<00:07, 42.40it/s]Loading weights:  18%|█▊        | 63/355 [00:02<00:06, 43.38it/s]Loading weights:  19%|█▉        | 69/355 [00:02<00:06, 43.81it/s]Loading weights:  21%|██        | 74/355 [00:02<00:06, 44.41it/s]Loading weights:  23%|██▎       | 80/355 [00:03<00:06, 39.44it/s]Loading weights:  25%|██▌       | 89/355 [00:03<00:05, 49.52it/s]Loading weights:  27%|██▋       | 95/355 [00:03<00:05, 43.41it/s]Loading weights:  29%|██▊       | 102/355 [00:03<00:05, 45.85it/s]Loading weights:  30%|███       | 107/355 [00:03<00:05, 45.96it/s]Loading weights:  32%|███▏      | 112/355 [00:03<00:06, 36.06it/s]Loading weights:  33%|███▎      | 117/355 [00:04<00:07, 31.97it/s]Loading weights:  35%|███▍      | 124/355 [00:04<00:06, 35.68it/s]Loading weights:  36%|███▌      | 128/355 [00:04<00:06, 34.13it/s]Loading weights:  38%|███▊      | 135/355 [00:04<00:06, 35.86it/s]Loading weights:  39%|███▉      | 139/355 [00:04<00:06, 31.12it/s]Loading weights:  41%|████      | 146/355 [00:04<00:06, 34.47it/s]Loading weights:  42%|████▏     | 150/355 [00:04<00:06, 32.84it/s]Loading weights:  44%|████▍     | 157/355 [00:05<00:05, 34.59it/s]Loading weights:  45%|████▌     | 161/355 [00:05<00:06, 30.36it/s]Loading weights:  47%|████▋     | 167/355 [00:05<00:05, 31.98it/s]Loading weights:  48%|████▊     | 171/355 [00:05<00:05, 31.01it/s]Loading weights:  50%|█████     | 179/355 [00:05<00:05, 35.08it/s]Loading weights:  52%|█████▏    | 183/355 [00:05<00:05, 32.44it/s]Loading weights:  53%|█████▎    | 189/355 [00:06<00:04, 38.03it/s]Loading weights:  55%|█████▍    | 194/355 [00:06<00:05, 31.28it/s]Loading weights:  57%|█████▋    | 201/355 [00:06<00:04, 34.85it/s]Loading weights:  58%|█████▊    | 205/355 [00:06<00:04, 33.66it/s]Loading weights:  60%|█████▉    | 212/355 [00:06<00:03, 37.74it/s]Loading weights:  61%|██████    | 216/355 [00:06<00:03, 37.69it/s]Loading weights:  63%|██████▎   | 223/355 [00:06<00:03, 42.09it/s]Loading weights:  64%|██████▍   | 228/355 [00:07<00:02, 43.24it/s]Loading weights:  66%|██████▌   | 233/355 [00:07<00:02, 41.53it/s]Loading weights:  67%|██████▋   | 238/355 [00:07<00:02, 42.95it/s]Loading weights:  69%|██████▉   | 245/355 [00:07<00:02, 40.55it/s]Loading weights:  70%|███████   | 250/355 [00:07<00:02, 37.27it/s]Loading weights:  72%|███████▏  | 256/355 [00:07<00:02, 35.26it/s]Loading weights:  73%|███████▎  | 260/355 [00:08<00:03, 28.80it/s]Loading weights:  75%|███████▍  | 265/355 [00:08<00:02, 32.74it/s]Loading weights:  76%|███████▌  | 269/355 [00:08<00:03, 24.43it/s]Loading weights:  78%|███████▊  | 278/355 [00:08<00:02, 34.02it/s]Loading weights:  80%|███████▉  | 283/355 [00:08<00:01, 36.44it/s]Loading weights:  81%|████████▏ | 289/355 [00:08<00:01, 38.60it/s]Loading weights:  83%|████████▎ | 294/355 [00:08<00:01, 40.12it/s]Loading weights:  85%|████████▍ | 300/355 [00:09<00:01, 41.48it/s]Loading weights:  86%|████████▌ | 305/355 [00:09<00:01, 42.65it/s]Loading weights:  88%|████████▊ | 311/355 [00:09<00:01, 43.26it/s]Loading weights:  89%|████████▉ | 316/355 [00:09<00:01, 29.20it/s]Loading weights:  90%|█████████ | 320/355 [00:09<00:01, 30.98it/s]Loading weights:  91%|█████████▏| 324/355 [00:10<00:01, 19.48it/s]Loading weights:  93%|█████████▎| 331/355 [00:10<00:00, 26.95it/s]Loading weights:  95%|█████████▍| 336/355 [00:10<00:00, 19.28it/s]Loading weights:  96%|█████████▋| 342/355 [00:10<00:00, 24.71it/s]Loading weights:  97%|█████████▋| 346/355 [00:11<00:00, 23.27it/s]Loading weights: 100%|██████████| 355/355 [00:11<00:00, 31.84it/s]
+{
+  "timestamp": "2026-11-14T01:12:30+00:00",
+  "hostname": "gpub079.delta.ncsa.illinois.edu",
+  "slurm_job_id": "23916330",
+  "cuda_visible_devices": "0",
+  "python": "3.13.5",
+  "torch": "2.14.1+cu130",
+  "torch_cuda": "13.0",
+  "cudnn": 92400,
+  "transformers": "5.19.0",
+  "triton": "3.8.0",
+  "model_id": "allenai/Olmo-3-1025-7B",
+  "revision": "a81bae42db3975be1671e27b9c9a56da1a9f980f",
+  "dtype": "bfloat16",
+  "attn_implementation": "sdpa",
+  "device": "cuda",
+  "gpu_name": "NVIDIA A40",
+  "nvidia_smi": "0, NVIDIA A40, 595.71.05, 14193 MiB, 46068 MiB, 0 %, 1740 MHz, 58",
+  "git_hash": "uncommitted",
+  "git_dirty": false,
+  "load_s": 13.123621423030272,
+  "workload": {
+    "prefill": [
+      [
+        1,
+        128
+      ],
+      [
+        1,
+        2048
+      ],
+      [
+        1,
+        8192
+      ]
+    ],
+    "decode": [
+      [
+        1,
+        512,
+        128
+      ],
+      [
+        8,
+        512,
+        128
+      ],
+      [
+        1,
+        8192,
+        128
+      ]
+    ],
+    "warmup": 3,
+    "repeats": 5,
+    "texts": {
+      "scandal_in_bohemia.txt": "1ea089c8ec3d69ea499efea24a957908fbaed75bc5e110f865320d0f1acc89d2",
+      "long_prompt.txt": "d88e8b7f30c5178955df2d6e4074de12acc43fde5dc96c9323224a190b16026f"
+    },
+    "long_text_from": 8192
+  },
+  "opts": [
+    "band",
+    "fused",
+    "gateup",
+    "graph",
+    "mask",
+    "qkv",
+    "rope",
+    "slots",
+    "static",
+    "tunable"
+  ]
+}
+tunableop: tuning, writing /u/neilas3/classes/598/598-project/results/tunable/tunableop_a40.csv
+scandal_in_bohemia.txt (1536 tokens): ppl 2.9063 -> 2.9078 (+0.052%), top-1 agreement 0.9909
+long_prompt.txt (8192 tokens): ppl 3.7298 -> 3.7306 (+0.022%), top-1 agreement 0.9956
+generations match eager: [True, True, True, True]
+generations match golden: [True, True, True, True]
+workload tokens match: 1.000, first divergence: None
+NUMERICS PASS
+prefill b=1 s=128  ttft_ms=31.80 (cv 0.003)  prefill_tok_s=4024.76 (cv 0.003)  peak=14264 MiB
+prefill b=1 s=2048  ttft_ms=280.27 (cv 0.006)  prefill_tok_s=7307.15 (cv 0.006)  peak=15451 MiB
+prefill b=1 s=8192  ttft_ms=1329.53 (cv 0.001)  prefill_tok_s=6161.57 (cv 0.001)  peak=17480 MiB
+decode  b=1 s=512  ttft_ms=75.31 (cv 0.003)  tpot_ms=26.26 (cv 0.000)  decode_tok_s=38.08 (cv 0.000)  e2e_tok_s=37.53 (cv 0.000)  step_ms=26.25 (cv 0.002)  peak=14369 MiB
+decode  b=8 s=512  ttft_ms=530.81 (cv 0.002)  tpot_ms=30.64 (cv 0.000)  decode_tok_s=261.08 (cv 0.000)  e2e_tok_s=231.56 (cv 0.000)  step_ms=30.63 (cv 0.003)  peak=16983 MiB
+decode  b=1 s=8192  ttft_ms=1348.28 (cv 0.001)  tpot_ms=31.42 (cv 0.000)  decode_tok_s=31.83 (cv 0.000)  e2e_tok_s=23.98 (cv 0.000)  step_ms=31.41 (cv 0.003)  peak=17520 MiB
+wrote results/experiments/ape2_23916330/fused,static,graph,mask,slots,rope,qkv,gateup,band,tunable/bench.json and bench.csv (180 s total)
+=== variant static  Fri Nov 13 19:15:18 CST 2026
+Loading weights:   0%|          | 0/355 [00:00<?, ?it/s]Loading weights:   0%|          | 1/355 [00:00<02:42,  2.18it/s]Loading weights:   1%|          | 2/355 [00:01<04:03,  1.45it/s]Loading weights:   1%|          | 3/355 [00:01<02:29,  2.36it/s]Loading weights:   1%|          | 4/355 [00:01<01:44,  3.37it/s]Loading weights:   3%|▎         | 9/355 [00:01<00:33, 10.31it/s]Loading weights:   4%|▎         | 13/355 [00:01<00:22, 15.38it/s]Loading weights:   5%|▍         | 16/355 [00:02<00:26, 12.89it/s]Loading weights:   7%|▋         | 24/355 [00:02<00:13, 24.02it/s]Loading weights:   8%|▊         | 28/355 [00:02<00:17, 19.06it/s]Loading weights:   9%|▉         | 33/355 [00:02<00:13, 23.71it/s]Loading weights:  10%|█         | 37/355 [00:02<00:14, 22.06it/s]Loading weights:  11%|█▏        | 40/355 [00:02<00:13, 23.32it/s]Loading weights:  13%|█▎        | 46/355 [00:03<00:10, 30.53it/s]Loading weights:  14%|█▍        | 50/355 [00:03<00:13, 22.46it/s]Loading weights:  16%|█▌        | 57/355 [00:03<00:09, 30.24it/s]Loading weights:  17%|█▋        | 61/355 [00:03<00:12, 23.47it/s]Loading weights:  19%|█▉        | 68/355 [00:03<00:09, 31.51it/s]Loading weights:  21%|██        | 73/355 [00:04<00:10, 26.23it/s]Loading weights:  23%|██▎       | 80/355 [00:04<00:09, 30.17it/s]Loading weights:  24%|██▎       | 84/355 [00:04<00:09, 29.47it/s]Loading weights:  25%|██▌       | 90/355 [00:04<00:07, 35.23it/s]Loading weights:  27%|██▋       | 95/355 [00:04<00:08, 30.41it/s]Loading weights:  29%|██▊       | 102/355 [00:04<00:07, 35.71it/s]Loading weights:  30%|███       | 107/355 [00:04<00:06, 37.99it/s]Loading weights:  32%|███▏      | 113/355 [00:05<00:07, 32.22it/s]Loading weights:  34%|███▎      | 119/355 [00:05<00:06, 34.33it/s]Loading weights:  35%|███▌      | 125/355 [00:05<00:06, 36.39it/s]Loading weights:  37%|███▋      | 130/355 [00:05<00:05, 38.17it/s]Loading weights:  38%|███▊      | 136/355 [00:05<00:05, 40.65it/s]Loading weights:  41%|████      | 144/355 [00:05<00:04, 48.33it/s]Loading weights:  42%|████▏     | 150/355 [00:06<00:04, 42.74it/s]Loading weights:  44%|████▍     | 157/355 [00:06<00:04, 45.51it/s]Loading weights:  46%|████▌     | 162/355 [00:06<00:04, 45.80it/s]Loading weights:  47%|████▋     | 167/355 [00:06<00:04, 43.38it/s]Loading weights:  48%|████▊     | 172/355 [00:06<00:04, 44.17it/s]Loading weights:  50%|█████     | 179/355 [00:06<00:03, 46.81it/s]Loading weights:  52%|█████▏    | 184/355 [00:06<00:03, 46.75it/s]Loading weights:  54%|█████▎    | 190/355 [00:06<00:03, 46.22it/s]Loading weights:  55%|█████▍    | 195/355 [00:07<00:03, 46.35it/s]Loading weights:  56%|█████▋    | 200/355 [00:07<00:03, 43.58it/s]Loading weights:  58%|█████▊    | 205/355 [00:07<00:03, 44.37it/s]Loading weights:  60%|█████▉    | 212/355 [00:07<00:03, 47.13it/s]Loading weights:  61%|██████    | 217/355 [00:07<00:02, 46.98it/s]Loading weights:  63%|██████▎   | 223/355 [00:07<00:02, 46.35it/s]Loading weights:  64%|██████▍   | 228/355 [00:07<00:02, 46.42it/s]Loading weights:  66%|██████▌   | 234/355 [00:07<00:02, 45.94it/s]Loading weights:  67%|██████▋   | 239/355 [00:07<00:02, 46.17it/s]Loading weights:  69%|██████▉   | 245/355 [00:08<00:02, 45.67it/s]Loading weights:  70%|███████   | 250/355 [00:08<00:02, 45.79it/s]Loading weights:  72%|███████▏  | 256/355 [00:08<00:02, 40.07it/s]Loading weights:  74%|███████▍  | 264/355 [00:08<00:01, 47.54it/s]Loading weights:  76%|███████▌  | 269/355 [00:08<00:02, 39.73it/s]Loading weights:  78%|███████▊  | 278/355 [00:08<00:01, 47.13it/s]Loading weights:  80%|███████▉  | 283/355 [00:08<00:01, 46.74it/s]Loading weights:  81%|████████▏ | 289/355 [00:09<00:01, 45.87it/s]Loading weights:  83%|████████▎ | 294/355 [00:09<00:01, 45.46it/s]Loading weights:  85%|████████▍ | 300/355 [00:09<00:01, 45.16it/s]Loading weights:  86%|████████▌ | 305/355 [00:09<00:01, 45.27it/s]Loading weights:  88%|████████▊ | 311/355 [00:09<00:00, 45.08it/s]Loading weights:  89%|████████▉ | 316/355 [00:09<00:00, 45.25it/s]Loading weights:  91%|█████████ | 322/355 [00:09<00:00, 44.55it/s]Loading weights:  92%|█████████▏| 327/355 [00:09<00:00, 44.95it/s]Loading weights:  94%|█████████▍| 333/355 [00:10<00:00, 44.62it/s]Loading weights:  95%|█████████▌| 338/355 [00:10<00:00, 44.51it/s]Loading weights:  97%|█████████▋| 344/355 [00:10<00:00, 36.90it/s]Loading weights:  99%|█████████▊| 350/355 [00:10<00:00, 41.06it/s]Loading weights: 100%|██████████| 355/355 [00:10<00:00, 33.57it/s]
+{
+  "timestamp": "2026-11-14T01:15:43+00:00",
+  "hostname": "gpub079.delta.ncsa.illinois.edu",
+  "slurm_job_id": "23916330",
+  "cuda_visible_devices": "0",
+  "python": "3.13.5",
+  "torch": "2.14.1+cu130",
+  "torch_cuda": "13.0",
+  "cudnn": 92400,
+  "transformers": "5.19.0",
+  "triton": "3.8.0",
+  "model_id": "allenai/Olmo-3-1025-7B",
+  "revision": "a81bae42db3975be1671e27b9c9a56da1a9f980f",
+  "dtype": "bfloat16",
+  "attn_implementation": "sdpa",
+  "device": "cuda",
+  "gpu_name": "NVIDIA A40",
+  "nvidia_smi": "0, NVIDIA A40, 595.71.05, 14193 MiB, 46068 MiB, 0 %, 1740 MHz, 57",
+  "git_hash": "uncommitted",
+  "git_dirty": false,
+  "load_s": 12.553657260956243,
+  "workload": {
+    "prefill": [
+      [
+        1,
+        128
+      ],
+      [
+        1,
+        2048
+      ],
+      [
+        1,
+        8192
+      ]
+    ],
+    "decode": [
+      [
+        1,
+        512,
+        128
+      ],
+      [
+        8,
+        512,
+        128
+      ],
+      [
+        1,
+        8192,
+        128
+      ]
+    ],
+    "warmup": 3,
+    "repeats": 5,
+    "texts": {
+      "scandal_in_bohemia.txt": "1ea089c8ec3d69ea499efea24a957908fbaed75bc5e110f865320d0f1acc89d2",
+      "long_prompt.txt": "d88e8b7f30c5178955df2d6e4074de12acc43fde5dc96c9323224a190b16026f"
+    },
+    "long_text_from": 8192
+  },
+  "opts": [
+    "static"
+  ]
+}
+scandal_in_bohemia.txt (1536 tokens): ppl 2.9063 -> 2.9063 (+0.000%), top-1 agreement 1.0000
+long_prompt.txt (8192 tokens): ppl 3.7298 -> 3.7298 (+0.000%), top-1 agreement 1.0000
+generations match eager: [True, True, True, True]
+generations match golden: [True, True, True, True]
+workload tokens match: 1.000, first divergence: None
+NUMERICS PASS
+prefill b=1 s=128  ttft_ms=41.15 (cv 0.002)  prefill_tok_s=3110.87 (cv 0.002)  peak=14037 MiB
+prefill b=1 s=2048  ttft_ms=396.15 (cv 0.001)  prefill_tok_s=5169.70 (cv 0.001)  peak=15210 MiB
+prefill b=1 s=8192  ttft_ms=2121.08 (cv 0.001)  prefill_tok_s=3862.19 (cv 0.001)  peak=17408 MiB
+decode  b=1 s=512  ttft_ms=109.15 (cv 0.001)  tpot_ms=37.63 (cv 0.000)  decode_tok_s=26.58 (cv 0.000)  e2e_tok_s=26.19 (cv 0.000)  step_ms=37.58 (cv 0.005)  peak=14301 MiB
+decode  b=8 s=512  ttft_ms=749.53 (cv 0.001)  tpot_ms=38.04 (cv 0.000)  decode_tok_s=210.30 (cv 0.000)  e2e_tok_s=183.50 (cv 0.000)  step_ms=38.00 (cv 0.003)  peak=16905 MiB
+decode  b=1 s=8192  ttft_ms=2127.24 (cv 0.002)  tpot_ms=38.61 (cv 0.000)  decode_tok_s=25.90 (cv 0.000)  e2e_tok_s=18.21 (cv 0.000)  step_ms=38.58 (cv 0.004)  peak=17416 MiB
+wrote results/experiments/ape2_23916330/static/bench.json and bench.csv (197 s total)
+done Fri Nov 13 19:18:48 CST 2026

@@ -1,0 +1,279 @@
+gpub084.delta.ncsa.illinois.edu
+{"job": "23927854", "quick": false, "dry_run": false, "warmup": 5, "iters": 50, "torch": "2.14.1+cu130", "cuda": "13.0", "gpu": "NVIDIA A40", "cudnn": 92400, "defaults": {"preferred_blas_library": "_BlasBackend.Cublas", "allow_bf16_reduced_precision_reduction": true, "cublaslt_workspace_bytes": 1048576, "allow_tf32": false, "triton_num_warps": {"rmsnorm": 8, "qk_norm_rope": 8, "silu_mul": 4}}}
+[W1113 19:38:37.201493617 Context.cpp:629] Warning: torch.backends.cuda.preferred_blas_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator())
+done: gemm (75 rows)
+done: workspace (20 rows)
+done: sdpa (108 rows)
+done: triton (48 rows)
+done: tf32 (2 rows)
+
+== gemm
+            op      N      K     M         knob  status       us  x_default  TFLOP/s  max_abs_diff_vs_default
+        o_proj   4096   4096     1      default      ok    63.44       1.00     0.53                     0.00
+        o_proj   4096   4096     1     cublaslt      ok    64.10       1.01     0.52                  3.9e-03
+        o_proj   4096   4096     1  no_bf16_rpr      ok    63.44       1.00     0.53                     0.00
+        o_proj   4096   4096     8      default      ok    64.56       1.00     4.16                     0.00
+        o_proj   4096   4096     8     cublaslt      ok    64.56       1.00     4.16                     0.00
+        o_proj   4096   4096     8  no_bf16_rpr      ok    64.56       1.00     4.16                     0.00
+        o_proj   4096   4096   128      default      ok    71.81       1.00    59.81                     0.00
+        o_proj   4096   4096   128     cublaslt      ok    72.09       1.00    59.58                     0.00
+        o_proj   4096   4096   128  no_bf16_rpr      ok    72.09       1.00    59.58                     0.00
+        o_proj   4096   4096   512      default      ok   164.25       1.00   104.60                     0.00
+        o_proj   4096   4096   512     cublaslt      ok   165.89       1.01   103.56                     0.00
+        o_proj   4096   4096   512  no_bf16_rpr      ok   165.89       1.01   103.56                     0.00
+        o_proj   4096   4096  2048      default      ok   674.92       1.00   101.82                     0.00
+        o_proj   4096   4096  2048     cublaslt      ok   685.67       1.02   100.22                     0.03
+        o_proj   4096   4096  2048  no_bf16_rpr      ok   649.01       0.96   105.88                     0.03
+       gate/up  11008   4096     1      default      ok   170.14       1.00     0.53                     0.00
+       gate/up  11008   4096     1     cublaslt      ok   170.39       1.00     0.53                     0.02
+       gate/up  11008   4096     1  no_bf16_rpr      ok   159.80       0.94     0.56                     0.02
+       gate/up  11008   4096     8      default      ok   160.56       1.00     4.49                     0.00
+       gate/up  11008   4096     8     cublaslt      ok   158.77       0.99     4.54                     0.00
+       gate/up  11008   4096     8  no_bf16_rpr      ok   160.56       1.00     4.49                     0.00
+       gate/up  11008   4096   128      default      ok   202.96       1.00    56.87                     0.00
+       gate/up  11008   4096   128     cublaslt      ok   203.06       1.00    56.84                     0.00
+       gate/up  11008   4096   128  no_bf16_rpr      ok   249.45       1.23    46.27                     0.03
+       gate/up  11008   4096   512      default      ok   506.78       1.00    91.11                     0.00
+       gate/up  11008   4096   512     cublaslt      ok   504.42       1.00    91.53                     0.00
+       gate/up  11008   4096   512  no_bf16_rpr      ok   504.42       1.00    91.53                     0.00
+       gate/up  11008   4096  2048      default      ok  1613.41       1.00   114.47                     0.00
+       gate/up  11008   4096  2048     cublaslt      ok  1627.96       1.01   113.45                     0.00
+       gate/up  11008   4096  2048  no_bf16_rpr      ok  1627.65       1.01   113.47                     0.00
+    qkv merged  12288   4096     1      default      ok   183.07       1.00     0.55                     0.00
+    qkv merged  12288   4096     1     cublaslt      ok   183.40       1.00     0.55                     0.02
+    qkv merged  12288   4096     1  no_bf16_rpr      ok   177.87       0.97     0.57                     0.02
+    qkv merged  12288   4096     8      default      ok   179.35       1.00     4.49                     0.00
+    qkv merged  12288   4096     8     cublaslt      ok   177.51       0.99     4.54                     0.00
+    qkv merged  12288   4096     8  no_bf16_rpr      ok   179.40       1.00     4.49                     0.00
+    qkv merged  12288   4096   128      default      ok   225.95       1.00    57.03                     0.00
+    qkv merged  12288   4096   128     cublaslt      ok   225.84       1.00    57.05                     0.00
+    qkv merged  12288   4096   128  no_bf16_rpr      ok   249.09       1.10    51.73                     0.03
+    qkv merged  12288   4096   512      default      ok   550.60       1.00    93.61                     0.00
+    qkv merged  12288   4096   512     cublaslt      ok   524.90       0.95    98.19                     0.00
+    qkv merged  12288   4096   512  no_bf16_rpr      ok   522.04       0.95    98.73                     0.00
+    qkv merged  12288   4096  2048      default      ok  1822.11       1.00   113.14                     0.00
+    qkv merged  12288   4096  2048     cublaslt      ok  1836.65       1.01   112.25                     0.00
+    qkv merged  12288   4096  2048  no_bf16_rpr      ok  1822.11       1.00   113.14                     0.00
+gate_up merged  22016   4096     1      default      ok   321.13       1.00     0.56                     0.00
+gate_up merged  22016   4096     1     cublaslt      ok   327.37       1.02     0.55                     0.02
+gate_up merged  22016   4096     1  no_bf16_rpr      ok   315.34       0.98     0.57                     0.02
+gate_up merged  22016   4096     8      default      ok   326.14       1.00     4.42                     0.00
+gate_up merged  22016   4096     8     cublaslt      ok   316.72       0.97     4.56                     0.03
+gate_up merged  22016   4096     8  no_bf16_rpr      ok   335.10       1.03     4.31                     0.03
+gate_up merged  22016   4096   128      default      ok   437.43       1.00    52.78                     0.00
+gate_up merged  22016   4096   128     cublaslt      ok   437.40       1.00    52.78                     0.00
+gate_up merged  22016   4096   128  no_bf16_rpr      ok   416.31       0.95    55.45                     0.03
+gate_up merged  22016   4096   512      default      ok   956.62       1.00    96.53                     0.00
+gate_up merged  22016   4096   512     cublaslt      ok   906.04       0.95   101.92                     0.00
+gate_up merged  22016   4096   512  no_bf16_rpr      ok   937.98       0.98    98.45                     0.00
+gate_up merged  22016   4096  2048      default      ok  3164.57       1.00   116.72                     0.00
+gate_up merged  22016   4096  2048     cublaslt      ok  3165.80       1.00   116.67                     0.00
+gate_up merged  22016   4096  2048  no_bf16_rpr      ok  3169.79       1.00   116.53                     0.00
+     down_proj   4096  11008     1      default      ok   162.00       1.00     0.56                     0.00
+     down_proj   4096  11008     1     cublaslt      ok   158.67       0.98     0.57                  7.8e-03
+     down_proj   4096  11008     1  no_bf16_rpr      ok   161.74       1.00     0.56                     0.00
+     down_proj   4096  11008     8      default      ok   165.84       1.00     4.35                     0.00
+     down_proj   4096  11008     8     cublaslt      ok   165.84       1.00     4.35                     0.00
+     down_proj   4096  11008     8  no_bf16_rpr      ok   165.81       1.00     4.35                     0.00
+     down_proj   4096  11008   128      default      ok   178.89       1.00    64.52                     0.00
+     down_proj   4096  11008   128     cublaslt      ok   178.94       1.00    64.50                     0.00
+     down_proj   4096  11008   128  no_bf16_rpr      ok   178.89       1.00    64.52                     0.00
+     down_proj   4096  11008   512      default      ok   448.31       1.00   102.99                     0.00
+     down_proj   4096  11008   512     cublaslt      ok   456.19       1.02   101.21                     0.00
+     down_proj   4096  11008   512  no_bf16_rpr      ok   453.63       1.01   101.78                     0.00
+     down_proj   4096  11008  2048      default      ok  1665.43       1.00   110.89                     0.00
+     down_proj   4096  11008  2048     cublaslt      ok  1790.46       1.08   103.15                     0.03
+     down_proj   4096  11008  2048  no_bf16_rpr      ok  1723.08       1.03   107.18                     0.03
+
+== workspace
+            op      N      K    M  workspace_MiB  status      us  x_default  TFLOP/s
+        o_proj   4096   4096  128              1      ok   70.71       1.00    60.74
+        o_proj   4096   4096  128              8      ok   70.71       1.00    60.74
+        o_proj   4096   4096  512              1      ok  166.71       1.00   103.05
+        o_proj   4096   4096  512              8      ok  168.76       1.01   101.80
+       gate/up  11008   4096  128              1      ok  206.16       1.00    55.99
+       gate/up  11008   4096  128              8      ok  205.93       1.00    56.05
+       gate/up  11008   4096  512              1      ok  509.34       1.00    90.65
+       gate/up  11008   4096  512              8      ok  508.52       1.00    90.79
+    qkv merged  12288   4096  128              1      ok  226.71       1.00    56.83
+    qkv merged  12288   4096  128              8      ok  226.59       1.00    56.87
+    qkv merged  12288   4096  512              1      ok  524.60       1.00    98.25
+    qkv merged  12288   4096  512              8      ok  540.88       1.03    95.29
+gate_up merged  22016   4096  128              1      ok  438.55       1.00    52.64
+gate_up merged  22016   4096  128              8      ok  437.86       1.00    52.72
+gate_up merged  22016   4096  512              1      ok  898.25       1.00   102.80
+gate_up merged  22016   4096  512              8      ok  936.96       1.04    98.55
+     down_proj   4096  11008  128              1      ok  177.69       1.00    64.96
+     down_proj   4096  11008  128              8      ok  178.02       1.00    64.84
+     down_proj   4096  11008  512              1      ok  445.24       1.00   103.70
+     down_proj   4096  11008  512              8      ok  444.21       1.00   103.94
+
+== sdpa
+B     n      mask              backend       status        us  x_default  KV GB/s  max_abs_diff_vs_math_fp32
+1   640      bool              default           ok     45.95       1.00   228.19                    8.5e-04
+1   640      bool            efficient           ok     45.95       1.00   228.19                    8.5e-04
+1   640      bool                cudnn           ok     30.21       0.66   347.12                    8.5e-04
+1   640      bool                 math           ok    162.43       3.53    64.55                    8.5e-04
+1   640      bool  math_bf16_reduction           ok     59.14       1.29   177.32                    2.4e-03
+1   640      bool                flash  unsupported         -          -        -                          -
+1   640  additive              default           ok     41.22       1.00   254.41                    8.5e-04
+1   640  additive            efficient           ok     41.22       1.00   254.41                    8.5e-04
+1   640  additive                cudnn           ok     25.47       0.62   411.66                    8.5e-04
+1   640  additive                 math           ok    157.70       3.83    66.49                    8.5e-04
+1   640  additive  math_bf16_reduction           ok     54.53       1.32   192.30                    2.4e-03
+1   640  additive                flash  unsupported         -          -        -                          -
+1   640      none              default           ok     25.60       1.00   409.60                    6.4e-04
+1   640      none            efficient           ok     34.82       1.36   301.18                    6.2e-04
+1   640      none                cudnn           ok     24.64       0.96   425.56                    6.4e-04
+1   640      none                 math           ok    152.70       5.97    68.67                    4.9e-04
+1   640      none  math_bf16_reduction           ok     51.58       2.02   203.28                    1.5e-03
+1   640      none                flash           ok     25.60       1.00   409.60                    6.4e-04
+8   640      bool              default           ok    173.70       1.00   482.95                    1.1e-03
+8   640      bool            efficient           ok    173.70       1.00   482.95                    1.1e-03
+8   640      bool                cudnn           ok    154.75       0.89   542.07                    1.1e-03
+8   640      bool                 math           ok   1071.74       6.17    78.27                    9.6e-04
+8   640      bool  math_bf16_reduction           ok    316.03       1.82   265.44                    3.2e-03
+8   640      bool                flash  unsupported         -          -        -                          -
+8   640  additive              default           ok    169.09       1.00   496.11                    1.1e-03
+8   640  additive            efficient           ok    169.02       1.00   496.30                    1.1e-03
+8   640  additive                cudnn           ok    150.02       0.89   559.18                    1.1e-03
+8   640  additive                 math           ok   1067.01       6.31    78.62                    9.6e-04
+8   640  additive  math_bf16_reduction           ok    311.04       1.84   269.70                    3.2e-03
+8   640  additive                flash  unsupported         -          -        -                          -
+8   640      none              default           ok    159.49       1.00   525.97                    9.2e-04
+8   640      none            efficient           ok    165.76       1.04   506.07                    9.2e-04
+8   640      none                cudnn           ok    148.74       0.93   563.99                    9.2e-04
+8   640      none                 math           ok   1061.63       6.66    79.02                    9.2e-04
+8   640      none  math_bf16_reduction           ok    307.46       1.93   272.84                    2.3e-03
+8   640      none                flash           ok    160.26       1.00   523.45                    9.2e-04
+1  4096      bool              default           ok    231.04       1.00   290.46                    2.9e-04
+1  4096      bool            efficient           ok    230.91       1.00   290.63                    2.9e-04
+1  4096      bool                cudnn           ok    124.67       0.54   538.28                    3.1e-04
+1  4096      bool                 math           ok    877.31       3.80    76.49                    2.4e-04
+1  4096      bool  math_bf16_reduction           ok    264.45       1.14   253.77                    5.2e-04
+1  4096      bool                flash  unsupported         -          -        -                          -
+1  4096  additive              default           ok    224.38       1.00   299.08                    2.9e-04
+1  4096  additive            efficient           ok    224.38       1.00   299.08                    2.9e-04
+1  4096  additive                cudnn           ok    119.30       0.53   562.54                    3.1e-04
+1  4096  additive                 math           ok    872.06       3.89    76.95                    2.4e-04
+1  4096  additive  math_bf16_reduction           ok    259.58       1.16   258.52                    5.2e-04
+1  4096  additive                flash  unsupported         -          -        -                          -
+1  4096      none              default           ok    119.17       1.00   563.15                    2.8e-04
+1  4096      none            efficient           ok    183.68       1.54   365.36                    2.8e-04
+1  4096      none                cudnn           ok    119.04       1.00   563.75                    2.8e-04
+1  4096      none                 math           ok    867.07       7.28    77.40                    2.4e-04
+1  4096      none  math_bf16_reduction           ok    256.13       2.15   262.01                    5.2e-04
+1  4096      none                flash           ok    119.30       1.00   562.54                    2.8e-04
+8  4096      bool              default           ok   1058.62       1.00   507.14                    3.2e-04
+8  4096      bool            efficient           ok   1058.56       1.00   507.17                    3.2e-04
+8  4096      bool                cudnn           ok    941.18       0.89   570.42                    3.2e-04
+8  4096      bool                 math           ok   6727.36       6.35    79.80                    2.4e-04
+8  4096      bool  math_bf16_reduction           ok   1893.31       1.79   283.56                    9.2e-04
+8  4096      bool                flash  unsupported         -          -        -                          -
+8  4096  additive              default           ok   1053.44       1.00   509.64                    3.2e-04
+8  4096  additive            efficient           ok   1053.82       1.00   509.45                    3.2e-04
+8  4096  additive                cudnn           ok    936.32       0.89   573.38                    3.2e-04
+8  4096  additive                 math           ok   6722.11       6.38    79.87                    2.4e-04
+8  4096  additive  math_bf16_reduction           ok   1888.58       1.79   284.27                    9.2e-04
+8  4096  additive                flash  unsupported         -          -        -                          -
+8  4096      none              default           ok    986.24       1.00   544.36                    3.3e-04
+8  4096      none            efficient           ok   1029.50       1.04   521.49                    3.2e-04
+8  4096      none                cudnn           ok    928.00       0.94   578.52                    3.2e-04
+8  4096      none                 math           ok   6710.46       6.80    80.01                    2.4e-04
+8  4096      none  math_bf16_reduction           ok   1882.05       1.91   285.26                    8.5e-04
+8  4096      none                flash           ok    986.11       1.00   544.43                    3.3e-04
+1  8320      bool              default           ok    454.14       1.00   300.16                    1.7e-04
+1  8320      bool            efficient           ok    450.82       0.99   302.37                    1.7e-04
+1  8320      bool                cudnn           ok    241.02       0.53   565.57                    1.6e-04
+1  8320      bool                 math           ok   1734.40       3.82    78.59                    1.2e-04
+1  8320      bool  math_bf16_reduction           ok    499.07       1.10   273.14                    4.1e-04
+1  8320      bool                flash  unsupported         -          -        -                          -
+1  8320  additive              default           ok    445.70       1.00   305.85                    1.7e-04
+1  8320  additive            efficient           ok    445.70       1.00   305.85                    1.7e-04
+1  8320  additive                cudnn           ok    236.29       0.53   576.90                    1.6e-04
+1  8320  additive                 math           ok   1728.38       3.88    78.87                    1.2e-04
+1  8320  additive  math_bf16_reduction           ok    494.34       1.11   275.75                    4.1e-04
+1  8320  additive                flash  unsupported         -          -        -                          -
+1  8320      none              default           ok    232.58       1.00   586.11                    2.2e-04
+1  8320      none            efficient           ok    364.16       1.57   374.33                    1.8e-04
+1  8320      none                cudnn           ok    236.16       1.02   577.21                    1.7e-04
+1  8320      none                 math           ok   1715.33       7.38    79.47                    1.5e-04
+1  8320      none  math_bf16_reduction           ok    490.37       2.11   277.98                    4.0e-04
+1  8320      none                flash           ok    232.83       1.00   585.46                    2.2e-04
+8  8320      bool              default           ok   2141.44       1.00   509.25                    2.7e-04
+8  8320      bool            efficient           ok   2141.44       1.00   509.25                    2.7e-04
+8  8320      bool                cudnn           ok   1894.91       0.88   575.50                    2.7e-04
+8  8320      bool                 math           ok  13565.57       6.33    80.39                    2.4e-04
+8  8320      bool  math_bf16_reduction           ok   3828.54       1.79   284.84                    4.9e-04
+8  8320      bool                flash  unsupported         -          -        -                          -
+8  8320  additive              default           ok   2136.77       1.00   510.36                    2.7e-04
+8  8320  additive            efficient           ok   2136.58       1.00   510.40                    2.7e-04
+8  8320  additive                cudnn           ok   1890.50       0.88   576.84                    2.7e-04
+8  8320  additive                 math           ok  13560.38       6.35    80.42                    2.4e-04
+8  8320  additive  math_bf16_reduction           ok   3823.74       1.79   285.20                    4.9e-04
+8  8320  additive                flash  unsupported         -          -        -                          -
+8  8320      none              default           ok   2002.18       1.00   544.67                    2.9e-04
+8  8320      none            efficient           ok   2083.58       1.04   523.39                    3.2e-04
+8  8320      none                cudnn           ok   1875.07       0.94   581.59                    3.2e-04
+8  8320      none                 math           ok  13528.77       6.76    80.61                    2.4e-04
+8  8320      none  math_bf16_reduction           ok   3811.33       1.90   286.13                    4.5e-04
+8  8320      none                flash           ok   2005.38       1.00   543.80                    2.9e-04
+
+== triton
+      kernel  rows  num_warps  status      us  x_default    GB/s
+     rmsnorm     1          2      ok    2.12       1.13   11.59
+     rmsnorm     1          4      ok    2.00       1.07   12.31
+     rmsnorm     1          8      ok    1.87       1.00   13.15
+     rmsnorm     1         16      ok    1.81       0.97   13.56
+qk_norm_rope     1          2      ok    2.81       1.21   11.68
+qk_norm_rope     1          4      ok    2.20       0.95   14.88
+qk_norm_rope     1          8      ok    2.31       1.00   14.16
+qk_norm_rope     1         16      ok    2.37       1.02   13.85
+    silu_mul     1          2      ok    2.72       1.21   24.25
+    silu_mul     1          4      ok    2.24       1.00   29.45
+    silu_mul     1          8      ok    1.62       0.72   40.82
+    silu_mul     1         16      ok    1.35       0.60   48.86
+     rmsnorm     8          2      ok    2.17       1.12   90.57
+     rmsnorm     8          4      ok    2.05       1.06   96.00
+     rmsnorm     8          8      ok    1.94       1.00  101.59
+     rmsnorm     8         16      ok    1.86       0.96  105.49
+qk_norm_rope     8          2      ok    2.87       1.21   91.43
+qk_norm_rope     8          4      ok    2.25       0.95  116.36
+qk_norm_rope     8          8      ok    2.38       1.00  110.34
+qk_norm_rope     8         16      ok    2.39       1.00  109.87
+    silu_mul     8          2      ok    2.96       1.24  178.55
+    silu_mul     8          4      ok    2.39       1.00  221.46
+    silu_mul     8          8      ok    1.79       0.75  294.86
+    silu_mul     8         16      ok    1.60       0.67  330.77
+     rmsnorm   512          2      ok   20.85       0.98  603.54
+     rmsnorm   512          4      ok   20.74       0.97  606.81
+     rmsnorm   512          8      ok   21.37       1.00  588.79
+     rmsnorm   512         16      ok   21.41       1.00  587.80
+qk_norm_rope   512          2      ok   34.94       1.02  480.19
+qk_norm_rope   512          4      ok   33.25       0.97  504.59
+qk_norm_rope   512          8      ok   34.10       1.00  491.94
+qk_norm_rope   512         16      ok   33.68       0.99  498.15
+    silu_mul   512          2      ok   62.65       1.02  539.74
+    silu_mul   512          4      ok   61.54       1.00  549.48
+    silu_mul   512          8      ok   61.59       1.00  549.07
+    silu_mul   512         16      ok   61.38       1.00  550.95
+     rmsnorm  2048          2      ok   88.65       1.00  567.77
+     rmsnorm  2048          4      ok   88.79       1.00  566.86
+     rmsnorm  2048          8      ok   88.55       1.00  568.43
+     rmsnorm  2048         16      ok   88.45       1.00  569.02
+qk_norm_rope  2048          2      ok  133.70       1.02  501.92
+qk_norm_rope  2048          4      ok  131.38       1.00  510.80
+qk_norm_rope  2048          8      ok  130.85       1.00  512.88
+qk_norm_rope  2048         16      ok  131.36       1.00  510.86
+    silu_mul  2048          2      ok  245.82       1.01  550.27
+    silu_mul  2048          4      ok  244.05       1.00  554.26
+    silu_mul  2048          8      ok  243.44       1.00  555.64
+    silu_mul  2048         16      ok  242.08       0.99  558.76
+
+== tf32
+                 op     S  allow_tf32  status    us  x_default  max_abs_diff_vs_fp64
+rope inv_freq @ pos  8192       False      ok  2.76       1.00               2.4e-04
+rope inv_freq @ pos  8192        True      ok  2.76       1.00               2.4e-04
+
+wrote /u/neilas3/classes/598/598-project/results/knobs/knobs_23927854.json
+done

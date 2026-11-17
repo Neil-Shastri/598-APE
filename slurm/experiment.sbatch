@@ -26,6 +26,10 @@ nvidia-smi --query-gpu=name,driver_version,clocks.sm,temperature.gpu --format=cs
 if [ -n "$UNIT_TESTS" ]; then
     python -m pytest -q $UNIT_TESTS || exit 1
 fi
+if [ -n "$SANITIZE" ]; then
+    # memory errors in our Triton kernels (stands in for valgrind on GPU code)
+    compute-sanitizer --tool memcheck --error-exitcode 1 python -m pytest -q $SANITIZE
+fi
 if [ -n "$KERNEL_BENCH" ]; then
     python -m olmo_bench.kernels --bench
 fi
